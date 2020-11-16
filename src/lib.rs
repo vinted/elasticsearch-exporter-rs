@@ -121,6 +121,11 @@ impl Exporter {
     pub async fn spawn(self) {
         info!("Spawned");
         Self::spawn_cat(self.clone());
+        Self::spawn_cluster(self.clone());
+    }
+
+    fn spawn_cluster(exporter: Self) {
+        let _ = tokio::spawn(metrics::_cluster::health::poll(exporter.clone()));
     }
 
     // =^.^=

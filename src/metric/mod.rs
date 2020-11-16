@@ -15,22 +15,30 @@ pub struct Metric(String, MetricType);
 /// Vector of metrics for convenience
 pub type Metrics = Vec<Metric>;
 
+/// Build metric from JSON value
+pub fn from_value(value: Value) -> Vec<Metrics> {
+    let mut metrics: Vec<Metrics> = Vec::new();
+
+    if let Some(object) = value.as_object() {
+        metrics.push(
+            object
+                .into_iter()
+                .map(|(k, v)| Metric::try_from((k.as_str(), v)))
+                .filter_map(Result::ok)
+                .collect::<Vec<Metric>>(),
+        );
+    } else {
+        warn!("from_values unsupported value {}", value);
+    }
+    metrics
+}
+
 /// Build vector of metrics from JSON vector values
 pub fn from_values(values: Vec<Value>) -> Vec<Metrics> {
     let mut metrics: Vec<Metrics> = Vec::new();
 
-    for value in values.iter() {
-        if let Some(object) = value.as_object() {
-            metrics.push(
-                object
-                    .into_iter()
-                    .map(|(k, v)| Metric::try_from((k.as_str(), v)))
-                    .filter_map(Result::ok)
-                    .collect::<Vec<Metric>>(),
-            );
-        } else {
-            warn!("from_values unsupported value {}", value);
-        }
+    for value in values.into_iter() {
+        metrics.extend(from_value(value));
     }
 
     metrics
@@ -128,19 +136,27 @@ impl<'s> TryFrom<RawMetric<'s>> for MetricType {
         let unknown = || MetricError::unknown(metric.0.to_owned());
 
         let parse_i64 = || -> Result<i64, MetricError> {
-            value
-                .as_str()
-                .map(|n| n.parse::<i64>())
-                .ok_or(unknown())?
-                .map_err(MetricError::from)
+            if value.is_number() {
+                Ok(value.as_i64().unwrap_or(0))
+            } else {
+                value
+                    .as_str()
+                    .map(|n| n.parse::<i64>())
+                    .ok_or(unknown())?
+                    .map_err(MetricError::from)
+            }
         };
 
         let parse_f64 = || -> Result<f64, MetricError> {
-            value
-                .as_str()
-                .map(|n| n.parse::<f64>())
-                .ok_or(unknown())?
-                .map_err(MetricError::from)
+            if value.is_f64() {
+                Ok(value.as_f64().unwrap_or(0.0))
+            } else {
+                value
+                    .as_str()
+                    .map(|n| n.parse::<f64>())
+                    .ok_or(unknown())?
+                    .map_err(MetricError::from)
+            }
         };
 
         match metric.0 {
@@ -150,28 +166,33 @@ impl<'s> TryFrom<RawMetric<'s>> for MetricType {
             ))),
             "epoch" => Ok(MetricType::Time(Duration::from_secs(parse_i64()? as u64))),
 
-            "value" => Ok(MetricType::Switch(if value.as_bool().unwrap_or(false) {
+            // timed_out
+            "out" | "value" => Ok(MetricType::Switch(if value.as_bool().unwrap_or(false) {
                 1
             } else {
                 0
             })),
 
-            "order" | "largest" | "rejected" | "completed" | "queue" | "active" | "core"
-            | "data" | "tasks" | "relo" | "unassign" | "init" | "files" | "ops" | "recovered"
-            | "generation" | "max" | "contexts" | "listeners" | "pri" | "rep" | "docs"
-            | "count" | "pid" | "compilations" | "deleted" | "shards" | "indices"
-            | "checkpoint" | "avail" | "used" | "cpu" | "triggered" | "evictions" | "failed"
-            | "total" | "current" => Ok(MetricType::Gauge(parse_i64()?)),
+            "nodes" | "fetch" | "order" | "largest" | "rejected" | "completed" | "queue"
+            | "active" | "core" | "data" | "tasks" | "relo" | "unassign" | "init" | "files"
+            | "ops" | "recovered" | "generation" | "max" | "contexts" | "listeners" | "pri"
+            | "rep" | "docs" | "count" | "pid" | "compilations" | "deleted" | "shards"
+            | "indices" | "checkpoint" | "avail" | "used" | "cpu" | "triggered" | "evictions"
+            | "failed" | "total" | "current" => Ok(MetricType::Gauge(parse_i64()?)),
 
-            "1m" | "5m" | "15m" | "percent" => Ok(MetricType::GaugeF(parse_f64()?)),
+            "1m" | "5m" | "15m" | "number" | "percent" => Ok(MetricType::GaugeF(parse_f64()?)),
 
-            "at" | "for" | "details" | "reason" | "sync_id" | "port" | "attr" | "field"
-            | "shard" | "index" | "name" | "type" | "version" | "jdk" | "description" => Ok(
-                MetricType::Label(value.as_str().ok_or(unknown())?.to_owned()),
-            ),
+            "status" | "at" | "for" | "details" | "reason" | "sync_id" | "port" | "attr"
+            | "field" | "shard" | "index" | "name" | "type" | "version" | "jdk" | "description" => {
+                Ok(MetricType::Label(
+                    value.as_str().ok_or(unknown())?.to_owned(),
+                ))
+            }
 
             _ => {
                 if cfg!(debug_assertions) {
+                    println!("Catchall metric: {:?}", metric);
+
                     let parsed = parse_i64().unwrap_or(-1).to_string();
 
                     if &parsed != "-1" && parsed.len() == value.as_str().unwrap_or("").len() {
