@@ -1,0 +1,59 @@
+{
+  "_nodes": {
+    "failed": 0,
+    "successful": 1,
+    "total": 1
+  },
+  "cluster_name": "test",
+  "nodes": {
+    "U-WnGaTpRxucgde3miiDWw": {
+      "rest_actions": {
+        "bulk_action": 5716309,
+        "cat_action": 1,
+        "cat_alias_action": 181,
+        "cat_allocation_action": 191,
+        "cat_fielddata_action": 181,
+        "cat_health_action": 180,
+        "cat_indices_action": 347,
+        "cat_node_attrs_action": 181,
+        "cat_nodes_action": 192,
+        "cat_pending_cluster_tasks_action": 180,
+        "cat_plugins_action": 181,
+        "cat_recovery_action": 181,
+        "cat_repositories_action": 181,
+        "cat_segments_action": 183,
+        "cat_shards_action": 194,
+        "cat_templates_action": 186,
+        "cat_threadpool_action": 181,
+        "cat_transform_action": 181,
+        "cluster_get_settings_action": 172341,
+        "cluster_health_action": 172700,
+        "cluster_stats_action": 39,
+        "create_index_action": 181,
+        "delete_index_action": 15,
+        "get_aliases_action": 2,
+        "get_index_template_action": 4,
+        "get_indices_action": 422,
+        "get_settings_action": 172340,
+        "indices_aliases_action": 1,
+        "indices_stats_action": 172342,
+        "main_action": 502846,
+        "nodes_info_action": 179,
+        "nodes_stats_action": 172344,
+        "nodes_usage_action": 171,
+        "put_index_template_action": 38,
+        "search_action": 1574371
+      },
+      "since": 1603122740232,
+      "timestamp": 1605636302795,
+      "aggregations": {
+        "terms": {
+          "bytes": 17477416
+        },
+        "top_hits": {
+          "other": 15367070
+        }
+      }
+    }
+  }
+}

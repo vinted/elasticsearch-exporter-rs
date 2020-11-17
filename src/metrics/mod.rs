@@ -1,5 +1,6 @@
 pub(crate) mod _cat;
 pub(crate) mod _cluster;
+pub(crate) mod _nodes;
 
 // TODO: add metrics of
 //

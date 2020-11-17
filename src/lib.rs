@@ -42,10 +42,10 @@
 
 #[macro_use]
 extern crate log;
-use elasticsearch::cluster::ClusterHealthParts;
+#[macro_use]
+extern crate serde_derive;
 use elasticsearch::http::transport::{SingleNodeConnectionPool, TransportBuilder};
 use elasticsearch::Elasticsearch;
-use serde_json::Value;
 use std::collections::{BTreeMap, HashMap};
 use std::time::Duration;
 
@@ -55,6 +55,8 @@ pub mod collection;
 pub mod metric;
 mod options;
 pub use options::ExporterOptions;
+
+mod metadata;
 
 pub(crate) mod metrics;
 
@@ -86,6 +88,10 @@ pub struct Exporter {
     pub options: ExporterOptions,
     /// Constant exporter labels, e.g.: cluster
     pub const_labels: HashMap<String, String>,
+
+    /// Node ID to node name map for adding extra metadata labels
+    /// {"U-WnGaTpRxucgde3miiDWw": "m1-supernode.example.com"}
+    pub id_to_name: HashMap<String, String>,
 }
 
 impl Exporter {
@@ -100,16 +106,8 @@ impl Exporter {
         info!("Elasticsearch::ping");
         let _ = client.ping().send().await?;
 
-        let cluster_name = client
-            .cluster()
-            .health(ClusterHealthParts::None)
-            .send()
-            .await?
-            .json::<Value>()
-            .await?["cluster_name"]
-            .as_str()
-            .unwrap_or("unknown")
-            .to_string();
+        let id_to_name = metadata::nodes_id_map(&client).await?;
+        let cluster_name = metadata::cluster_name(&client).await?;
 
         let mut const_labels = HashMap::new();
         let _ = const_labels.insert("cluster".into(), cluster_name);
@@ -118,6 +116,7 @@ impl Exporter {
             client,
             options,
             const_labels,
+            id_to_name,
         })
     }
 
@@ -126,10 +125,17 @@ impl Exporter {
         info!("Spawned");
         Self::spawn_cat(self.clone());
         Self::spawn_cluster(self.clone());
+        Self::spawn_nodes(self.clone());
     }
 
+    #[allow(unused)]
     fn spawn_cluster(exporter: Self) {
         let _ = tokio::spawn(metrics::_cluster::health::poll(exporter.clone()));
+    }
+
+    #[allow(unused)]
+    fn spawn_nodes(exporter: Self) {
+        let _ = tokio::spawn(metrics::_nodes::usage::poll(exporter.clone()));
     }
 
     // =^.^=
@@ -149,6 +155,7 @@ impl Exporter {
     // /_cat/repositories
     // /_cat/templates
     // /_cat/transforms
+    #[allow(unused)]
     fn spawn_cat(exporter: Self) {
         let _ = tokio::spawn(metrics::_cat::allocation::poll(exporter.clone()));
         let _ = tokio::spawn(metrics::_cat::shards::poll(exporter.clone()));

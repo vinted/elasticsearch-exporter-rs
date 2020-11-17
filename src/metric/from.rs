@@ -6,6 +6,17 @@ use super::{Metric, MetricError, Metrics};
 /// Map from key and JSON value
 type SerdeMap = serde_json::Map<String, Value>;
 
+/// Build vector of metrics from JSON vector values
+pub fn from_values(values: Vec<Value>) -> Vec<Metrics> {
+    let mut metrics: Vec<Metrics> = Vec::new();
+
+    for value in values.into_iter() {
+        metrics.extend(from_value(value));
+    }
+
+    metrics
+}
+
 /// Build metric from JSON value
 pub fn from_value(value: Value) -> Vec<Metrics> {
     let mut output: Vec<Metrics> = Vec::new();
@@ -39,7 +50,7 @@ fn _from_value<'f>(
     {
         metrics.push(Metric::try_from((prefix, value))?);
     } else if let Some(obj) = value.as_object() {
-        let _ = from_map(prefix, output, obj)?;
+        let _ = _from_map(prefix, output, obj)?;
     } else if let Some(array) = value.as_array() {
         let _ = from_array(prefix, output, array)?;
     } else {
@@ -48,7 +59,7 @@ fn _from_value<'f>(
     Ok(metrics)
 }
 
-fn from_map(prefix: &str, output: &mut Vec<Metrics>, map: &SerdeMap) -> Result<(), MetricError> {
+fn _from_map(prefix: &str, output: &mut Vec<Metrics>, map: &SerdeMap) -> Result<(), MetricError> {
     let mut metrics = Metrics::new();
 
     for (key, value) in map.iter() {

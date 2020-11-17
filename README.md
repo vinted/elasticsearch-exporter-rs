@@ -45,12 +45,14 @@ elasticsearch_include_labels
  - cat_thread_pool: node_name,name,type
  - cat_transforms: index
  - cluster_health: status
+ - nodes_usage: name,usage
 elasticsearch_skip_metrics
  - cat_aliases: filter,routing_index,routing_search,is_write_index
  - cat_health: epoch,timestamp
  - cat_nodeattrs: pid
  - cat_recovery: start_time,start_time_millis,stop_time,stop_time_millis
  - cat_templates: order
+ - nodes_usage: _nodes_total,_nodes_successful,timestamp,since
 elasticsearch_cat_headers
  - cat_nodes: *
 exporter_poll_default_interval: 5s

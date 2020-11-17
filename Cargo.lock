@@ -251,6 +251,7 @@ dependencies = [
  "pretty_env_logger",
  "prometheus",
  "serde",
+ "serde_derive",
  "serde_json",
  "tokio",
  "url",

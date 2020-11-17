@@ -15,11 +15,8 @@ pub struct Metric(String, MetricType);
 /// Vector of metrics for convenience
 pub type Metrics = Vec<Metric>;
 
-mod from_value;
-pub use from_value::from_value;
-
-mod from_values;
-pub use from_values::from_values;
+mod from;
+pub use from::{from_value, from_values};
 
 impl Metric {
     /// Return metric key
