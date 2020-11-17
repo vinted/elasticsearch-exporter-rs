@@ -61,7 +61,7 @@ impl Collection {
             }
 
             let new_gauge = GaugeVec::new(
-                Opts::new(metric_key, format!("TODO setup help: {}", key))
+                Opts::new(metric_key, key)
                     .const_labels(self.const_labels.clone())
                     .subsystem(self.subsystem)
                     .namespace(crate::NAMESPACE),
@@ -100,7 +100,7 @@ impl Collection {
             }
 
             let new_histogram = HistogramVec::new(
-                HistogramOpts::new(metric_key, format!("TODO setup help: {}", key))
+                HistogramOpts::new(metric_key, key)
                     .const_labels(self.const_labels.clone())
                     .subsystem(self.subsystem)
                     .buckets(self.options.exporter_histogram_buckets.clone())
@@ -174,7 +174,7 @@ impl Collection {
                             &metric.key(),
                             duration.as_secs_f64(),
                             &labels,
-                            Some("_seconds"),
+                            None,
                         )?;
                     }
                 }
