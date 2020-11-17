@@ -27,7 +27,9 @@ use tokio::signal;
 use tokio::sync::oneshot::{self, Receiver, Sender};
 use url::Url;
 
-use elasticsearch_exporter::{CollectionLabels, Exporter, ExporterOptions, Labels};
+use elasticsearch_exporter::{
+    CollectionLabels, Exporter, ExporterOptions, ExporterPollIntervals, Labels,
+};
 
 lazy_static! {
     static ref HTTP_REQ_HISTOGRAM: HistogramVec = register_histogram_vec!(
@@ -124,11 +126,51 @@ struct Opts {
     )]
     elasticsearch_skip_metrics: HashMapVec,
 
-    #[clap(long = "exporter_poll_interval_ms", default_value = "5000")]
-    exporter_poll_interval_ms: u64,
+    #[clap(long = "exporter_poll_default_interval_ms", default_value = "5000")]
+    exporter_poll_default_interval_ms: u64,
 
     #[clap(long = "exporter_skip_zero_metrics")]
     exporter_skip_zero_metrics: bool,
+
+    #[clap(long = "exporter_poll_intervals", default_value = "cluster_health=5s")]
+    exporter_poll_intervals: HashMapDuration,
+}
+
+#[derive(Debug, Clone, Default)]
+struct HashMapDuration(ExporterPollIntervals);
+
+impl FromStr for HashMapDuration {
+    type Err = SimpleError;
+
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        let mut map = ExporterPollIntervals::new();
+
+        let parts = input.trim().split("&").into_iter().collect::<Vec<&str>>();
+
+        for part in parts.into_iter() {
+            match part.split_once("=") {
+                Some((key, value)) => match value.parse::<humantime::Duration>() {
+                    Ok(time) => {
+                        let _ = map.insert(key.to_string(), *time);
+                    }
+                    Err(e) => {
+                        return Err(SimpleError(format!(
+                            "Failed to parse time for key {} value {} err {}",
+                            key, value, e
+                        )))
+                    }
+                },
+                None => {
+                    return Err(SimpleError(format!(
+                        "Usage `{}`, you provided `{}`",
+                        HASH_MAP_STR_FORMAT, part
+                    )))
+                }
+            }
+        }
+
+        Ok(Self(map))
+    }
 }
 
 #[derive(Clone, Debug, Default)]
@@ -260,9 +302,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         elasticsearch_skip_metrics: opts.elasticsearch_skip_metrics.0.clone(),
         elasticsearch_include_labels: opts.elasticsearch_include_labels.0.clone(),
         elasticsearch_cat_headers: opts.elasticsearch_cat_headers.0.clone(),
-        exporter_poll_interval: Duration::from_millis(opts.exporter_poll_interval_ms),
+        exporter_poll_default_interval: Duration::from_millis(
+            opts.exporter_poll_default_interval_ms,
+        ),
         exporter_histogram_buckets: elasticsearch_exporter::DEFAULT_BUCKETS.to_vec(),
         exporter_skip_zero_metrics: !opts.exporter_skip_zero_metrics,
+        exporter_poll_intervals: opts.exporter_poll_intervals.0.clone(),
     };
 
     info!("{}", options);

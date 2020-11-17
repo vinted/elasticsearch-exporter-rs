@@ -26,7 +26,7 @@ elasticsearch_skip_labels
  - cat_templates: composed_of
  - cat_thread_pool: node_id,ephemeral_node_id,pid
  - cat_transforms: health,status
- - cluster_stats=segment,patterns
+ - cluster_stats: segment,patterns
 elasticsearch_include_labels
  - cat_aliases: index,alias
  - cat_allocation: node
@@ -53,7 +53,9 @@ elasticsearch_skip_metrics
  - cat_templates: order
 elasticsearch_cat_headers
  - cat_nodes: *
-exporter_poll_interval: 5s
+exporter_poll_default_interval: 5s
+exporter_poll_intervals
+ - cluster_health: 5s
 exporter_histogram_buckets: [0.02, 0.04, 0.06, 0.08, 0.1, 0.25, 0.5, 0.75, 1.0, 2.0, 4.0, 6.0, 8.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0] in seconds
 exporter_skip_zero_metrics: true
 ```

@@ -24,10 +24,6 @@ macro_rules! poll_metrics {
 
         #[allow(unused)]
         pub(crate) async fn poll(exporter: Exporter) {
-            let start = tokio::time::Instant::now();
-            let mut interval =
-                tokio::time::interval_at(start, exporter.options.exporter_poll_interval);
-
             let mut collection = Collection::new(SUBSYSTEM, exporter.options.clone());
             // Common to all /_cat metrics
             collection.const_labels = exporter.const_labels.clone();
@@ -45,6 +41,21 @@ macro_rules! poll_metrics {
             {
                 collection.include_labels = include_labels.clone();
             }
+
+            let start = tokio::time::Instant::now();
+
+            let poll_interval = exporter
+                .options
+                .exporter_poll_intervals
+                .get(SUBSYSTEM)
+                .unwrap_or(&exporter.options.exporter_poll_default_interval);
+
+            info!(
+                "Starting subsystem: {} with poll interval: {:?}",
+                SUBSYSTEM, poll_interval
+            );
+
+            let mut interval = tokio::time::interval_at(start, *poll_interval);
 
             // TODO: add metric how long it takes to scape subsystem
             while interval.next().await.is_some() {

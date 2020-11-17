@@ -47,6 +47,7 @@ use elasticsearch::http::transport::{SingleNodeConnectionPool, TransportBuilder}
 use elasticsearch::Elasticsearch;
 use serde_json::Value;
 use std::collections::{BTreeMap, HashMap};
+use std::time::Duration;
 
 /// Generic collector of Elasticsearch metrics
 pub mod collection;
@@ -72,6 +73,9 @@ pub type Labels = BTreeMap<String, String>;
 
 /// Collection labels
 pub type CollectionLabels = BTreeMap<String, Vec<String>>;
+
+/// Exporter polling intervals
+pub type ExporterPollIntervals = BTreeMap<String, Duration>;
 
 /// Elasticsearch exporter
 #[derive(Debug, Clone)]

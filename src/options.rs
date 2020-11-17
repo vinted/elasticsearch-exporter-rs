@@ -2,7 +2,7 @@ use std::fmt;
 use std::time::Duration;
 use url::Url;
 
-use crate::{CollectionLabels, Labels};
+use crate::{CollectionLabels, ExporterPollIntervals, Labels};
 
 /// Elasticsearch exporter options
 #[derive(Debug, Clone)]
@@ -21,7 +21,9 @@ pub struct ExporterOptions {
     pub elasticsearch_cat_headers: Labels,
 
     /// Metrics polling interval
-    pub exporter_poll_interval: Duration,
+    pub exporter_poll_default_interval: Duration,
+    /// Exporter skip zero metrics
+    pub exporter_poll_intervals: ExporterPollIntervals,
     /// Metrics histogram buckets
     pub exporter_histogram_buckets: Vec<f64>,
     /// Exporter skip zero metrics
@@ -47,6 +49,19 @@ fn collection_labels_to_string(
     for (k, v) in labels.iter() {
         output.push_str("\n");
         output.push_str(&format!(" - {}: {}", k, v.join(",")));
+    }
+}
+
+fn poll_duration_to_string(
+    output: &mut String,
+    field: &'static str,
+    labels: &ExporterPollIntervals,
+) {
+    output.push_str("\n");
+    output.push_str(field);
+    for (k, v) in labels.iter() {
+        output.push_str("\n");
+        output.push_str(&format!(" - {}: {:?}", k, v));
     }
 }
 
@@ -85,9 +100,15 @@ impl fmt::Display for ExporterOptions {
         // Exporter
         output.push_str("\n");
         output.push_str(&format!(
-            "exporter_poll_interval: {:?}",
-            self.exporter_poll_interval
+            "exporter_poll_default_interval: {:?}",
+            self.exporter_poll_default_interval
         ));
+
+        poll_duration_to_string(
+            &mut output,
+            "exporter_poll_intervals",
+            &self.exporter_poll_intervals,
+        );
 
         output.push_str("\n");
         output.push_str(&format!(
@@ -101,6 +122,7 @@ impl fmt::Display for ExporterOptions {
             self.exporter_skip_zero_metrics
         ));
 
+        output.push_str("\n");
         write!(f, "{}", output)
     }
 }
