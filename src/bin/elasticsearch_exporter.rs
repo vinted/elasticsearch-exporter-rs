@@ -123,6 +123,12 @@ struct Opts {
         default_value = "cat_health=epoch,timestamp&cat_aliases=filter,routing_index,routing_search,is_write_index&cat_nodeattrs=pid&cat_recovery=start_time,start_time_millis,stop_time,stop_time_millis&cat_templates=order"
     )]
     elasticsearch_skip_metrics: HashMapVec,
+
+    #[clap(long = "exporter_poll_interval_ms", default_value = "5000")]
+    exporter_poll_interval_ms: u64,
+
+    #[clap(long = "exporter_skip_zero_metrics")]
+    exporter_skip_zero_metrics: bool,
 }
 
 #[derive(Clone, Debug, Default)]
@@ -254,8 +260,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         elasticsearch_skip_metrics: opts.elasticsearch_skip_metrics.0.clone(),
         elasticsearch_include_labels: opts.elasticsearch_include_labels.0.clone(),
         elasticsearch_cat_headers: opts.elasticsearch_cat_headers.0.clone(),
-        exporter_poll_interval: Duration::from_millis(5000),
+        exporter_poll_interval: Duration::from_millis(opts.exporter_poll_interval_ms),
         exporter_histogram_buckets: elasticsearch_exporter::DEFAULT_BUCKETS.to_vec(),
+        exporter_skip_zero_metrics: !opts.exporter_skip_zero_metrics,
     };
 
     info!("{}", options);

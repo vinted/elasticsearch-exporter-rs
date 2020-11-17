@@ -24,6 +24,8 @@ pub struct ExporterOptions {
     pub exporter_poll_interval: Duration,
     /// Metrics histogram buckets
     pub exporter_histogram_buckets: Vec<f64>,
+    /// Exporter skip zero metrics
+    pub exporter_skip_zero_metrics: bool,
 }
 
 fn labels_to_string(output: &mut String, field: &'static str, labels: &Labels) {
@@ -91,6 +93,12 @@ impl fmt::Display for ExporterOptions {
         output.push_str(&format!(
             "exporter_histogram_buckets: {:?} in seconds",
             self.exporter_histogram_buckets
+        ));
+
+        output.push_str("\n");
+        output.push_str(&format!(
+            "exporter_skip_zero_metrics: {:?}",
+            self.exporter_skip_zero_metrics
         ));
 
         write!(f, "{}", output)

@@ -149,7 +149,7 @@ impl Collection {
                     let _ = self.insert_gauge(&metric.key(), *value as f64, &labels, None)?;
                 }
                 MetricType::Bytes(value) => {
-                    if value > &0 {
+                    if self.options.exporter_skip_zero_metrics && value > &0 {
                         let _ = self.insert_gauge(
                             &metric.key(),
                             *value as f64,
@@ -159,12 +159,12 @@ impl Collection {
                     }
                 }
                 MetricType::GaugeF(value) => {
-                    if value > &0.0 {
+                    if self.options.exporter_skip_zero_metrics && value > &0.0 {
                         let _ = self.insert_gauge(&metric.key(), *value, &labels, None)?;
                     }
                 }
                 MetricType::Gauge(value) => {
-                    if value > &0 {
+                    if self.options.exporter_skip_zero_metrics && value > &0 {
                         let _ = self.insert_gauge(&metric.key(), *value as f64, &labels, None)?;
                     }
                 }
