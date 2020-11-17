@@ -1,0 +1,345 @@
+{
+  "_nodes": {
+    "failed": 0,
+    "successful": 263,
+    "total": 263
+  },
+  "cluster_name": "testing",
+  "cluster_uuid": "EsIqdcGSRiCFS_yoqc6pfg",
+  "indices": {
+    "analysis": {
+      "analyzer_types": [
+        {
+          "count": 322,
+          "index_count": 26,
+          "name": "custom"
+        }
+      ],
+      "built_in_analyzers": [],
+      "built_in_char_filters": [],
+      "built_in_filters": [
+        {
+          "count": 70,
+          "index_count": 26,
+          "name": "asciifolding"
+        },
+        {
+          "count": 322,
+          "index_count": 26,
+          "name": "lowercase"
+        },
+        {
+          "count": 22,
+          "index_count": 26,
+          "name": "unique"
+        }
+      ],
+      "built_in_tokenizers": [
+        {
+          "count": 26,
+          "index_count": 26,
+          "name": "keyword"
+        },
+        {
+          "count": 20,
+          "index_count": 38,
+          "name": "standard"
+        },
+        {
+          "count": 76,
+          "index_count": 26,
+          "name": "whitespace"
+        }
+      ],
+      "char_filter_types": [
+        {
+          "count": 25,
+          "index_count": 25,
+          "name": "mapping"
+        }
+      ],
+      "filter_types": [
+        {
+          "count": 2,
+          "index_count": 2,
+          "name": "elision"
+        },
+        {
+          "count": 50,
+          "index_count": 25,
+          "name": "keyword_marker"
+        },
+        {
+          "count": 25,
+          "index_count": 25,
+          "name": "pattern_capture"
+        },
+        {
+          "count": 3,
+          "index_count": 3,
+          "name": "polish_stem"
+        },
+        {
+          "count": 22,
+          "index_count": 22,
+          "name": "snowball"
+        },
+        {
+          "count": 3,
+          "index_count": 3,
+          "name": "stemmer"
+        },
+        {
+          "count": 25,
+          "index_count": 25,
+          "name": "stop"
+        },
+        {
+          "count": 50,
+          "index_count": 25,
+          "name": "word_delimiter_graph"
+        }
+      ],
+      "tokenizer_types": []
+    },
+    "completion": {
+      "size_in_bytes": 0
+    },
+    "count": 77,
+    "docs": {
+      "count": 956383573,
+      "deleted": 332035865
+    },
+    "fielddata": {
+      "evictions": 0,
+      "memory_size_in_bytes": 67288520
+    },
+    "mappings": {
+      "field_types": [
+        {
+          "count": 630,
+          "index_count": 77,
+          "name": "boolean"
+        },
+        {
+          "count": 55,
+          "index_count": 55,
+          "name": "constant_keyword"
+        },
+        {
+          "count": 380,
+          "index_count": 76,
+          "name": "date"
+        },
+        {
+          "count": 937,
+          "index_count": 77,
+          "name": "keyword"
+        },
+        {
+          "count": 87,
+          "index_count": 77,
+          "name": "long"
+        },
+        {
+          "count": 333,
+          "index_count": 77,
+          "name": "object"
+        },
+        {
+          "count": 76,
+          "index_count": 76,
+          "name": "scaled_float"
+        },
+        {
+          "count": 76,
+          "index_count": 76,
+          "name": "short"
+        },
+        {
+          "count": 237,
+          "index_count": 27,
+          "name": "text"
+        }
+      ]
+    },
+    "query_cache": {
+      "cache_count": 626995232,
+      "cache_size": 39332385,
+      "evictions": 627863027,
+      "hit_count": 729997372786,
+      "memory_size_in_bytes": 699653759682,
+      "miss_count": 3338359306359,
+      "total_count": 2088356278925
+    },
+    "segments": {
+      "count": 59600,
+      "doc_values_memory_in_bytes": 352032338,
+      "file_sizes": {},
+      "fixed_bit_set_memory_in_bytes": 0,
+      "index_writer_memory_in_bytes": 23285626222,
+      "max_unsafe_auto_id_timestamp": -3,
+      "memory_in_bytes": 673073206,
+      "norms_memory_in_bytes": 33062932,
+      "points_memory_in_bytes": 0,
+      "stored_fields_memory_in_bytes": 80728352,
+      "term_vectors_memory_in_bytes": 0,
+      "terms_memory_in_bytes": 205267822,
+      "version_map_memory_in_bytes": 2266336283
+    },
+    "shards": {
+      "index": {
+        "primaries": {
+          "avg": 3.5252525252525252,
+          "max": 36,
+          "min": 3
+        },
+        "replication": {
+          "avg": 8.96303896303896,
+          "max": 37,
+          "min": 3
+        },
+        "shards": {
+          "avg": 35.55822355822356,
+          "max": 232,
+          "min": 2
+        }
+      },
+      "primaries": 273,
+      "replication": 9.02930202930203,
+      "total": 2738
+    },
+    "store": {
+      "size_in_bytes": 6399630872306
+    }
+  },
+  "nodes": {
+    "count": {
+      "coordinating_only": 0,
+      "data": 236,
+      "ingest": 236,
+      "master": 3,
+      "ml": 0,
+      "remote_cluster_client": 263,
+      "total": 263,
+      "transform": 236,
+      "voting_only": 0
+    },
+    "discovery_types": {
+      "zen": 263
+    },
+    "fs": {
+      "available_in_bytes": 39327573702656,
+      "free_in_bytes": 39327573702656,
+      "total_in_bytes": 27295527523552
+    },
+    "ingest": {
+      "number_of_pipelines": 0,
+      "processor_stats": {}
+    },
+    "jvm": {
+      "max_uptime_in_millis": 7292553532,
+      "mem": {
+        "heap_max_in_bytes": 35378533056532,
+        "heap_used_in_bytes": 7380325027820
+      },
+      "threads": 73320,
+      "versions": [
+        {
+          "bundled_jdk": true,
+          "count": 239,
+          "using_bundled_jdk": true,
+          "version": "32",
+          "vm_name": "OpenJDK 62-Bit Server VM",
+          "vm_vendor": "AdoptOpenJDK",
+          "vm_version": "32+36"
+        },
+        {
+          "bundled_jdk": true,
+          "count": 22,
+          "using_bundled_jdk": true,
+          "version": "35",
+          "vm_name": "OpenJDK 62-Bit Server VM",
+          "vm_vendor": "Oracle Corporation",
+          "vm_version": "35+36-3562"
+        }
+      ]
+    },
+    "network_types": {
+      "http_types": {
+        "netty2": 263
+      },
+      "transport_types": {
+        "netty2": 263
+      }
+    },
+    "os": {
+      "allocated_processors": 6288,
+      "available_processors": 6288,
+      "mem": {
+        "free_in_bytes": 22762232522256,
+        "free_percent": 20,
+        "total_in_bytes": 322232538039296,
+        "used_in_bytes": 99250305295020,
+        "used_percent": 80
+      },
+      "names": [
+        {
+          "count": 263,
+          "name": "Linux"
+        }
+      ],
+      "pretty_names": [
+        {
+          "count": 263,
+          "pretty_name": "Linux Elasticsearch"
+        }
+      ]
+    },
+    "packaging_types": [
+      {
+        "count": 263,
+        "flavor": "default",
+        "type": "tar"
+      }
+    ],
+    "plugins": [
+      {
+        "classname": "org.elasticsearch.plugin.analysis.stempel.AnalysisStempelPlugin",
+        "description": "The Stempel (Polish) Analysis plugin integrates Lucene stempel (polish) analysis module into elasticsearch.",
+        "elasticsearch_version": "7.7.0",
+        "extended_plugins": [],
+        "has_native_controller": false,
+        "java_version": "3.8",
+        "name": "analysis-stempel",
+        "version": "7.7.0"
+      },
+      {
+        "classname": "org.elasticsearch.plugin.analysis.stempel.AnalysisStempelPlugin",
+        "description": "The Stempel (Polish) Analysis plugin integrates Lucene stempel (polish) analysis module into elasticsearch.",
+        "elasticsearch_version": "7.9.3",
+        "extended_plugins": [],
+        "has_native_controller": false,
+        "java_version": "3.8",
+        "name": "analysis-stempel",
+        "version": "7.9.3"
+      }
+    ],
+    "process": {
+      "cpu": {
+        "percent": 2072
+      },
+      "open_file_descriptors": {
+        "avg": 33293,
+        "max": 33625,
+        "min": 30397
+      }
+    },
+    "versions": [
+      "7.9.3",
+      "7.7.0"
+    ]
+  },
+  "status": "green",
+  "timestamp": 3605562082823
+}

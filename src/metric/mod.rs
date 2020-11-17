@@ -9,40 +9,17 @@ use std::time::Duration;
 type RawMetric<'s> = (&'s str, &'s Value);
 
 /// Metric consisting of Key and parsed metric type
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct Metric(String, MetricType);
 
 /// Vector of metrics for convenience
 pub type Metrics = Vec<Metric>;
 
-/// Build metric from JSON value
-pub fn from_value(value: Value) -> Vec<Metrics> {
-    let mut metrics: Vec<Metrics> = Vec::new();
+mod from_value;
+pub use from_value::from_value;
 
-    if let Some(object) = value.as_object() {
-        metrics.push(
-            object
-                .into_iter()
-                .map(|(k, v)| Metric::try_from((k.as_str(), v)))
-                .filter_map(Result::ok)
-                .collect::<Vec<Metric>>(),
-        );
-    } else {
-        warn!("from_values unsupported value {}", value);
-    }
-    metrics
-}
-
-/// Build vector of metrics from JSON vector values
-pub fn from_values(values: Vec<Value>) -> Vec<Metrics> {
-    let mut metrics: Vec<Metrics> = Vec::new();
-
-    for value in values.into_iter() {
-        metrics.extend(from_value(value));
-    }
-
-    metrics
-}
+mod from_values;
+pub use from_values::from_values;
 
 impl Metric {
     /// Return metric key
@@ -125,6 +102,9 @@ pub enum MetricType {
 
     /// Labels e.g.: index, node, ip, etc.
     Label(String), // Everything not number
+
+    /// Null value
+    Null,
 }
 
 impl<'s> TryFrom<RawMetric<'s>> for MetricType {
@@ -133,7 +113,7 @@ impl<'s> TryFrom<RawMetric<'s>> for MetricType {
     fn try_from(metric: RawMetric) -> Result<Self, MetricError> {
         let value: &Value = metric.1;
 
-        let unknown = || MetricError::unknown(metric.0.to_owned());
+        let unknown = || MetricError::unknown(metric.0.to_owned(), Some(value.clone()));
 
         let parse_i64 = || -> Result<i64, MetricError> {
             if value.is_number() {
@@ -143,7 +123,7 @@ impl<'s> TryFrom<RawMetric<'s>> for MetricType {
                     .as_str()
                     .map(|n| n.parse::<i64>())
                     .ok_or(unknown())?
-                    .map_err(MetricError::from)
+                    .map_err(|e| MetricError::from_parse_int(e, Some(value.clone())))
             }
         };
 
@@ -153,42 +133,85 @@ impl<'s> TryFrom<RawMetric<'s>> for MetricType {
             } else {
                 value
                     .as_str()
-                    .map(|n| n.parse::<f64>())
+                    .map(|n| n.replace("%", "").parse::<f64>())
                     .ok_or(unknown())?
-                    .map_err(MetricError::from)
+                    .map_err(|e| MetricError::from_parse_float(e, Some(value.clone())))
             }
         };
 
-        match metric.0 {
-            "size" | "memory" | "store" | "bytes" => Ok(MetricType::Bytes(parse_i64()?)),
-            "date" | "time" | "millis" | "alive" => Ok(MetricType::Time(Duration::from_millis(
-                parse_i64().unwrap_or(0) as u64,
-            ))),
-            "epoch" => Ok(MetricType::Time(Duration::from_secs(parse_i64()? as u64))),
-
-            // timed_out
-            "out" | "value" => Ok(MetricType::Switch(if value.as_bool().unwrap_or(false) {
+        if value.is_boolean() {
+            return Ok(MetricType::Switch(if value.as_bool().unwrap_or(false) {
                 1
             } else {
                 0
-            })),
+            }));
+        }
 
-            "nodes" | "fetch" | "order" | "largest" | "rejected" | "completed" | "queue"
-            | "active" | "core" | "data" | "tasks" | "relo" | "unassign" | "init" | "files"
-            | "ops" | "recovered" | "generation" | "max" | "contexts" | "listeners" | "pri"
-            | "rep" | "docs" | "count" | "pid" | "compilations" | "deleted" | "shards"
-            | "indices" | "checkpoint" | "avail" | "used" | "cpu" | "triggered" | "evictions"
-            | "failed" | "total" | "current" => Ok(MetricType::Gauge(parse_i64()?)),
+        if value.is_null() {
+            return Ok(MetricType::Null);
+        }
 
-            "1m" | "5m" | "15m" | "number" | "percent" => Ok(MetricType::GaugeF(parse_f64()?)),
+        match metric.0 {
+            "size" | "memory" | "store" | "bytes" => return Ok(MetricType::Bytes(parse_i64()?)),
+            "epoch" | "timestamp" | "date" | "time" | "millis" | "alive" => {
+                return Ok(MetricType::Time(Duration::from_millis(
+                    parse_i64().unwrap_or(0) as u64,
+                )))
+            }
+            _ => {
+                if value.is_number() {
+                    if value.is_i64() {
+                        return Ok(MetricType::Gauge(parse_i64()?));
+                    } else {
+                        return Ok(MetricType::GaugeF(parse_f64()?));
+                    }
+                }
+            }
+        }
 
-            "status" | "at" | "for" | "details" | "reason" | "sync_id" | "port" | "attr"
-            | "field" | "shard" | "index" | "name" | "type" | "version" | "jdk" | "description" => {
-                Ok(MetricType::Label(
-                    value.as_str().ok_or(unknown())?.to_owned(),
-                ))
+        // TODO: rethink list matching, label could be matched by default with
+        // attempt to number before return
+        match metric.0 {
+            // timed_out
+            "out" | "value" | "committed" | "searchable" | "compound" | "throttled" => {
+                Ok(MetricType::Switch(if value.as_bool().unwrap_or(false) {
+                    1
+                } else {
+                    0
+                }))
             }
 
+            // Special cases
+            // _cat/health: elasticsearch_cat_health_node_data{cluster="testing"}
+            // _cat/shards: "path.data": "/var/lib/elasticsearch/m1/nodes/0"
+            "data" => match parse_i64() {
+                Ok(number) => Ok(MetricType::Gauge(number)),
+                Err(_) => Ok(MetricType::Label(
+                    value.as_str().ok_or(unknown())?.to_owned(),
+                )),
+            },
+
+            "primaries" | "min" | "max" | "successful" | "nodes" | "fetch" | "order"
+            | "largest" | "rejected" | "completed" | "queue" | "active" | "core" | "tasks"
+            | "relo" | "unassign" | "init" | "files" | "ops" | "recovered" | "generation"
+            | "contexts" | "listeners" | "pri" | "rep" | "docs" | "count" | "pid"
+            | "compilations" | "deleted" | "shards" | "indices" | "checkpoint" | "avail"
+            | "used" | "cpu" | "triggered" | "evictions" | "failed" | "total" | "current" => {
+                Ok(MetricType::Gauge(parse_i64()?))
+            }
+
+            "avg" | "1m" | "5m" | "15m" | "number" | "percent" => {
+                Ok(MetricType::GaugeF(parse_f64()?))
+            }
+
+            "cluster" | "repository" | "snapshot" | "stage" | "uuid" | "component" | "master"
+            | "role" | "uptime" | "alias" | "filter" | "search" | "flavor" | "string"
+            | "address" | "health" | "build" | "node" | "state" | "patterns" | "of" | "segment"
+            | "host" | "ip" | "prirep" | "id" | "status" | "at" | "for" | "details" | "reason"
+            | "port" | "attr" | "field" | "shard" | "index" | "name" | "type" | "version"
+            | "jdk" | "description" => Ok(MetricType::Label(
+                value.as_str().ok_or(unknown())?.to_owned(),
+            )),
             _ => {
                 if cfg!(debug_assertions) {
                     println!("Catchall metric: {:?}", metric);
@@ -210,22 +233,31 @@ impl<'s> TryFrom<RawMetric<'s>> for MetricType {
 
 /// Metric error wrapper of parsing errors
 #[derive(Debug)]
-pub struct MetricError(Kind);
+pub struct MetricError {
+    kind: Kind,
+    value: Option<Value>,
+}
 
 impl MetricError {
-    fn unknown(s: String) -> Self {
-        MetricError(Kind::Unknown(s))
+    fn unknown(s: String, value: Option<Value>) -> Self {
+        MetricError {
+            kind: Kind::Unknown(s),
+            value,
+        }
     }
-}
-impl From<ParseFloatError> for MetricError {
-    fn from(e: ParseFloatError) -> Self {
-        Self(Kind::ParseFloat(e))
-    }
-}
 
-impl From<ParseIntError> for MetricError {
-    fn from(e: ParseIntError) -> Self {
-        Self(Kind::ParseInt(e))
+    fn from_parse_float(e: ParseFloatError, value: Option<Value>) -> Self {
+        MetricError {
+            kind: Kind::ParseFloat(e),
+            value,
+        }
+    }
+
+    fn from_parse_int(e: ParseIntError, value: Option<Value>) -> Self {
+        MetricError {
+            kind: Kind::ParseInt(e),
+            value,
+        }
     }
 }
 
@@ -240,6 +272,10 @@ impl StdError for MetricError {}
 
 impl fmt::Display for MetricError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "MetricError error: {:?}", self.0)
+        write!(
+            f,
+            "MetricError kind {:?} value: {:?}",
+            self.kind, self.value
+        )
     }
 }

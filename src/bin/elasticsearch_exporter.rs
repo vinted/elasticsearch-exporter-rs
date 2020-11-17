@@ -108,7 +108,7 @@ struct Opts {
 
     #[clap(
         long = "elasticsearch_skip_labels",
-        default_value = "cat_allocation=health,status&cat_fielddata=id&cat_indices=health,status&cat_nodeattrs=id&cat_nodes=health,status,pid&cat_plugins=id,description&cat_segments=health,status,checkpoint,prirep&cat_shards=health,status,checkpoint,prirep&cat_templates=composed_of&cat_thread_pool=node_id,ephemeral_node_id,pid&cat_transforms=health,status"
+        default_value = "cat_allocation=health,status&cat_fielddata=id&cat_indices=health,status&cat_nodeattrs=id&cat_nodes=health,status,pid&cat_plugins=id,description&cat_segments=health,status,checkpoint,prirep&cat_shards=health,status,checkpoint,prirep&cat_templates=composed_of&cat_thread_pool=node_id,ephemeral_node_id,pid&cat_transforms=health,status&cluster_stats=segment,patterns"
     )]
     elasticsearch_skip_labels: HashMapVec,
 

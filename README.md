@@ -26,6 +26,7 @@ elasticsearch_skip_labels
  - cat_templates: composed_of
  - cat_thread_pool: node_id,ephemeral_node_id,pid
  - cat_transforms: health,status
+ - cluster_stats=segment,patterns
 elasticsearch_include_labels
  - cat_aliases: index,alias
  - cat_allocation: node

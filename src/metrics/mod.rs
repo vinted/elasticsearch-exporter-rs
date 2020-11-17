@@ -3,7 +3,6 @@ pub(crate) mod _cluster;
 
 // TODO: add metrics of
 //
-// - https://www.elastic.co/guide/en/elasticsearch/reference/current/cluster-stats.html
 // - https://www.elastic.co/guide/en/elasticsearch/reference/current/cluster-nodes-info.html
 // - https://www.elastic.co/guide/en/elasticsearch/reference/current/cluster-nodes-stats.html
 //
@@ -20,6 +19,7 @@ macro_rules! poll_metrics {
         use crate::metric::{self, Metrics};
         use crate::Exporter;
         use futures_util::StreamExt;
+        #[allow(unused)]
         use serde_json::Value;
 
         #[allow(unused)]
@@ -46,6 +46,7 @@ macro_rules! poll_metrics {
                 collection.include_labels = include_labels.clone();
             }
 
+            // TODO: add metric how long it takes to scape subsystem
             while interval.next().await.is_some() {
                 match metrics(&exporter).await {
                     Ok(metrics) => {
