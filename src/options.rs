@@ -39,7 +39,7 @@ impl ExporterOptions {
 
 fn switch_to_string(output: &mut String, field: &'static str, switches: &ExporterMetricsSwitch) {
     output.push_str("\n");
-    output.push_str(field);
+    output.push_str(&format!("{}:", field));
     for (k, v) in switches.iter() {
         output.push_str("\n");
         output.push_str(&format!(" - {}: {}", k, v));
@@ -52,7 +52,7 @@ fn collection_labels_to_string(
     labels: &CollectionLabels,
 ) {
     output.push_str("\n");
-    output.push_str(field);
+    output.push_str(&format!("{}:", field));
     for (k, v) in labels.iter() {
         output.push_str("\n");
         output.push_str(&format!(" - {}: {}", k, v.join(",")));
@@ -65,7 +65,7 @@ fn poll_duration_to_string(
     labels: &ExporterPollIntervals,
 ) {
     output.push_str("\n");
-    output.push_str(field);
+    output.push_str(&format!("{}:", field));
     for (k, v) in labels.iter() {
         output.push_str("\n");
         output.push_str(&format!(" - {}: {:?}", k, v));
