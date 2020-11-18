@@ -8,9 +8,9 @@ extern crate prometheus;
 extern crate log;
 
 use clap::Clap;
-use hyper::server::conn::AddrStream;
 use hyper::{
     header::CONTENT_TYPE,
+    server::conn::AddrStream,
     service::{make_service_fn, service_fn},
     Body, Request, Response, Server, StatusCode,
 };

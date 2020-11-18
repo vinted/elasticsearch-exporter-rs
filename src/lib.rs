@@ -131,14 +131,12 @@ impl Exporter {
         Self::spawn_nodes(self.clone());
     }
 
-    #[allow(unused)]
     fn spawn_cluster(exporter: Self) {
         use metrics::_cluster::*;
 
         is_metric_enabled!(exporter, health);
     }
 
-    #[allow(unused)]
     fn spawn_nodes(exporter: Self) {
         use metrics::_nodes::*;
 
@@ -162,7 +160,6 @@ impl Exporter {
     // /_cat/repositories
     // /_cat/templates
     // /_cat/transforms
-    #[allow(unused)]
     fn spawn_cat(exporter: Self) {
         use metrics::_cat::*;
 
