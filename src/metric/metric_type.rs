@@ -73,7 +73,7 @@ impl<'s> TryFrom<RawMetric<'s>> for MetricType {
         }
 
         match metric.0 {
-            "size" | "memory" | "store" | "bytes" => {
+            "used" | "size" | "memory" | "store" | "bytes" => {
                 // /_nodes/stats returns size with size postfix: kb, b, gb
                 // in case parsing to integer fails fallback and try to
                 // parse byte unit
@@ -136,8 +136,9 @@ impl<'s> TryFrom<RawMetric<'s>> for MetricType {
             | "tasks" | "relo" | "unassign" | "init" | "files" | "ops" | "recovered"
             | "generation" | "contexts" | "listeners" | "pri" | "rep" | "docs" | "count"
             | "pid" | "compilations" | "deleted" | "shards" | "indices" | "checkpoint"
-            | "avail" | "used" | "cpu" | "triggered" | "evictions" | "failed" | "total"
-            | "current" => Ok(MetricType::Gauge(parse_i64()?)),
+            | "avail" | "cpu" | "triggered" | "evictions" | "failed" | "total" | "current" => {
+                Ok(MetricType::Gauge(parse_i64()?))
+            }
 
             "avg" | "1m" | "5m" | "15m" | "number" | "percent" => {
                 Ok(MetricType::GaugeF(parse_f64()?))
