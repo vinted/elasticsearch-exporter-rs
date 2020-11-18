@@ -92,9 +92,9 @@ impl<'s> TryFrom<RawMetric<'s>> for MetricType {
                 };
             }
             // Skip these metrics as highly variable
-            "epoch" | "timestamp" => return Ok(MetricType::Null),
+            "date" | "epoch" | "timestamp" => return Ok(MetricType::Null),
 
-            "date" | "time" | "millis" | "alive" => {
+            "time" | "millis" | "alive" => {
                 return Ok(MetricType::Time(Duration::from_millis(
                     parse_i64().unwrap_or(0) as u64,
                 )))
