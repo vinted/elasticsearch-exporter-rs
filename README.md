@@ -1,4 +1,4 @@
-# Elasticsearch exporter
+# Elasticsearch exporter [![Build Status](https://travis-ci.org/vinted/elasticsearch_exporter-rs.svg?branch=master)](https://travis-ci.org/vinted/elasticsearch_exporter-rs)
 
 Prometheus Elasticsearch exporter capable of working with large clusters.
 
