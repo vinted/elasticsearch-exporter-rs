@@ -141,6 +141,7 @@ impl Exporter {
 
         is_metric_enabled!(exporter, usage);
         is_metric_enabled!(exporter, stats);
+        is_metric_enabled!(exporter, info);
     }
 
     // =^.^=
