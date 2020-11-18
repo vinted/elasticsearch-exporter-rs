@@ -10,11 +10,7 @@ pub(crate) async fn nodes_id_map(client: &Elasticsearch) -> Result<NodeIdToName,
     info!("Elasticsearch: fetching cluster node ID's");
     let nodes_os = client
         .nodes()
-        .info(NodesInfoParts::None)
-        // TODO: fix/report bug for filter_path
-        // DEBUG reqwest::async_impl::client > response '200 OK' for http://supernode:9200/_nodes?filter_path=os
-        // ERROR elasticsearch_exporter      > error decoding response body: missing field `nodes` at line 1 column 2
-        // .filter_path(&["os"])
+        .info(NodesInfoParts::Metric(&["os"]))
         .send()
         .await?
         .json::<NodesOs>()
