@@ -175,12 +175,24 @@ impl Collection {
                     if self.options.exporter_skip_zero_metrics && duration.is_zero() {
                         continue;
                     }
-                    let _ = self.insert_histogram(
-                        &metric.key(),
-                        duration.as_secs_f64(),
-                        &labels,
-                        None,
-                    )?;
+
+                    if metric.key().contains("millis") {
+                        let adjusted_key = metric.key().replace("millis", "seconds");
+
+                        let _ = self.insert_histogram(
+                            &adjusted_key,
+                            duration.as_secs_f64(),
+                            &labels,
+                            None,
+                        )?;
+                    } else {
+                        let _ = self.insert_histogram(
+                            &metric.key(),
+                            duration.as_secs_f64(),
+                            &labels,
+                            None,
+                        )?;
+                    }
                 }
                 _ => {}
             }
