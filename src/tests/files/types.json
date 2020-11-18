@@ -1,0 +1,19 @@
+{
+  "_nodes": {
+    "failed": 9329292,
+    "some_total": "22",
+    "some_float": 1.13
+  },
+  "array": [
+    {
+      "map": 1,
+      "second": {
+        "dimension": 14,
+        "my_label": "super"
+      }
+    }
+  ],
+  "top_level_one": 1,
+  "top_level_bytes": "2",
+  "top_level_size": "3"
+}
