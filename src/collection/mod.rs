@@ -149,35 +149,38 @@ impl Collection {
                     let _ = self.insert_gauge(&metric.key(), *value as f64, &labels, None)?;
                 }
                 MetricType::Bytes(value) => {
-                    if self.options.exporter_skip_zero_metrics && value > &0 {
-                        let postfix = if metric.key().ends_with("_bytes") {
-                            None
-                        } else {
-                            Some("_bytes")
-                        };
-                        let _ =
-                            self.insert_gauge(&metric.key(), *value as f64, &labels, postfix)?;
+                    if self.options.exporter_skip_zero_metrics && value == &0 {
+                        continue;
                     }
+                    let postfix = if metric.key().ends_with("_bytes") {
+                        None
+                    } else {
+                        Some("_bytes")
+                    };
+                    let _ = self.insert_gauge(&metric.key(), *value as f64, &labels, postfix)?;
                 }
                 MetricType::GaugeF(value) => {
-                    if self.options.exporter_skip_zero_metrics && value > &0.0 {
-                        let _ = self.insert_gauge(&metric.key(), *value, &labels, None)?;
+                    if self.options.exporter_skip_zero_metrics && value == &0.0 {
+                        continue;
                     }
+                    let _ = self.insert_gauge(&metric.key(), *value, &labels, None)?;
                 }
                 MetricType::Gauge(value) => {
-                    if self.options.exporter_skip_zero_metrics && value > &0 {
-                        let _ = self.insert_gauge(&metric.key(), *value as f64, &labels, None)?;
+                    if self.options.exporter_skip_zero_metrics && value == &0 {
+                        continue;
                     }
+                    let _ = self.insert_gauge(&metric.key(), *value as f64, &labels, None)?;
                 }
                 MetricType::Time(duration) => {
-                    if !duration.is_zero() {
-                        let _ = self.insert_histogram(
-                            &metric.key(),
-                            duration.as_secs_f64(),
-                            &labels,
-                            None,
-                        )?;
+                    if self.options.exporter_skip_zero_metrics && duration.is_zero() {
+                        continue;
                     }
+                    let _ = self.insert_histogram(
+                        &metric.key(),
+                        duration.as_secs_f64(),
+                        &labels,
+                        None,
+                    )?;
                 }
                 _ => {}
             }
