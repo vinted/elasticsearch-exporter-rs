@@ -1,15 +1,15 @@
 [package]
 name = "elasticsearch_exporter"
-version = "0.1.0"
+version = "0.2.0"
 authors = ["Ernestas Poskus <ernestas@vinted.com>"]
 edition = "2018"
 description = """
 Vinted Elasticsearch exporter
 """
 documentation = "https://docs.rs/elasticsearch_exporter"
-homepage = "https://github.com/vinted/elasticsearch_exporter-rs"
+homepage = "https://github.com/vinted/elasticsearch-exporter-rs"
 license = "BSD-3-Clause"
-repository = "https://github.com/vinted/elasticsearch_exporter-rs"
+repository = "https://github.com/vinted/elasticsearch-exporter-rs"
 autobins = false
 
 [[bin]]
