@@ -1,5 +1,16 @@
 # Elasticsearch exporter [![Build Status](https://travis-ci.org/vinted/elasticsearch_exporter-rs.svg?branch=master)](https://travis-ci.org/vinted/elasticsearch_exporter-rs)
 
+[![Crates.io][crates-badge]][crates-url]
+[![Documentation][docs-badge]][docs-url]
+[![BSD-3 licensed][bsd-badge]][bsd-url]
+
+[crates-badge]: https://img.shields.io/crates/v/elasticsearch_exporter.svg
+[crates-url]: https://crates.io/crates/elasticsearch_exporter
+[docs-badge]: https://docs.rs/elasticsearch_exporter/badge.svg
+[docs-url]: https://docs.rs/elasticsearch_exporter
+[bsd-badge]: https://img.shields.io/badge/license-bsd-3.svg
+[bsd-url]: LICENSE
+
 Prometheus Elasticsearch exporter capable of working with large clusters.
 
 ## Features
