@@ -29,17 +29,15 @@ macro_rules! poll_metrics {
             // Common to all /_cat metrics
             collection.const_labels = exporter.const_labels.clone();
 
-            if let Some(skip_labels) = exporter.options.elasticsearch_skip_labels.get(SUBSYSTEM) {
+            if let Some(skip_labels) = exporter.options.exporter_skip_labels.get(SUBSYSTEM) {
                 collection.skip_labels = skip_labels.clone();
             }
 
-            if let Some(skip_metrics) = exporter.options.elasticsearch_skip_metrics.get(SUBSYSTEM) {
+            if let Some(skip_metrics) = exporter.options.exporter_skip_metrics.get(SUBSYSTEM) {
                 collection.skip_metrics = skip_metrics.clone();
             }
 
-            if let Some(include_labels) =
-                exporter.options.elasticsearch_include_labels.get(SUBSYSTEM)
-            {
+            if let Some(include_labels) = exporter.options.exporter_include_labels.get(SUBSYSTEM) {
                 collection.include_labels = include_labels.clone();
             }
 

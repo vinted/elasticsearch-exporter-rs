@@ -2,7 +2,7 @@ use std::fmt;
 use std::time::Duration;
 use url::Url;
 
-use crate::{CollectionLabels, ExporterMetricsSwitch, ExporterPollIntervals, Labels};
+use crate::{CollectionLabels, ExporterMetricsSwitch, ExporterPollIntervals};
 
 /// Elasticsearch exporter options
 #[derive(Debug, Clone)]
@@ -11,15 +11,13 @@ pub struct ExporterOptions {
     pub elasticsearch_url: Url,
     /// Global HTTP request timeout
     pub elasticsearch_global_timeout: Duration,
-    /// Elasticsearch labels to skip
-    pub elasticsearch_skip_labels: CollectionLabels,
-    /// Elasticsearch labels to include, caution this may increase metric cardinality
-    pub elasticsearch_include_labels: CollectionLabels,
-    /// Elasticsearch labels to skip completely such as segment "id"
-    pub elasticsearch_skip_metrics: CollectionLabels,
-    /// Elasticsearch cat API header fields
-    pub elasticsearch_cat_headers: Labels,
 
+    /// Exporter labels to skip
+    pub exporter_skip_labels: CollectionLabels,
+    /// Exporter labels to include, caution this may increase metric cardinality
+    pub exporter_include_labels: CollectionLabels,
+    /// Exporter labels to skip completely such as segment "id"
+    pub exporter_skip_metrics: CollectionLabels,
     /// Metrics polling interval
     pub exporter_poll_default_interval: Duration,
     /// Exporter skip zero metrics
@@ -43,15 +41,6 @@ fn switch_to_string(output: &mut String, field: &'static str, switches: &Exporte
     output.push_str("\n");
     output.push_str(field);
     for (k, v) in switches.iter() {
-        output.push_str("\n");
-        output.push_str(&format!(" - {}: {}", k, v));
-    }
-}
-
-fn labels_to_string(output: &mut String, field: &'static str, labels: &Labels) {
-    output.push_str("\n");
-    output.push_str(field);
-    for (k, v) in labels.iter() {
         output.push_str("\n");
         output.push_str(&format!(" - {}: {}", k, v));
     }
@@ -96,23 +85,18 @@ impl fmt::Display for ExporterOptions {
         ));
         collection_labels_to_string(
             &mut output,
-            "elasticsearch_skip_labels",
-            &self.elasticsearch_skip_labels,
+            "exporter_skip_labels",
+            &self.exporter_skip_labels,
         );
         collection_labels_to_string(
             &mut output,
-            "elasticsearch_include_labels",
-            &self.elasticsearch_include_labels,
+            "exporter_include_labels",
+            &self.exporter_include_labels,
         );
         collection_labels_to_string(
             &mut output,
-            "elasticsearch_skip_metrics",
-            &self.elasticsearch_skip_metrics,
-        );
-        labels_to_string(
-            &mut output,
-            "elasticsearch_cat_headers",
-            &self.elasticsearch_cat_headers,
+            "exporter_skip_metrics",
+            &self.exporter_skip_metrics,
         );
 
         // Exporter
