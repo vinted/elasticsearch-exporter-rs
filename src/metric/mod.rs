@@ -61,6 +61,8 @@ impl<'s> TryFrom<RawMetric<'s>> for Metric {
 
 #[test]
 fn test_try_from_raw_metric() {
+    use std::time::Duration;
+
     let metric = "elasticsearch.test_metric.total".to_string();
     let raw: RawMetric = (&metric, &Value::from("2299291"));
 
