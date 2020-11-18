@@ -27,13 +27,13 @@ pub struct ExporterOptions {
     /// Exporter skip zero metrics
     pub exporter_skip_zero_metrics: bool,
     /// Exporter metrics switch either ON or OFF
-    pub exporter_metrics_switch: ExporterMetricsSwitch,
+    pub exporter_metrics_enabled: ExporterMetricsSwitch,
 }
 
 impl ExporterOptions {
     /// Check if metric is enabled
     pub fn is_metric_enabled(&self, subsystem: &'static str) -> bool {
-        self.exporter_metrics_switch.contains_key(subsystem)
+        self.exporter_metrics_enabled.contains_key(subsystem)
     }
 }
 
@@ -127,7 +127,7 @@ impl fmt::Display for ExporterOptions {
         switch_to_string(
             &mut output,
             "exporter_metrics_enabled",
-            &self.exporter_metrics_switch,
+            &self.exporter_metrics_enabled,
         );
 
         output.push_str("\n");

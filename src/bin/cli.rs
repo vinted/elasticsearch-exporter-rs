@@ -106,10 +106,10 @@ pub struct Opts {
 
     /// Exporter metrics switch defined which metrics are turned ON
     #[clap(
-        long = "exporter_metrics_switch",
+        long = "exporter_metrics_enabled",
         default_value = "cat_health=true&cat_indices=true&nodes_stats=true"
     )]
-    pub exporter_metrics_switch: HashMapSwitch,
+    pub exporter_metrics_enabled: HashMapSwitch,
 }
 
 #[derive(Debug, Clone, Default)]

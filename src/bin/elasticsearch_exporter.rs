@@ -110,7 +110,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         exporter_histogram_buckets: elasticsearch_exporter::DEFAULT_BUCKETS.to_vec(),
         exporter_skip_zero_metrics: !opts.exporter_skip_zero_metrics,
         exporter_poll_intervals: opts.exporter_poll_intervals.0.clone(),
-        exporter_metrics_switch: opts.exporter_metrics_switch.0.clone(),
+        exporter_metrics_enabled: opts.exporter_metrics_enabled.0.clone(),
     };
 
     info!("{}", options);
