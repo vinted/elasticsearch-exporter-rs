@@ -186,11 +186,17 @@ impl Collection {
                             None,
                         )?;
                     } else {
+                        let postfix = if metric.key().ends_with("_seconds") {
+                            None
+                        } else {
+                            Some("_seconds")
+                        };
+
                         let _ = self.insert_histogram(
                             &metric.key(),
                             duration.as_secs_f64(),
                             &labels,
-                            None,
+                            postfix,
                         )?;
                     }
                 }
