@@ -7,6 +7,7 @@ use std::collections::HashMap;
 type NodeIdToName = HashMap<String, String>;
 
 pub(crate) async fn nodes_id_map(client: &Elasticsearch) -> Result<NodeIdToName, Error> {
+    info!("Elasticsearch: fetching cluster node ID's");
     let nodes_os = client
         .nodes()
         .info(NodesInfoParts::None)
@@ -45,6 +46,7 @@ impl From<NodesOs> for HashMap<String, String> {
 }
 
 pub(crate) async fn cluster_name(client: &Elasticsearch) -> Result<String, Error> {
+    info!("Elasticsearch: fetching cluster_name");
     Ok(client
         .cluster()
         .health(ClusterHealthParts::None)

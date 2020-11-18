@@ -59,11 +59,32 @@ fn _from_value<'f>(
     Ok(metrics)
 }
 
+// Skip prefix append is required to skip prefixing for the keys
+// that were injected artificially such as "name"
+//
+// e.g.:
+//
+// PREFIX thread_pool_transform_indexing K name
+// PREFIX thread_pool_transform_indexing K queue
+// PREFIX thread_pool_transform_indexing K rejected
+//
+// Above you can find keys that will be prefixed by and without skipping
+// keys will become:
+//
+// thread_pool_transform_indexing_name
+// thread_pool_transform_indexing_queue
+// thread_pool_transform_indexing_rejected
+//
+// This is inconvenient to use with exporter_include_labels CLI argument
+const SKIP_PREFIX_APPEND: &[&'static str] = &["name", "ip", "host"];
+
 fn _from_map(prefix: &str, output: &mut Vec<Metrics>, map: &SerdeMap) -> Result<(), MetricError> {
     let mut metrics = Metrics::new();
 
     for (key, value) in map.iter() {
-        let inner_metrics = if prefix == "" {
+        trace!("_from_map PREFIX {} K {}", prefix, key);
+
+        let inner_metrics = if prefix == "" || SKIP_PREFIX_APPEND.contains(&key.as_str()) {
             _from_value(key, output, value)?
         } else {
             _from_value(&format!("{}_{}", prefix, key), output, value)?

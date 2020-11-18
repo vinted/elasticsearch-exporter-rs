@@ -126,7 +126,7 @@ impl fmt::Display for ExporterOptions {
 
         switch_to_string(
             &mut output,
-            "exporter_metrics_switch",
+            "exporter_metrics_enabled",
             &self.exporter_metrics_switch,
         );
 

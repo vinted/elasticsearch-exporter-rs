@@ -106,7 +106,7 @@ impl Exporter {
             .build()?;
 
         let client = Elasticsearch::new(transport);
-        info!("Elasticsearch::ping");
+        info!("Elasticsearch: ping");
         let _ = client.ping().send().await?;
 
         let id_to_name = metadata::nodes_id_map(&client).await?;
@@ -125,7 +125,6 @@ impl Exporter {
 
     /// Spawn collectors
     pub async fn spawn(self) {
-        info!("Spawned");
         Self::spawn_cat(self.clone());
         Self::spawn_cluster(self.clone());
         Self::spawn_nodes(self.clone());
@@ -141,6 +140,7 @@ impl Exporter {
         use metrics::_nodes::*;
 
         is_metric_enabled!(exporter, usage);
+        is_metric_enabled!(exporter, stats);
     }
 
     // =^.^=
