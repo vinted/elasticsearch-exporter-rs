@@ -1,7 +1,7 @@
 use elasticsearch::cat::CatFielddataParts;
 use elasticsearch::params::Bytes;
 
-const SUBSYSTEM: &'static str = "cat_fielddata";
+pub(crate) const SUBSYSTEM: &'static str = "cat_fielddata";
 
 async fn metrics(exporter: &Exporter) -> Result<Vec<Metrics>, elasticsearch::Error> {
     let response = exporter

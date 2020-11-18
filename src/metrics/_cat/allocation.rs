@@ -1,7 +1,7 @@
 use elasticsearch::cat::CatAllocationParts;
 use elasticsearch::params::Bytes;
 
-const SUBSYSTEM: &'static str = "cat_allocation";
+pub(crate) const SUBSYSTEM: &'static str = "cat_allocation";
 
 async fn metrics(exporter: &Exporter) -> Result<Vec<Metrics>, elasticsearch::Error> {
     let response = exporter

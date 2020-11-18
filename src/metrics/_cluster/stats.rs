@@ -1,6 +1,6 @@
 use elasticsearch::cluster::ClusterStatsParts;
 
-const SUBSYSTEM: &'static str = "cluster_stats";
+pub(crate) const SUBSYSTEM: &'static str = "cluster_stats";
 
 async fn metrics(exporter: &Exporter) -> Result<Vec<Metrics>, elasticsearch::Error> {
     let response = exporter

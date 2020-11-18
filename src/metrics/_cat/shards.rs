@@ -1,7 +1,7 @@
 use elasticsearch::cat::CatShardsParts;
 use elasticsearch::params::{Bytes, Time};
 
-const SUBSYSTEM: &'static str = "cat_shards";
+pub(crate) const SUBSYSTEM: &'static str = "cat_shards";
 
 async fn metrics(exporter: &Exporter) -> Result<Vec<Metrics>, elasticsearch::Error> {
     let response = exporter

@@ -28,7 +28,8 @@ use tokio::sync::oneshot::{self, Receiver, Sender};
 use url::Url;
 
 use elasticsearch_exporter::{
-    CollectionLabels, Exporter, ExporterOptions, ExporterPollIntervals, Labels,
+    CollectionLabels, Exporter, ExporterMetricsSwitch, ExporterOptions, ExporterPollIntervals,
+    Labels,
 };
 
 lazy_static! {
@@ -134,6 +135,43 @@ struct Opts {
 
     #[clap(long = "exporter_poll_intervals", default_value = "cluster_health=5s")]
     exporter_poll_intervals: HashMapDuration,
+
+    #[clap(
+        long = "exporter_metrics_switch",
+        default_value = "cat_health=true&cat_indices=true"
+    )]
+    exporter_metrics_switch: HashMapSwitch,
+}
+
+#[derive(Debug, Clone, Default)]
+struct HashMapSwitch(ExporterMetricsSwitch);
+
+impl FromStr for HashMapSwitch {
+    type Err = SimpleError;
+
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        let mut map = ExporterMetricsSwitch::new();
+
+        let parts = input.trim().split("&").into_iter().collect::<Vec<&str>>();
+
+        for part in parts.into_iter() {
+            match part.split_once("=") {
+                Some((key, value)) => {
+                    let bool_value = if value == "true" { true } else { false };
+
+                    let _ = map.insert(key.to_string(), bool_value);
+                }
+                None => {
+                    return Err(SimpleError(format!(
+                        "Usage `cat_health=true&cat_templates=false`, you provided `{}`",
+                        part
+                    )))
+                }
+            }
+        }
+
+        Ok(Self(map))
+    }
 }
 
 #[derive(Debug, Clone, Default)]
@@ -308,6 +346,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         exporter_histogram_buckets: elasticsearch_exporter::DEFAULT_BUCKETS.to_vec(),
         exporter_skip_zero_metrics: !opts.exporter_skip_zero_metrics,
         exporter_poll_intervals: opts.exporter_poll_intervals.0.clone(),
+        exporter_metrics_switch: opts.exporter_metrics_switch.0.clone(),
     };
 
     info!("{}", options);

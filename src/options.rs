@@ -2,7 +2,7 @@ use std::fmt;
 use std::time::Duration;
 use url::Url;
 
-use crate::{CollectionLabels, ExporterPollIntervals, Labels};
+use crate::{CollectionLabels, ExporterMetricsSwitch, ExporterPollIntervals, Labels};
 
 /// Elasticsearch exporter options
 #[derive(Debug, Clone)]
@@ -28,6 +28,24 @@ pub struct ExporterOptions {
     pub exporter_histogram_buckets: Vec<f64>,
     /// Exporter skip zero metrics
     pub exporter_skip_zero_metrics: bool,
+    /// Exporter metrics switch either ON or OFF
+    pub exporter_metrics_switch: ExporterMetricsSwitch,
+}
+
+impl ExporterOptions {
+    /// Check if metric is enabled
+    pub fn is_metric_enabled(&self, subsystem: &'static str) -> bool {
+        self.exporter_metrics_switch.contains_key(subsystem)
+    }
+}
+
+fn switch_to_string(output: &mut String, field: &'static str, switches: &ExporterMetricsSwitch) {
+    output.push_str("\n");
+    output.push_str(field);
+    for (k, v) in switches.iter() {
+        output.push_str("\n");
+        output.push_str(&format!(" - {}: {}", k, v));
+    }
 }
 
 fn labels_to_string(output: &mut String, field: &'static str, labels: &Labels) {
@@ -121,6 +139,12 @@ impl fmt::Display for ExporterOptions {
             "exporter_skip_zero_metrics: {:?}",
             self.exporter_skip_zero_metrics
         ));
+
+        switch_to_string(
+            &mut output,
+            "exporter_metrics_switch",
+            &self.exporter_metrics_switch,
+        );
 
         output.push_str("\n");
         write!(f, "{}", output)

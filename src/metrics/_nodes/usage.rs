@@ -1,7 +1,7 @@
 use elasticsearch::nodes::NodesUsageParts;
 use std::collections::HashMap;
 
-const SUBSYSTEM: &'static str = "nodes_usage";
+pub(crate) const SUBSYSTEM: &'static str = "nodes_usage";
 
 async fn metrics(exporter: &Exporter) -> Result<Vec<Metrics>, elasticsearch::Error> {
     let response = exporter
@@ -27,7 +27,7 @@ struct NodesUsage {
     nodes: HashMap<String, HashMap<String, Value>>,
 }
 
-const RELEVANT_METRICS: &[&'static str; 2] = &["rest_actions", "aggregations"];
+pub(crate) const RELEVANT_METRICS: &[&'static str; 2] = &["rest_actions", "aggregations"];
 
 impl NodesUsage {
     fn inject_labels(mut self, labels: &HashMap<String, String>) -> Vec<Value> {

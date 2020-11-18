@@ -1,7 +1,7 @@
 use elasticsearch::cat::CatSegmentsParts;
 use elasticsearch::params::Bytes;
 
-const SUBSYSTEM: &'static str = "cat_segments";
+pub(crate) const SUBSYSTEM: &'static str = "cat_segments";
 
 async fn metrics(exporter: &Exporter) -> Result<Vec<Metrics>, elasticsearch::Error> {
     let response = exporter

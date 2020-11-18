@@ -1,7 +1,7 @@
 use elasticsearch::cat::CatRecoveryParts;
 use elasticsearch::params::{Bytes, Time};
 
-const SUBSYSTEM: &'static str = "cat_recovery";
+pub(crate) const SUBSYSTEM: &'static str = "cat_recovery";
 
 async fn metrics(exporter: &Exporter) -> Result<Vec<Metrics>, elasticsearch::Error> {
     let response = exporter

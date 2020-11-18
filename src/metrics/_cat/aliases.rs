@@ -1,6 +1,6 @@
 use elasticsearch::cat::CatAliasesParts;
 
-const SUBSYSTEM: &'static str = "cat_aliases";
+pub(crate) const SUBSYSTEM: &'static str = "cat_aliases";
 
 async fn metrics(exporter: &Exporter) -> Result<Vec<Metrics>, elasticsearch::Error> {
     let response = exporter

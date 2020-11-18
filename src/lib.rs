@@ -79,6 +79,9 @@ pub type CollectionLabels = BTreeMap<String, Vec<String>>;
 /// Exporter polling intervals
 pub type ExporterPollIntervals = BTreeMap<String, Duration>;
 
+/// Exporter metrics switch ON/OFF
+pub type ExporterMetricsSwitch = BTreeMap<String, bool>;
+
 /// Elasticsearch exporter
 #[derive(Debug, Clone)]
 pub struct Exporter {
@@ -130,12 +133,16 @@ impl Exporter {
 
     #[allow(unused)]
     fn spawn_cluster(exporter: Self) {
-        let _ = tokio::spawn(metrics::_cluster::health::poll(exporter.clone()));
+        use metrics::_cluster::*;
+
+        is_metric_enabled!(exporter, health);
     }
 
     #[allow(unused)]
     fn spawn_nodes(exporter: Self) {
-        let _ = tokio::spawn(metrics::_nodes::usage::poll(exporter.clone()));
+        use metrics::_nodes::*;
+
+        is_metric_enabled!(exporter, usage);
     }
 
     // =^.^=
@@ -157,21 +164,35 @@ impl Exporter {
     // /_cat/transforms
     #[allow(unused)]
     fn spawn_cat(exporter: Self) {
-        let _ = tokio::spawn(metrics::_cat::allocation::poll(exporter.clone()));
-        let _ = tokio::spawn(metrics::_cat::shards::poll(exporter.clone()));
-        let _ = tokio::spawn(metrics::_cat::indices::poll(exporter.clone()));
-        let _ = tokio::spawn(metrics::_cat::segments::poll(exporter.clone()));
-        let _ = tokio::spawn(metrics::_cat::nodes::poll(exporter.clone()));
-        let _ = tokio::spawn(metrics::_cat::recovery::poll(exporter.clone()));
-        let _ = tokio::spawn(metrics::_cat::health::poll(exporter.clone()));
-        let _ = tokio::spawn(metrics::_cat::pending_tasks::poll(exporter.clone()));
-        let _ = tokio::spawn(metrics::_cat::aliases::poll(exporter.clone()));
-        let _ = tokio::spawn(metrics::_cat::thread_pool::poll(exporter.clone()));
-        let _ = tokio::spawn(metrics::_cat::plugins::poll(exporter.clone()));
-        let _ = tokio::spawn(metrics::_cat::fielddata::poll(exporter.clone()));
-        let _ = tokio::spawn(metrics::_cat::nodeattrs::poll(exporter.clone()));
-        let _ = tokio::spawn(metrics::_cat::repositories::poll(exporter.clone()));
-        let _ = tokio::spawn(metrics::_cat::templates::poll(exporter.clone()));
-        let _ = tokio::spawn(metrics::_cat::transforms::poll(exporter));
+        use metrics::_cat::*;
+
+        is_metric_enabled!(exporter, allocation);
+        is_metric_enabled!(exporter, shards);
+        is_metric_enabled!(exporter, indices);
+        is_metric_enabled!(exporter, segments);
+        is_metric_enabled!(exporter, nodes);
+        is_metric_enabled!(exporter, recovery);
+        is_metric_enabled!(exporter, health);
+        is_metric_enabled!(exporter, pending_tasks);
+        is_metric_enabled!(exporter, aliases);
+        is_metric_enabled!(exporter, thread_pool);
+        is_metric_enabled!(exporter, plugins);
+        is_metric_enabled!(exporter, fielddata);
+        is_metric_enabled!(exporter, nodeattrs);
+        is_metric_enabled!(exporter, repositories);
+        is_metric_enabled!(exporter, templates);
+        is_metric_enabled!(exporter, transforms);
+
+        is_metric_enabled!(exporter, transforms);
     }
+}
+
+/// Convenience macro to poll metrics
+#[macro_export]
+macro_rules! is_metric_enabled {
+    ($exporter:expr, $metric:ident) => {
+        if $exporter.options.is_metric_enabled($metric::SUBSYSTEM) {
+            let _ = tokio::spawn($metric::poll($exporter.clone()));
+        }
+    };
 }

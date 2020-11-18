@@ -1,7 +1,7 @@
 use elasticsearch::cat::CatIndicesParts;
 use elasticsearch::params::{Bytes, Time};
 
-const SUBSYSTEM: &'static str = "cat_indices";
+pub(crate) const SUBSYSTEM: &'static str = "cat_indices";
 
 async fn metrics(exporter: &Exporter) -> Result<Vec<Metrics>, elasticsearch::Error> {
     let response = exporter
