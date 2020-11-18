@@ -150,12 +150,13 @@ impl Collection {
                 }
                 MetricType::Bytes(value) => {
                     if self.options.exporter_skip_zero_metrics && value > &0 {
-                        let _ = self.insert_gauge(
-                            &metric.key(),
-                            *value as f64,
-                            &labels,
-                            Some("_bytes"),
-                        )?;
+                        let postfix = if metric.key().ends_with("_bytes") {
+                            None
+                        } else {
+                            Some("_bytes")
+                        };
+                        let _ =
+                            self.insert_gauge(&metric.key(), *value as f64, &labels, postfix)?;
                     }
                 }
                 MetricType::GaugeF(value) => {
