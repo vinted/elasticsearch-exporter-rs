@@ -73,7 +73,7 @@ impl<'s> TryFrom<RawMetric<'s>> for MetricType {
         }
 
         match metric.0 {
-            "used" | "size" | "memory" | "store" | "bytes" => {
+            "avail" | "used" | "size" | "memory" | "store" | "bytes" => {
                 // /_nodes/stats returns size with size postfix: kb, b, gb
                 // in case parsing to integer fails fallback and try to
                 // parse byte unit
