@@ -30,6 +30,19 @@ pub fn signal_channel() -> Receiver<()> {
     signal_rx
 }
 
+#[derive(Debug)]
+pub struct SimpleError(String);
+
+impl fmt::Display for SimpleError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", self.0)
+    }
+}
+
+impl StdError for SimpleError {}
+
+const HASH_MAP_STR_FORMAT: &'static str = "cat_indices=id,pri,rep&cat_nodes=heap.percent,jdk";
+
 #[derive(Clap, Clone, Debug)]
 pub struct Opts {
     /// Application listen address
@@ -106,27 +119,12 @@ impl FromStr for HashMapSwitch {
     type Err = SimpleError;
 
     fn from_str(input: &str) -> Result<Self, Self::Err> {
-        let mut map = ExporterMetricsSwitch::new();
-
-        let parts = input.trim().split("&").into_iter().collect::<Vec<&str>>();
-
-        for part in parts.into_iter() {
-            match part.split_once("=") {
-                Some((key, value)) => {
-                    let bool_value = if value == "true" { true } else { false };
-
-                    let _ = map.insert(key.to_string(), bool_value);
-                }
-                None => {
-                    return Err(SimpleError(format!(
-                        "Usage `cat_health=true&cat_templates=false`, you provided `{}`",
-                        part
-                    )))
-                }
-            }
-        }
-
-        Ok(Self(map))
+        Ok(Self(serde_qs::from_str(input).map_err(|e| {
+            SimpleError(format!(
+                "Usage `cat_health=true&cat_templates=false`, you provided `{}`",
+                e
+            ))
+        })?))
     }
 }
 
@@ -208,41 +206,15 @@ impl FromStr for HashMapVec {
 #[derive(Clone, Debug, Default)]
 struct HashMapStr(pub Labels);
 
-#[derive(Debug)]
-pub struct SimpleError(String);
-
-impl fmt::Display for SimpleError {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{}", self.0)
-    }
-}
-
-impl StdError for SimpleError {}
-
-const HASH_MAP_STR_FORMAT: &'static str = "cat_indices=id,pri,rep&cat_nodes=heap.percent,jdk";
-
 impl FromStr for HashMapStr {
     type Err = SimpleError;
 
     fn from_str(input: &str) -> Result<Self, Self::Err> {
-        let mut map = Labels::new();
-
-        let parts = input.trim().split("&").into_iter().collect::<Vec<&str>>();
-
-        for part in parts.into_iter() {
-            match part.split_once("=") {
-                Some((key, value)) => {
-                    let _ = map.insert(key.to_string(), value.to_string());
-                }
-                None => {
-                    return Err(SimpleError(format!(
-                        "Usage `{}`, you provided `{}`",
-                        HASH_MAP_STR_FORMAT, part
-                    )))
-                }
-            }
-        }
-
-        Ok(Self(map))
+        Ok(Self(serde_qs::from_str(input).map_err(|e| {
+            SimpleError(format!(
+                "Usage `{}`, you provided `{}`",
+                HASH_MAP_STR_FORMAT, e
+            ))
+        })?))
     }
 }

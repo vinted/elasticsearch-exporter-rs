@@ -28,6 +28,7 @@ url = "2.2.0"
 futures-util = "0.3.8"
 humantime = "2.0.1"
 serde_derive = "1.0.117"
+serde_qs = "0.7.0"
 
 [dependencies.hyper]
 version = "0.13"

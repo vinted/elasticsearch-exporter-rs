@@ -207,6 +207,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "data-encoding"
+version = "2.3.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "993a608597367c6377b258c25d7120740f00ed23a2252b729b1932dd7866f908"
+
+[[package]]
 name = "dtoa"
 version = "0.4.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -253,6 +259,7 @@ dependencies = [
  "serde",
  "serde_derive",
  "serde_json",
+ "serde_qs",
  "tokio",
  "url",
 ]
@@ -1248,6 +1255,18 @@ dependencies = [
  "itoa",
  "ryu",
  "serde",
+]
+
+[[package]]
+name = "serde_qs"
+version = "0.7.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9408a61dabe404c76cec504ec510f7d92f41dc0a9362a0db8ab73d141cfbf93f"
+dependencies = [
+ "data-encoding",
+ "percent-encoding",
+ "serde",
+ "thiserror",
 ]
 
 [[package]]
