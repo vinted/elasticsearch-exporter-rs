@@ -114,7 +114,7 @@ impl<'s> TryFrom<RawMetric<'s>> for MetricType {
         // attempt to parse number before return as default type label
         match metric.0 {
             // timed_out
-            "out" | "value" | "committed" | "searchable" | "compound" | "throttled"
+            "enabled" | "out" | "value" | "committed" | "searchable" | "compound" | "throttled"
             | "installed" => Ok(MetricType::Switch(if value.as_bool().unwrap_or(false) {
                 1
             } else {
@@ -131,26 +131,25 @@ impl<'s> TryFrom<RawMetric<'s>> for MetricType {
                 )),
             },
 
-            "primaries" | "min" | "max" | "successful" | "nodes" | "fetch" | "order"
-            | "largest" | "rejected" | "completed" | "queue" | "active" | "core" | "tasks"
-            | "relo" | "unassign" | "init" | "files" | "ops" | "recovered" | "generation"
-            | "contexts" | "listeners" | "pri" | "rep" | "docs" | "count" | "pid"
-            | "compilations" | "deleted" | "shards" | "indices" | "checkpoint" | "avail"
-            | "used" | "cpu" | "triggered" | "evictions" | "failed" | "total" | "current" => {
-                Ok(MetricType::Gauge(parse_i64()?))
-            }
+            "processors" | "primaries" | "min" | "max" | "successful" | "nodes" | "fetch"
+            | "order" | "largest" | "rejected" | "completed" | "queue" | "active" | "core"
+            | "tasks" | "relo" | "unassign" | "init" | "files" | "ops" | "recovered"
+            | "generation" | "contexts" | "listeners" | "pri" | "rep" | "docs" | "count"
+            | "pid" | "compilations" | "deleted" | "shards" | "indices" | "checkpoint"
+            | "avail" | "used" | "cpu" | "triggered" | "evictions" | "failed" | "total"
+            | "current" => Ok(MetricType::Gauge(parse_i64()?)),
 
             "avg" | "1m" | "5m" | "15m" | "number" | "percent" => {
                 Ok(MetricType::GaugeF(parse_f64()?))
             }
 
-            "usage" | "mount" | "group" | "rank" | "path" | "roles" | "context" | "cluster"
-            | "repository" | "snapshot" | "stage" | "uuid" | "component" | "master" | "role"
-            | "uptime" | "alias" | "filter" | "search" | "flavor" | "string" | "address"
-            | "health" | "build" | "node" | "state" | "patterns" | "of" | "segment" | "host"
-            | "ip" | "prirep" | "id" | "status" | "at" | "for" | "details" | "reason" | "port"
-            | "attr" | "field" | "shard" | "index" | "name" | "type" | "version" | "jdk"
-            | "description" => Ok(MetricType::Label(
+            "types" | "usage" | "mount" | "group" | "rank" | "path" | "roles" | "context"
+            | "cluster" | "repository" | "snapshot" | "stage" | "uuid" | "component" | "master"
+            | "role" | "uptime" | "alias" | "filter" | "search" | "flavor" | "string"
+            | "address" | "health" | "build" | "node" | "state" | "patterns" | "of" | "segment"
+            | "host" | "ip" | "prirep" | "id" | "status" | "at" | "for" | "details" | "reason"
+            | "port" | "attr" | "field" | "shard" | "index" | "name" | "type" | "version"
+            | "jdk" | "description" => Ok(MetricType::Label(
                 value.as_str().ok_or(unknown())?.to_owned(),
             )),
             _ => {

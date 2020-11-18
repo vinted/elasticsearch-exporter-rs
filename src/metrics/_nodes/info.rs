@@ -23,7 +23,29 @@ async fn metrics(exporter: &Exporter) -> Result<Vec<Metrics>, elasticsearch::Err
     Ok(metric::from_values(values))
 }
 
-const REMOVE_KEYS: &[&'static str; 4] = &["timestamp", "plugins", "modules", "ingest"];
+const REMOVE_KEYS: &[&'static str; 21] = &[
+    "aggregations",
+    "timestamp",
+    "plugins",
+    "modules",
+    "ingest",
+    "input_arguments",
+    "memory_pools",
+    "gc_collectors",
+    "build_hash",
+    "build_type",
+    "build_flavor",
+    "using_compressed_ordinary_object_pointers",
+    "vm_vendor",
+    "arch",
+    "memory_lock",
+    "x-pack",
+    "strategy",
+    "default",
+    "pidfile",
+    "path",
+    "settings",
+];
 
 crate::poll_metrics!();
 
