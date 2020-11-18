@@ -7,9 +7,9 @@ description = """
 Vinted Elasticsearch exporter
 """
 documentation = "https://docs.rs/elasticsearch_exporter"
-homepage = "https://github.com/vinted/elasticsearch_exporter.rs"
+homepage = "https://github.com/vinted/elasticsearch_exporter-rs"
 license = "BSD-3-Clause"
-repository = "https://github.com/vinted/elasticsearch_exporter.rs"
+repository = "https://github.com/vinted/elasticsearch_exporter-rs"
 autobins = false
 
 [[bin]]
