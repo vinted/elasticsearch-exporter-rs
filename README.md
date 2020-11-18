@@ -22,10 +22,27 @@ $ curl -s http://127.0.0.1:9222/metrics | wc
 
 ## Features
 
- - Skips if metric zero/empty metrics
- - Metric collection is decoupled from rendering `/metrics` page
+ - Metric collection is decoupled from serving `/metrics` page
+ - Skips zero/empty metrics (controlled with flag `exporter_skip_zero_metrics`)
+ - Elasticsearch "millis" converted to seconds
+ - Gauges everywhere
+ - Histograms for time
+ - All time based metrics are converted as f64 seconds, keywords `millis` replaced with `seconds`
+ - Added `_bytes` and `_seconds` postfix
+ - Preserves metrics tree namespace up to last leaf
+   - elasticsearch_cat_indices_pri_warmer_total_time_seconds_bucket
+   - elasticsearch_cat_health_unassign
+   - elasticsearch_nodes_info_jvm_mem_heap_max_in_bytes
 
 ## Options
+
+ - Configurable labels "skip" and/or "include" (flags: `exporter_include_labels`, `exporter_skip_labels`)
+ - Configurable skip metrics (controlled with (flag `exporter_skip_metrics`)
+ - Configurable global timeout (flag `elasticsearch_global_timeout`)
+ - Configurable global polling interval (flag `exporter_poll_default_interval`)
+ - Configurable per metric polling interval (flag `exporter_poll_intervals`)
+ - Configurable histogram buckets (flag `exporter_histogram_buckets`)
+ - Configurable metrics collection (flag `exporter_metrics_enabled`)
 
 ```shell
 Vinted Elasticsearch exporter
