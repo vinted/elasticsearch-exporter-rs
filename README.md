@@ -33,6 +33,12 @@ $ curl -s http://127.0.0.1:9222/metrics | wc
    - elasticsearch_cat_indices_pri_warmer_total_time_seconds_bucket
    - elasticsearch_cat_health_unassign
    - elasticsearch_nodes_info_jvm_mem_heap_max_in_bytes
+ - Custom namespace labels `vin_cluster_version` for convenient comparison of metrics between cluster versions
+ - Automatic cluster metadata updates every 5 minutes
+ - /_nodes/* API additional labels injection by mapping node ID to fetched cluster metadata
+   - name (map from node ID to name) namespaced -> `name`
+   - version (Elasticsearch node version) namespaced to `vin_cluster_version`
+   - IP namespaced -> `ip`
 
 ## Options
 
@@ -43,6 +49,7 @@ $ curl -s http://127.0.0.1:9222/metrics | wc
  - Configurable per metric polling interval (flag `exporter_poll_intervals`)
  - Configurable histogram buckets (flag `exporter_histogram_buckets`)
  - Configurable metrics collection (flag `exporter_metrics_enabled`)
+ - Configurable metadata collection (flag `exporter_metadata_refresh_interval`)
 
 ```shell
 Vinted Elasticsearch exporter
@@ -80,7 +87,7 @@ exporter_include_labels:
  - cat_transforms: index
  - cluster_health: status
  - nodes_info: name
- - nodes_stats: name
+ - nodes_stats: name,vin_cluster_version
  - nodes_usage: name
 exporter_skip_metrics:
  - cat_aliases: filter,routing_index,routing_search,is_write_index

@@ -1,7 +1,10 @@
 use serde_json::Value;
 use std::collections::HashMap;
 
-use crate::metadata::{IdToMetadata, NodeData};
+use crate::{
+    metadata::{IdToMetadata, NodeData},
+    reserved,
+};
 
 /// Nodes response
 #[derive(Debug, Serialize, Deserialize)]
@@ -37,9 +40,10 @@ fn inject_label(value: &mut Value, node_data: &NodeData, keys_to_remove: &[&'sta
     if let Some(map) = value.as_object_mut() {
         let _ = map.insert("name".into(), Value::String(node_data.name.to_string()));
         let _ = map.insert(
-            "cluster_version".into(),
+            reserved::CLUSTER_VERSION.into(),
             Value::String(node_data.version.to_string()),
         );
+        let _ = map.insert("ip".into(), Value::String(node_data.ip.to_string()));
 
         // Doing inverse removal because serde_json::Map does not have .retain
         for to_remove in keys_to_remove {

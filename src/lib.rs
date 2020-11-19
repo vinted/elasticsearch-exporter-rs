@@ -57,6 +57,9 @@ pub mod metric;
 mod options;
 pub use options::ExporterOptions;
 
+/// Reserved labels
+pub mod reserved;
+
 /// Cluster metadata
 pub mod metadata;
 
