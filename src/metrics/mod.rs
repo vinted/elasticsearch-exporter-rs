@@ -42,12 +42,10 @@ macro_rules! poll_metrics {
             let start =
                 tokio::time::Instant::now() + Duration::from_millis(Exporter::random_delay());
 
-            let poll_interval = exporter
-                .0
-                .options
+            let poll_interval = options
                 .exporter_poll_intervals
                 .get(SUBSYSTEM)
-                .unwrap_or(&exporter.0.options.exporter_poll_default_interval);
+                .unwrap_or(&options.exporter_poll_default_interval);
 
             info!(
                 "Starting subsystem: {} with poll interval: {:?}",
