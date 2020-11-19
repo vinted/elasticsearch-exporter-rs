@@ -17,6 +17,7 @@ macro_rules! poll_metrics {
         use futures_util::StreamExt;
         #[allow(unused)]
         use serde_json::Value;
+        use std::time::Duration;
 
         #[allow(unused)]
         pub(crate) async fn poll(exporter: Exporter) {
@@ -38,8 +39,8 @@ macro_rules! poll_metrics {
                 collection.include_labels = include_labels.clone();
             }
 
-            // TODO: add random delay
-            let start = tokio::time::Instant::now();
+            let start =
+                tokio::time::Instant::now() + Duration::from_millis(Exporter::random_delay());
 
             let poll_interval = exporter
                 .0
