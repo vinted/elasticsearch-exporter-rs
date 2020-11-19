@@ -3,7 +3,7 @@ use elasticsearch::{Elasticsearch, Error};
 use serde_json::Value;
 
 pub(crate) mod node_data;
-pub(crate) use node_data::{build, poll, IdToMetadata};
+pub(crate) use node_data::{build, poll, IdToMetadata, NodeData};
 
 pub(crate) async fn cluster_name(client: &Elasticsearch) -> Result<String, Error> {
     info!("Elasticsearch: fetching cluster_name");
