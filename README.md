@@ -98,6 +98,7 @@ exporter_metrics_enabled:
  - cat_indices: true
  - nodes_info: true
  - nodes_stats: true
+exporter_metadata_refresh_interval: 300s
 ```
 
 ## Development

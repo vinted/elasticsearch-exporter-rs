@@ -28,6 +28,8 @@ pub struct ExporterOptions {
     pub exporter_skip_zero_metrics: bool,
     /// Exporter metrics switch either ON or OFF
     pub exporter_metrics_enabled: ExporterMetricsSwitch,
+    /// Exporter metadata refresh interval
+    pub exporter_metadata_refresh_interval: Duration,
 }
 
 impl ExporterOptions {
@@ -129,6 +131,12 @@ impl fmt::Display for ExporterOptions {
             "exporter_metrics_enabled",
             &self.exporter_metrics_enabled,
         );
+
+        output.push_str("\n");
+        output.push_str(&format!(
+            "exporter_metadata_refresh_interval: {:?}",
+            self.exporter_metadata_refresh_interval
+        ));
 
         output.push_str("\n");
         write!(f, "{}", output)

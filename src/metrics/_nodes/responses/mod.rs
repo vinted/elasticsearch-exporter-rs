@@ -11,16 +11,18 @@ pub(crate) struct NodesResponse {
 
 impl NodesResponse {
     /// Inject labels into nodes response
-    pub(crate) fn into_values(
+    pub(crate) async fn into_values(
         mut self,
         metadata: &IdToMetadata,
         keys_to_remove: &[&'static str],
     ) -> Vec<Value> {
         let mut values: Vec<Value> = Vec::new();
 
+        let metadata_read = metadata.read().await;
+
         // Inject node label
         for (node_id, mut data) in self.nodes.drain() {
-            if let Some(node_metadata) = metadata.get(&node_id) {
+            if let Some(node_metadata) = metadata_read.get(&node_id) {
                 inject_label(&mut data, &node_metadata.name, keys_to_remove);
 
                 values.push(data);

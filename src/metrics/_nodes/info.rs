@@ -18,7 +18,8 @@ async fn metrics(exporter: &Exporter) -> Result<Vec<Metrics>, elasticsearch::Err
     let values = response
         .json::<NodesResponse>()
         .await?
-        .into_values(exporter.metadata(), REMOVE_KEYS);
+        .into_values(exporter.metadata(), REMOVE_KEYS)
+        .await;
 
     Ok(metric::from_values(values))
 }
@@ -49,9 +50,11 @@ const REMOVE_KEYS: &[&'static str; 21] = &[
 
 crate::poll_metrics!();
 
-#[test]
-fn test_nodes_info() {
-    use std::collections::HashMap;
+#[tokio::test]
+async fn test_nodes_info() {
+    use tokio::sync::RwLock;
+
+    use crate::metadata::node_data::{NodeData, NodeDataMap};
 
     let usage: NodesResponse =
         serde_json::from_str(include_str!("../../tests/files/nodes_info.json"))
@@ -59,10 +62,17 @@ fn test_nodes_info() {
 
     let expected_name: String = "m1-nodename.example.com".into();
 
-    let mut labels: HashMap<String, String> = HashMap::new();
-    let _ = labels.insert("U-WnGaTpRxucgde3miiDWw".into(), expected_name.clone());
+    let mut metadata = NodeDataMap::new();
+    let _ = metadata.insert(
+        "U-WnGaTpRxucgde3miiDWw".into(),
+        NodeData {
+            name: expected_name.clone(),
+            ..Default::default()
+        },
+    );
+    let metadata = RwLock::new(metadata);
 
-    let values = usage.into_values(&labels, &["timestamp"]);
+    let values = usage.into_values(&metadata, &["timestamp"]).await;
     assert!(!values.is_empty());
 
     let value = values[0].as_object().unwrap();

@@ -57,7 +57,8 @@ pub mod metric;
 mod options;
 pub use options::ExporterOptions;
 
-mod metadata;
+/// Cluster metadata
+pub mod metadata;
 
 pub(crate) mod metrics;
 
@@ -153,6 +154,11 @@ impl Exporter {
         Self::spawn_cat(self.clone());
         Self::spawn_cluster(self.clone());
         Self::spawn_nodes(self.clone());
+        Self::spawn_metadata(self);
+    }
+
+    fn spawn_metadata(exporter: Self) {
+        let _ = tokio::spawn(metadata::poll(exporter.clone()));
     }
 
     fn spawn_cluster(exporter: Self) {

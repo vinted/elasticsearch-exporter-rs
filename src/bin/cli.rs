@@ -110,6 +110,13 @@ pub struct Opts {
         default_value = "cat_health=true&cat_indices=true&nodes_stats=true&nodes_info=true"
     )]
     pub exporter_metrics_enabled: HashMapSwitch,
+
+    /// Exporter metadata refresh interval
+    #[clap(
+        long = "exporter_metadata_refresh_interval_seconds",
+        default_value = "300"
+    )]
+    pub exporter_metadata_refresh_interval_seconds: u64,
 }
 
 #[derive(Debug, Clone, Default)]
