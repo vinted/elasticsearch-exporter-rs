@@ -1,5 +1,3 @@
-#![feature(duration_zero)]
-
 //! # Vinted Elasticsearch exporter
 #![deny(
     warnings,
