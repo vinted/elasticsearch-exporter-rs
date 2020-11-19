@@ -79,14 +79,14 @@ pub struct Opts {
     /// Exporter include labels
     #[clap(
         long = "exporter_include_labels",
-        default_value = "cat_health=shards&cat_aliases=index,alias&cat_allocation=node&cat_fielddata=node,field&cat_indices=index&cat_nodeattrs=node,attr&cat_nodes=index,name,node_role&cat_pending_tasks=index&cat_plugins=name&cat_recovery=index,shard,stage,type&cat_repositories=index&cat_segments=index,shard&cat_shards=index,node,shard&cat_templates=name,index_patterns&cat_thread_pool=node_name,name,type&cat_transforms=index&cluster_health=status&nodes_usage=name,usage"
+        default_value = "cat_health=shards&cat_aliases=index,alias&cat_allocation=node&cat_fielddata=node,field&cat_indices=index&cat_nodeattrs=node,attr&cat_nodes=index,name,node_role&cat_pending_tasks=index&cat_plugins=name&cat_recovery=index,shard,stage,type&cat_repositories=index&cat_segments=index,shard&cat_shards=index,node,shard&cat_templates=name,index_patterns&cat_thread_pool=node_name,name,type&cat_transforms=index&cluster_health=status&nodes_usage=name&nodes_stats=name,vin_cluster_version&nodes_info=name"
     )]
     pub exporter_include_labels: HashMapVec,
 
     /// Exporter skip labels
     #[clap(
         long = "exporter_skip_metrics",
-        default_value = "cat_health=epoch,timestamp&cat_aliases=filter,routing_index,routing_search,is_write_index&cat_nodeattrs=pid&cat_recovery=start_time,start_time_millis,stop_time,stop_time_millis&cat_templates=order&nodes_usage=_nodes_total,_nodes_successful,timestamp,since"
+        default_value = "cat_aliases=filter,routing_index,routing_search,is_write_index&cat_nodeattrs=pid&cat_recovery=start_time,start_time_millis,stop_time,stop_time_millis&cat_templates=order&nodes_usage=_nodes_total,_nodes_successful,since"
     )]
     pub exporter_skip_metrics: HashMapVec,
 
@@ -106,10 +106,17 @@ pub struct Opts {
 
     /// Exporter metrics switch defined which metrics are turned ON
     #[clap(
-        long = "exporter_metrics_switch",
-        default_value = "cat_health=true&cat_indices=true"
+        long = "exporter_metrics_enabled",
+        default_value = "cat_health=true&cat_indices=true&nodes_stats=true&nodes_info=true"
     )]
-    pub exporter_metrics_switch: HashMapSwitch,
+    pub exporter_metrics_enabled: HashMapSwitch,
+
+    /// Exporter metadata refresh interval
+    #[clap(
+        long = "exporter_metadata_refresh_interval_seconds",
+        default_value = "300"
+    )]
+    pub exporter_metadata_refresh_interval_seconds: u64,
 }
 
 #[derive(Debug, Clone, Default)]

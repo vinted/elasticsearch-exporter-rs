@@ -5,13 +5,13 @@ pub(crate) const SUBSYSTEM: &'static str = "cat_allocation";
 
 async fn metrics(exporter: &Exporter) -> Result<Vec<Metrics>, elasticsearch::Error> {
     let response = exporter
-        .client
+        .client()
         .cat()
         .allocation(CatAllocationParts::None)
         .format("json")
         .h(&["*"])
         .bytes(Bytes::B)
-        .request_timeout(exporter.options.elasticsearch_global_timeout)
+        .request_timeout(exporter.options().elasticsearch_global_timeout)
         // Return local information, do not retrieve the state from master node (default: false)
         .local(true)
         .send()

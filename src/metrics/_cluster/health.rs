@@ -4,10 +4,10 @@ pub(crate) const SUBSYSTEM: &'static str = "cluster_health";
 
 async fn metrics(exporter: &Exporter) -> Result<Vec<Metrics>, elasticsearch::Error> {
     let response = exporter
-        .client
+        .client()
         .cluster()
         .health(ClusterHealthParts::None)
-        .request_timeout(exporter.options.elasticsearch_global_timeout)
+        .request_timeout(exporter.options().elasticsearch_global_timeout)
         // Return local information, do not retrieve the state from master node (default: false)
         .local(true)
         .send()

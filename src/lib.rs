@@ -47,6 +47,7 @@ extern crate serde_derive;
 use elasticsearch::http::transport::{SingleNodeConnectionPool, TransportBuilder};
 use elasticsearch::Elasticsearch;
 use std::collections::{BTreeMap, HashMap};
+use std::sync::Arc;
 use std::time::Duration;
 
 /// Generic collector of Elasticsearch metrics
@@ -56,7 +57,11 @@ pub mod metric;
 mod options;
 pub use options::ExporterOptions;
 
-mod metadata;
+/// Reserved labels
+pub mod reserved;
+
+/// Cluster metadata
+pub mod metadata;
 
 pub(crate) mod metrics;
 
@@ -84,20 +89,44 @@ pub type ExporterMetricsSwitch = BTreeMap<String, bool>;
 
 /// Elasticsearch exporter
 #[derive(Debug, Clone)]
-pub struct Exporter {
+pub struct Exporter(Arc<Inner>);
+
+#[derive(Debug)]
+struct Inner {
     /// Elasticsearch client instance
-    pub client: Elasticsearch,
+    client: Elasticsearch,
     /// Exporter options
-    pub options: ExporterOptions,
+    options: ExporterOptions,
     /// Constant exporter labels, e.g.: cluster
-    pub const_labels: HashMap<String, String>,
+    const_labels: HashMap<String, String>,
 
     /// Node ID to node name map for adding extra metadata labels
     /// {"U-WnGaTpRxucgde3miiDWw": "m1-supernode.example.com"}
-    pub id_to_name: HashMap<String, String>,
+    metadata: metadata::IdToMetadata,
 }
 
 impl Exporter {
+    /// Elasticsearch client instance
+    pub fn client(&self) -> &Elasticsearch {
+        &self.0.client
+    }
+
+    /// Exporter options
+    pub fn options(&self) -> &ExporterOptions {
+        &self.0.options
+    }
+
+    /// Exporter options
+    pub fn const_labels(&self) -> HashMap<String, String> {
+        self.0.const_labels.clone()
+    }
+
+    /// Node ID to node name map for adding extra metadata labels
+    /// {"U-WnGaTpRxucgde3miiDWw": "m1-supernode.example.com"}
+    pub fn metadata(&self) -> &metadata::IdToMetadata {
+        &self.0.metadata
+    }
+
     /// Spawn exporter
     pub async fn new(options: ExporterOptions) -> Result<Self, Box<dyn std::error::Error>> {
         let connection_pool = SingleNodeConnectionPool::new(options.elasticsearch_url.clone());
@@ -106,29 +135,33 @@ impl Exporter {
             .build()?;
 
         let client = Elasticsearch::new(transport);
-        info!("Elasticsearch::ping");
+        info!("Elasticsearch: ping");
         let _ = client.ping().send().await?;
 
-        let id_to_name = metadata::nodes_id_map(&client).await?;
+        let metadata = metadata::build(&client).await?;
         let cluster_name = metadata::cluster_name(&client).await?;
 
         let mut const_labels = HashMap::new();
         let _ = const_labels.insert("cluster".into(), cluster_name);
 
-        Ok(Self {
+        Ok(Self(Arc::new(Inner {
             client,
             options,
             const_labels,
-            id_to_name,
-        })
+            metadata,
+        })))
     }
 
     /// Spawn collectors
     pub async fn spawn(self) {
-        info!("Spawned");
         Self::spawn_cat(self.clone());
         Self::spawn_cluster(self.clone());
         Self::spawn_nodes(self.clone());
+        Self::spawn_metadata(self);
+    }
+
+    fn spawn_metadata(exporter: Self) {
+        let _ = tokio::spawn(metadata::poll(exporter.clone()));
     }
 
     fn spawn_cluster(exporter: Self) {
@@ -141,6 +174,8 @@ impl Exporter {
         use metrics::_nodes::*;
 
         is_metric_enabled!(exporter, usage);
+        is_metric_enabled!(exporter, stats);
+        is_metric_enabled!(exporter, info);
     }
 
     // =^.^=
@@ -179,8 +214,12 @@ impl Exporter {
         is_metric_enabled!(exporter, repositories);
         is_metric_enabled!(exporter, templates);
         is_metric_enabled!(exporter, transforms);
+    }
 
-        is_metric_enabled!(exporter, transforms);
+    pub(crate) fn random_delay() -> u64 {
+        use rand::prelude::*;
+        let mut rng = thread_rng();
+        rng.gen_range(250, 1000)
     }
 }
 
@@ -188,7 +227,7 @@ impl Exporter {
 #[macro_export]
 macro_rules! is_metric_enabled {
     ($exporter:expr, $metric:ident) => {
-        if $exporter.options.is_metric_enabled($metric::SUBSYSTEM) {
+        if $exporter.options().is_metric_enabled($metric::SUBSYSTEM) {
             let _ = tokio::spawn($metric::poll($exporter.clone()));
         }
     };

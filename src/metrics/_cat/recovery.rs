@@ -5,14 +5,14 @@ pub(crate) const SUBSYSTEM: &'static str = "cat_recovery";
 
 async fn metrics(exporter: &Exporter) -> Result<Vec<Metrics>, elasticsearch::Error> {
     let response = exporter
-        .client
+        .client()
         .cat()
         .recovery(CatRecoveryParts::Index(&["*"]))
         .format("json")
         .h(&["*"])
         .bytes(Bytes::B)
         .time(Time::Ms)
-        .request_timeout(exporter.options.elasticsearch_global_timeout)
+        .request_timeout(exporter.options().elasticsearch_global_timeout)
         .send()
         .await?;
 

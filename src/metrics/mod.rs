@@ -3,11 +3,6 @@ pub(crate) mod _cluster;
 pub(crate) mod _nodes;
 
 // TODO: add metrics of
-//
-// - https://www.elastic.co/guide/en/elasticsearch/reference/current/cluster-nodes-info.html
-// - https://www.elastic.co/guide/en/elasticsearch/reference/current/cluster-nodes-stats.html
-//
-// - https://www.elastic.co/guide/en/elasticsearch/reference/current/cluster-nodes-usage.html
 // - https://www.elastic.co/guide/en/elasticsearch/reference/current/cluster-pending.html
 // - https://www.elastic.co/guide/en/elasticsearch/reference/current/tasks.html
 // - https://www.elastic.co/guide/en/elasticsearch/reference/current/cluster-state.html
@@ -22,32 +17,37 @@ macro_rules! poll_metrics {
         use futures_util::StreamExt;
         #[allow(unused)]
         use serde_json::Value;
+        use std::time::Duration;
 
         #[allow(unused)]
         pub(crate) async fn poll(exporter: Exporter) {
-            let mut collection = Collection::new(SUBSYSTEM, exporter.options.clone());
-            // Common to all /_cat metrics
-            collection.const_labels = exporter.const_labels.clone();
+            let options = exporter.options();
 
-            if let Some(skip_labels) = exporter.options.exporter_skip_labels.get(SUBSYSTEM) {
+            let mut collection = Collection::new(SUBSYSTEM, options.clone());
+            // Common to all /_cat metrics
+            collection.const_labels = exporter.const_labels();
+
+            if let Some(skip_labels) = options.exporter_skip_labels.get(SUBSYSTEM) {
                 collection.skip_labels = skip_labels.clone();
             }
 
-            if let Some(skip_metrics) = exporter.options.exporter_skip_metrics.get(SUBSYSTEM) {
+            if let Some(skip_metrics) = options.exporter_skip_metrics.get(SUBSYSTEM) {
                 collection.skip_metrics = skip_metrics.clone();
             }
 
-            if let Some(include_labels) = exporter.options.exporter_include_labels.get(SUBSYSTEM) {
+            if let Some(include_labels) = options.exporter_include_labels.get(SUBSYSTEM) {
                 collection.include_labels = include_labels.clone();
             }
 
-            let start = tokio::time::Instant::now();
+            let start =
+                tokio::time::Instant::now() + Duration::from_millis(Exporter::random_delay());
 
             let poll_interval = exporter
+                .0
                 .options
                 .exporter_poll_intervals
                 .get(SUBSYSTEM)
-                .unwrap_or(&exporter.options.exporter_poll_default_interval);
+                .unwrap_or(&exporter.0.options.exporter_poll_default_interval);
 
             info!(
                 "Starting subsystem: {} with poll interval: {:?}",
@@ -65,7 +65,7 @@ macro_rules! poll_metrics {
                         }
                     }
                     Err(e) => {
-                        error!("{} metrics err {}", collection.subsystem(), e);
+                        error!("poll {} metrics err {}", collection.subsystem(), e);
                     }
                 }
             }

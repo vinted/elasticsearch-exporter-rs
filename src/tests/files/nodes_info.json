@@ -1,0 +1,1003 @@
+{
+  "_nodes": {
+    "failed": 0,
+    "successful": 5,
+    "total": 5
+  },
+  "cluster_name": "testy",
+  "nodes": {
+    "U-WnGaTpRxucgde3miiDWw": {
+      "attributes": {
+        "transform.node": "true",
+        "xpack.installed": "true"
+      },
+      "build_flavor": "default",
+      "build_hash": "d32da0ea2a966c2e29257f2da2f222e3e97b2e6e",
+      "build_type": "tar",
+      "host": "50.33.50.25",
+      "http": {
+        "bound_address": [
+          "[::]:9205"
+        ],
+        "max_content_length_in_bytes": 502857600,
+        "publish_address": "50.33.50.25:9205"
+      },
+      "ingest": {
+        "processors": [
+          {
+            "type": "append"
+          },
+          {
+            "type": "bytes"
+          },
+          {
+            "type": "circle"
+          },
+          {
+            "type": "convert"
+          },
+          {
+            "type": "csv"
+          },
+          {
+            "type": "date"
+          },
+          {
+            "type": "date_index_name"
+          },
+          {
+            "type": "dissect"
+          },
+          {
+            "type": "dot_expander"
+          },
+          {
+            "type": "drop"
+          },
+          {
+            "type": "enrich"
+          },
+          {
+            "type": "fail"
+          },
+          {
+            "type": "foreach"
+          },
+          {
+            "type": "geoip"
+          },
+          {
+            "type": "grok"
+          },
+          {
+            "type": "gsub"
+          },
+          {
+            "type": "html_strip"
+          },
+          {
+            "type": "join"
+          },
+          {
+            "type": "json"
+          },
+          {
+            "type": "kv"
+          },
+          {
+            "type": "lowercase"
+          },
+          {
+            "type": "pipeline"
+          },
+          {
+            "type": "remove"
+          },
+          {
+            "type": "rename"
+          },
+          {
+            "type": "script"
+          },
+          {
+            "type": "set"
+          },
+          {
+            "type": "set_security_user"
+          },
+          {
+            "type": "sort"
+          },
+          {
+            "type": "split"
+          },
+          {
+            "type": "trim"
+          },
+          {
+            "type": "uppercase"
+          },
+          {
+            "type": "urldecode"
+          },
+          {
+            "type": "user_agent"
+          }
+        ]
+      },
+      "ip": "50.33.50.25",
+      "jvm": {
+        "bundled_jdk": true,
+        "gc_collectors": [
+          "G5 Young Generation",
+          "G5 Old Generation"
+        ],
+        "input_arguments": [
+          "-Xshare:auto",
+          "-Des.networkaddress.cache.ttl=60",
+          "-Des.networkaddress.cache.negative.ttl=50",
+          "-XX:+AlwaysPreTouch",
+          "-Xss5m",
+          "-Djava.awt.headless=true",
+          "-Dfile.encoding=UTF-8",
+          "-Djna.nosys=true",
+          "-XX:-OmitStackTraceInFastThrow",
+          "-XX:+ShowCodeDetailsInExceptionMessages",
+          "-Dio.netty.noUnsafe=true",
+          "-Dio.netty.noKeySetOptimization=true",
+          "-Dio.netty.recycler.maxCapacityPerThread=0",
+          "-Dio.netty.allocator.numDirectArenas=0",
+          "-Dlog2j.shutdownHookEnabled=false",
+          "-Dlog2j2.disable.jmx=true",
+          "-Djava.locale.providers=SPI,COMPAT",
+          "-Xms35772m",
+          "-Xmx35772m",
+          "-Dlog2j2.disable.jmx=true",
+          "-XX:-HeapDumpOnOutOfMemoryError",
+          "-XX:-OmitStackTraceInFastThrow",
+          "-XX:+UseNUMA",
+          "-XX:+UseG5GC",
+          "-XX:MaxGCPauseMillis=200",
+          "-XX:G5HeapRegionSize=56m",
+          "-XX:MaxDirectMemorySize=56659775288",
+          "-Des.path.home=/usr/local/elasticsearch",
+          "-Des.path.conf=/etc/elasticsearch-m5",
+          "-Des.distribution.flavor=default",
+          "-Des.distribution.type=tar",
+          "-Des.bundled_jdk=true"
+        ],
+        "mem": {
+          "direct_max_in_bytes": 0,
+          "heap_init_in_bytes": 33359550976,
+          "heap_max_in_bytes": 33359550976,
+          "non_heap_init_in_bytes": 7667752,
+          "non_heap_max_in_bytes": 0
+        },
+        "memory_pools": [
+          "CodeHeap 'non-nmethods'",
+          "Metaspace",
+          "CodeHeap 'profiled nmethods'",
+          "Compressed Class Space",
+          "G5 Eden Space",
+          "G5 Old Gen",
+          "G5 Survivor Space",
+          "CodeHeap 'non-profiled nmethods'"
+        ],
+        "pid": 32092,
+        "start_time_in_millis": 5603522735225,
+        "using_bundled_jdk": true,
+        "using_compressed_ordinary_object_pointers": "true",
+        "version": "55",
+        "vm_name": "OpenJDK 62-Bit Server VM",
+        "vm_vendor": "AdoptOpenJDK",
+        "vm_version": "55+36"
+      },
+      "modules": [
+        {
+          "classname": "org.elasticsearch.search.aggregations.matrix.MatrixAggregationPlugin",
+          "description": "Adds aggregations whose input are a list of numeric fields and output includes a matrix.",
+          "elasticsearch_version": "7.9.2",
+          "extended_plugins": [],
+          "has_native_controller": false,
+          "java_version": "5.8",
+          "name": "aggs-matrix-stats",
+          "version": "7.9.2"
+        },
+        {
+          "classname": "org.elasticsearch.analysis.common.CommonAnalysisPlugin",
+          "description": "Adds \"built in\" analyzers to Elasticsearch.",
+          "elasticsearch_version": "7.9.2",
+          "extended_plugins": [
+            "lang-painless"
+          ],
+          "has_native_controller": false,
+          "java_version": "5.8",
+          "name": "analysis-common",
+          "version": "7.9.2"
+        },
+        {
+          "classname": "org.elasticsearch.xpack.constantkeyword.ConstantKeywordMapperPlugin",
+          "description": "Module for the constant-keyword field type, which is a specialization of keyword for the case when all documents have the same value.",
+          "elasticsearch_version": "7.9.2",
+          "extended_plugins": [
+            "x-pack-core"
+          ],
+          "has_native_controller": false,
+          "java_version": "5.8",
+          "name": "constant-keyword",
+          "version": "7.9.2"
+        },
+        {
+          "classname": "org.elasticsearch.xpack.flattened.FlattenedMapperPlugin",
+          "description": "Module for the flattened field type, which allows JSON objects to be flattened into a single field.",
+          "elasticsearch_version": "7.9.2",
+          "extended_plugins": [
+            "x-pack-core"
+          ],
+          "has_native_controller": false,
+          "java_version": "5.8",
+          "name": "flattened",
+          "version": "7.9.2"
+        },
+        {
+          "classname": "org.elasticsearch.xpack.frozen.FrozenIndices",
+          "description": "A plugin for the frozen indices functionality",
+          "elasticsearch_version": "7.9.2",
+          "extended_plugins": [
+            "x-pack-core"
+          ],
+          "has_native_controller": false,
+          "java_version": "5.8",
+          "name": "frozen-indices",
+          "version": "7.9.2"
+        },
+        {
+          "classname": "org.elasticsearch.ingest.common.IngestCommonPlugin",
+          "description": "Module for ingest processors that do not require additional security permissions or have large dependencies and resources",
+          "elasticsearch_version": "7.9.2",
+          "extended_plugins": [
+            "lang-painless"
+          ],
+          "has_native_controller": false,
+          "java_version": "5.8",
+          "name": "ingest-common",
+          "version": "7.9.2"
+        },
+        {
+          "classname": "org.elasticsearch.ingest.geoip.IngestGeoIpPlugin",
+          "description": "Ingest processor that uses looksup geo data based on ip adresses using the Maxmind geo database",
+          "elasticsearch_version": "7.9.2",
+          "extended_plugins": [],
+          "has_native_controller": false,
+          "java_version": "5.8",
+          "name": "ingest-geoip",
+          "version": "7.9.2"
+        },
+        {
+          "classname": "org.elasticsearch.ingest.useragent.IngestUserAgentPlugin",
+          "description": "Ingest processor that extracts information from a user agent",
+          "elasticsearch_version": "7.9.2",
+          "extended_plugins": [],
+          "has_native_controller": false,
+          "java_version": "5.8",
+          "name": "ingest-user-agent",
+          "version": "7.9.2"
+        },
+        {
+          "classname": "org.elasticsearch.kibana.KibanaPlugin",
+          "description": "Plugin exposing APIs for Kibana system indices",
+          "elasticsearch_version": "7.9.2",
+          "extended_plugins": [],
+          "has_native_controller": false,
+          "java_version": "5.8",
+          "name": "kibana",
+          "version": "7.9.2"
+        },
+        {
+          "classname": "org.elasticsearch.script.expression.ExpressionPlugin",
+          "description": "Lucene expressions integration for Elasticsearch",
+          "elasticsearch_version": "7.9.2",
+          "extended_plugins": [],
+          "has_native_controller": false,
+          "java_version": "5.8",
+          "name": "lang-expression",
+          "version": "7.9.2"
+        },
+        {
+          "classname": "org.elasticsearch.script.mustache.MustachePlugin",
+          "description": "Mustache scripting integration for Elasticsearch",
+          "elasticsearch_version": "7.9.2",
+          "extended_plugins": [],
+          "has_native_controller": false,
+          "java_version": "5.8",
+          "name": "lang-mustache",
+          "version": "7.9.2"
+        },
+        {
+          "classname": "org.elasticsearch.painless.PainlessPlugin",
+          "description": "An easy, safe and fast scripting language for Elasticsearch",
+          "elasticsearch_version": "7.9.2",
+          "extended_plugins": [],
+          "has_native_controller": false,
+          "java_version": "5.8",
+          "name": "lang-painless",
+          "version": "7.9.2"
+        },
+        {
+          "classname": "org.elasticsearch.index.mapper.MapperExtrasPlugin",
+          "description": "Adds advanced field mappers",
+          "elasticsearch_version": "7.9.2",
+          "extended_plugins": [],
+          "has_native_controller": false,
+          "java_version": "5.8",
+          "name": "mapper-extras",
+          "version": "7.9.2"
+        },
+        {
+          "classname": "org.elasticsearch.join.ParentJoinPlugin",
+          "description": "This module adds the support parent-child queries and aggregations",
+          "elasticsearch_version": "7.9.2",
+          "extended_plugins": [],
+          "has_native_controller": false,
+          "java_version": "5.8",
+          "name": "parent-join",
+          "version": "7.9.2"
+        },
+        {
+          "classname": "org.elasticsearch.percolator.PercolatorPlugin",
+          "description": "Percolator module adds capability to index queries and query these queries by specifying documents",
+          "elasticsearch_version": "7.9.2",
+          "extended_plugins": [],
+          "has_native_controller": false,
+          "java_version": "5.8",
+          "name": "percolator",
+          "version": "7.9.2"
+        },
+        {
+          "classname": "org.elasticsearch.index.rankeval.RankEvalPlugin",
+          "description": "The Rank Eval module adds APIs to evaluate ranking quality.",
+          "elasticsearch_version": "7.9.2",
+          "extended_plugins": [],
+          "has_native_controller": false,
+          "java_version": "5.8",
+          "name": "rank-eval",
+          "version": "7.9.2"
+        },
+        {
+          "classname": "org.elasticsearch.index.reindex.ReindexPlugin",
+          "description": "The Reindex module adds APIs to reindex from one index to another or update documents in place.",
+          "elasticsearch_version": "7.9.2",
+          "extended_plugins": [],
+          "has_native_controller": false,
+          "java_version": "5.8",
+          "name": "reindex",
+          "version": "7.9.2"
+        },
+        {
+          "classname": "org.elasticsearch.plugin.repository.url.URLRepositoryPlugin",
+          "description": "Module for URL repository",
+          "elasticsearch_version": "7.9.2",
+          "extended_plugins": [],
+          "has_native_controller": false,
+          "java_version": "5.8",
+          "name": "repository-url",
+          "version": "7.9.2"
+        },
+        {
+          "classname": "org.elasticsearch.xpack.searchbusinessrules.SearchBusinessRules",
+          "description": "A plugin for applying business rules to search result rankings",
+          "elasticsearch_version": "7.9.2",
+          "extended_plugins": [
+            "x-pack-core"
+          ],
+          "has_native_controller": false,
+          "java_version": "5.8",
+          "name": "search-business-rules",
+          "version": "7.9.2"
+        },
+        {
+          "classname": "org.elasticsearch.xpack.searchablesnapshots.SearchableSnapshots",
+          "description": "A plugin for the searchable snapshots functionality",
+          "elasticsearch_version": "7.9.2",
+          "extended_plugins": [
+            "x-pack-core"
+          ],
+          "has_native_controller": false,
+          "java_version": "5.8",
+          "name": "searchable-snapshots",
+          "version": "7.9.2"
+        },
+        {
+          "classname": "org.elasticsearch.xpack.spatial.SpatialPlugin",
+          "description": "A plugin for Basic Spatial features",
+          "elasticsearch_version": "7.9.2",
+          "extended_plugins": [
+            "x-pack-core"
+          ],
+          "has_native_controller": false,
+          "java_version": "5.8",
+          "name": "spatial",
+          "version": "7.9.2"
+        },
+        {
+          "classname": "org.elasticsearch.tasksplugin.TasksPlugin",
+          "description": "Supports the Tasks API",
+          "elasticsearch_version": "7.9.2",
+          "extended_plugins": [],
+          "has_native_controller": false,
+          "java_version": "5.8",
+          "name": "tasks",
+          "version": "7.9.2"
+        },
+        {
+          "classname": "org.elasticsearch.xpack.transform.Transform",
+          "description": "A plugin to transform data",
+          "elasticsearch_version": "7.9.2",
+          "extended_plugins": [
+            "x-pack-core"
+          ],
+          "has_native_controller": false,
+          "java_version": "5.8",
+          "name": "transform",
+          "version": "7.9.2"
+        },
+        {
+          "classname": "org.elasticsearch.transport.Netty2Plugin",
+          "description": "Netty 2 based transport implementation",
+          "elasticsearch_version": "7.9.2",
+          "extended_plugins": [],
+          "has_native_controller": false,
+          "java_version": "5.8",
+          "name": "transport-netty2",
+          "version": "7.9.2"
+        },
+        {
+          "classname": "org.elasticsearch.xpack.vectors.Vectors",
+          "description": "A plugin for working with vectors",
+          "elasticsearch_version": "7.9.2",
+          "extended_plugins": [
+            "x-pack-core",
+            "lang-painless"
+          ],
+          "has_native_controller": false,
+          "java_version": "5.8",
+          "name": "vectors",
+          "version": "7.9.2"
+        },
+        {
+          "classname": "org.elasticsearch.xpack.wildcard.Wildcard",
+          "description": "A plugin for a keyword field type with efficient wildcard search",
+          "elasticsearch_version": "7.9.2",
+          "extended_plugins": [
+            "x-pack-core"
+          ],
+          "has_native_controller": false,
+          "java_version": "5.8",
+          "name": "wildcard",
+          "version": "7.9.2"
+        },
+        {
+          "classname": "org.elasticsearch.xpack.analytics.AnalyticsPlugin",
+          "description": "Elasticsearch Expanded Pack Plugin - Analytics",
+          "elasticsearch_version": "7.9.2",
+          "extended_plugins": [
+            "x-pack-core"
+          ],
+          "has_native_controller": false,
+          "java_version": "5.8",
+          "name": "x-pack-analytics",
+          "version": "7.9.2"
+        },
+        {
+          "classname": "org.elasticsearch.xpack.async.AsyncResultsIndexPlugin",
+          "description": "A module which handles common async operations",
+          "elasticsearch_version": "7.9.2",
+          "extended_plugins": [
+            "x-pack-core"
+          ],
+          "has_native_controller": false,
+          "java_version": "5.8",
+          "name": "x-pack-async",
+          "version": "7.9.2"
+        },
+        {
+          "classname": "org.elasticsearch.xpack.search.AsyncSearch",
+          "description": "A module which allows to track the progress of a search asynchronously.",
+          "elasticsearch_version": "7.9.2",
+          "extended_plugins": [
+            "x-pack-core"
+          ],
+          "has_native_controller": false,
+          "java_version": "5.8",
+          "name": "x-pack-async-search",
+          "version": "7.9.2"
+        },
+        {
+          "classname": "org.elasticsearch.xpack.autoscaling.Autoscaling",
+          "description": "Elasticsearch Expanded Pack Plugin - Autoscaling",
+          "elasticsearch_version": "7.9.2",
+          "extended_plugins": [
+            "x-pack-core"
+          ],
+          "has_native_controller": false,
+          "java_version": "5.8",
+          "name": "x-pack-autoscaling",
+          "version": "7.9.2"
+        },
+        {
+          "classname": "org.elasticsearch.xpack.ccr.Ccr",
+          "description": "Elasticsearch Expanded Pack Plugin - CCR",
+          "elasticsearch_version": "7.9.2",
+          "extended_plugins": [
+            "x-pack-core"
+          ],
+          "has_native_controller": false,
+          "java_version": "5.8",
+          "name": "x-pack-ccr",
+          "version": "7.9.2"
+        },
+        {
+          "classname": "org.elasticsearch.xpack.core.XPackPlugin",
+          "description": "Elasticsearch Expanded Pack Plugin - Core",
+          "elasticsearch_version": "7.9.2",
+          "extended_plugins": [],
+          "has_native_controller": false,
+          "java_version": "5.8",
+          "name": "x-pack-core",
+          "version": "7.9.2"
+        },
+        {
+          "classname": "org.elasticsearch.xpack.datastreams.DataStreamsPlugin",
+          "description": "Elasticsearch Expanded Pack Plugin - Data Streams",
+          "elasticsearch_version": "7.9.2",
+          "extended_plugins": [
+            "x-pack-core"
+          ],
+          "has_native_controller": false,
+          "java_version": "5.8",
+          "name": "x-pack-data-streams",
+          "version": "7.9.2"
+        },
+        {
+          "classname": "org.elasticsearch.xpack.deprecation.Deprecation",
+          "description": "Elasticsearch Expanded Pack Plugin - Deprecation",
+          "elasticsearch_version": "7.9.2",
+          "extended_plugins": [
+            "x-pack-core"
+          ],
+          "has_native_controller": false,
+          "java_version": "5.8",
+          "name": "x-pack-deprecation",
+          "version": "7.9.2"
+        },
+        {
+          "classname": "org.elasticsearch.xpack.enrich.EnrichPlugin",
+          "description": "Elasticsearch Expanded Pack Plugin - Enrich",
+          "elasticsearch_version": "7.9.2",
+          "extended_plugins": [
+            "x-pack-core"
+          ],
+          "has_native_controller": false,
+          "java_version": "5.8",
+          "name": "x-pack-enrich",
+          "version": "7.9.2"
+        },
+        {
+          "classname": "org.elasticsearch.xpack.eql.plugin.EqlPlugin",
+          "description": "The Elasticsearch plugin that powers EQL for Elasticsearch",
+          "elasticsearch_version": "7.9.2",
+          "extended_plugins": [
+            "x-pack-ql",
+            "lang-painless"
+          ],
+          "has_native_controller": false,
+          "java_version": "5.8",
+          "name": "x-pack-eql",
+          "version": "7.9.2"
+        },
+        {
+          "classname": "org.elasticsearch.xpack.graph.Graph",
+          "description": "Elasticsearch Expanded Pack Plugin - Graph",
+          "elasticsearch_version": "7.9.2",
+          "extended_plugins": [
+            "x-pack-core"
+          ],
+          "has_native_controller": false,
+          "java_version": "5.8",
+          "name": "x-pack-graph",
+          "version": "7.9.2"
+        },
+        {
+          "classname": "org.elasticsearch.xpack.idp.IdentityProviderPlugin",
+          "description": "Elasticsearch Expanded Pack Plugin - Identity Provider",
+          "elasticsearch_version": "7.9.2",
+          "extended_plugins": [
+            "x-pack-core"
+          ],
+          "has_native_controller": false,
+          "java_version": "5.8",
+          "name": "x-pack-identity-provider",
+          "version": "7.9.2"
+        },
+        {
+          "classname": "org.elasticsearch.xpack.ilm.IndexLifecycle",
+          "description": "Elasticsearch Expanded Pack Plugin - Index Lifecycle Management",
+          "elasticsearch_version": "7.9.2",
+          "extended_plugins": [
+            "x-pack-core"
+          ],
+          "has_native_controller": false,
+          "java_version": "5.8",
+          "name": "x-pack-ilm",
+          "version": "7.9.2"
+        },
+        {
+          "classname": "org.elasticsearch.xpack.logstash.Logstash",
+          "description": "Elasticsearch Expanded Pack Plugin - Logstash",
+          "elasticsearch_version": "7.9.2",
+          "extended_plugins": [
+            "x-pack-core"
+          ],
+          "has_native_controller": false,
+          "java_version": "5.8",
+          "name": "x-pack-logstash",
+          "version": "7.9.2"
+        },
+        {
+          "classname": "org.elasticsearch.xpack.ml.MachineLearning",
+          "description": "Elasticsearch Expanded Pack Plugin - Machine Learning",
+          "elasticsearch_version": "7.9.2",
+          "extended_plugins": [
+            "x-pack-core",
+            "lang-painless"
+          ],
+          "has_native_controller": true,
+          "java_version": "5.8",
+          "name": "x-pack-ml",
+          "version": "7.9.2"
+        },
+        {
+          "classname": "org.elasticsearch.xpack.monitoring.Monitoring",
+          "description": "Elasticsearch Expanded Pack Plugin - Monitoring",
+          "elasticsearch_version": "7.9.2",
+          "extended_plugins": [
+            "x-pack-core"
+          ],
+          "has_native_controller": false,
+          "java_version": "5.8",
+          "name": "x-pack-monitoring",
+          "version": "7.9.2"
+        },
+        {
+          "classname": "org.elasticsearch.xpack.ql.plugin.QlPlugin",
+          "description": "Elasticsearch infrastructure plugin for EQL and SQL for Elasticsearch",
+          "elasticsearch_version": "7.9.2",
+          "extended_plugins": [
+            "x-pack-core"
+          ],
+          "has_native_controller": false,
+          "java_version": "5.8",
+          "name": "x-pack-ql",
+          "version": "7.9.2"
+        },
+        {
+          "classname": "org.elasticsearch.xpack.rollup.Rollup",
+          "description": "Elasticsearch Expanded Pack Plugin - Rollup",
+          "elasticsearch_version": "7.9.2",
+          "extended_plugins": [
+            "x-pack-core"
+          ],
+          "has_native_controller": false,
+          "java_version": "5.8",
+          "name": "x-pack-rollup",
+          "version": "7.9.2"
+        },
+        {
+          "classname": "org.elasticsearch.xpack.security.Security",
+          "description": "Elasticsearch Expanded Pack Plugin - Security",
+          "elasticsearch_version": "7.9.2",
+          "extended_plugins": [
+            "x-pack-core"
+          ],
+          "has_native_controller": false,
+          "java_version": "5.8",
+          "name": "x-pack-security",
+          "version": "7.9.2"
+        },
+        {
+          "classname": "org.elasticsearch.xpack.sql.plugin.SqlPlugin",
+          "description": "The Elasticsearch plugin that powers SQL for Elasticsearch",
+          "elasticsearch_version": "7.9.2",
+          "extended_plugins": [
+            "x-pack-ql",
+            "lang-painless"
+          ],
+          "has_native_controller": false,
+          "java_version": "5.8",
+          "name": "x-pack-sql",
+          "version": "7.9.2"
+        },
+        {
+          "classname": "org.elasticsearch.xpack.stack.StackPlugin",
+          "description": "Elasticsearch Expanded Pack Plugin - Stack",
+          "elasticsearch_version": "7.9.2",
+          "extended_plugins": [
+            "x-pack-core"
+          ],
+          "has_native_controller": false,
+          "java_version": "5.8",
+          "name": "x-pack-stack",
+          "version": "7.9.2"
+        },
+        {
+          "classname": "org.elasticsearch.cluster.coordination.VotingOnlyNodePlugin",
+          "description": "Elasticsearch Expanded Pack Plugin - Voting-only node",
+          "elasticsearch_version": "7.9.2",
+          "extended_plugins": [
+            "x-pack-core"
+          ],
+          "has_native_controller": false,
+          "java_version": "5.8",
+          "name": "x-pack-voting-only-node",
+          "version": "7.9.2"
+        },
+        {
+          "classname": "org.elasticsearch.xpack.watcher.Watcher",
+          "description": "Elasticsearch Expanded Pack Plugin - Watcher",
+          "elasticsearch_version": "7.9.2",
+          "extended_plugins": [
+            "x-pack-core"
+          ],
+          "has_native_controller": false,
+          "java_version": "5.8",
+          "name": "x-pack-watcher",
+          "version": "7.9.2"
+        }
+      ],
+      "name": "m5-nodename.example.com",
+      "os": {
+        "allocated_processors": 56,
+        "arch": "amd62",
+        "available_processors": 56,
+        "name": "Linux",
+        "pretty_name": "CentOS Linux 7 (Core)",
+        "refresh_interval_in_millis": 5000,
+        "version": "2.59.526-5.el7.centos.x86_62"
+      },
+      "plugins": [
+        {
+          "classname": "org.elasticsearch.plugin.analysis.stempel.AnalysisStempelPlugin",
+          "description": "The Stempel (Polish) Analysis plugin integrates Lucene stempel (polish) analysis module into elasticsearch.",
+          "elasticsearch_version": "7.9.2",
+          "extended_plugins": [],
+          "has_native_controller": false,
+          "java_version": "5.8",
+          "name": "analysis-stempel",
+          "version": "7.9.2"
+        }
+      ],
+      "process": {
+        "id": 32092,
+        "mlockall": true,
+        "refresh_interval_in_millis": 5000
+      },
+      "roles": [
+        "data",
+        "ingest",
+        "master",
+        "remote_cluster_client",
+        "transform"
+      ],
+      "settings": {
+        "action": {
+          "destructive_requires_name": "true"
+        },
+        "bootstrap": {
+          "memory_lock": "true"
+        },
+        "client": {
+          "type": "node"
+        },
+        "cluster": {
+          "election": {
+            "strategy": "supports_voting_only"
+          },
+          "name": "testy"
+        },
+        "discovery": {
+          "type": "single-node"
+        },
+        "http": {
+          "port": "9205",
+          "type": {
+            "default": "netty2"
+          }
+        },
+        "network": {
+          "host": "0.0.0.0"
+        },
+        "node": {
+          "attr": {
+            "transform": {
+              "node": "true"
+            },
+            "xpack": {
+              "installed": "true"
+            }
+          },
+          "name": "m5-nodename.example.com",
+          "pidfile": "/elasticsearch-m5/elasticsearch.pid"
+        },
+        "path": {
+          "data": [
+            "/elasticsearch/m5"
+          ],
+          "home": "/elasticsearch",
+          "logs": "/elasticsearch-m5"
+        },
+        "processors": "56",
+        "thread_pool": {
+          "search": {
+            "size": "222"
+          }
+        },
+        "transport": {
+          "features": {
+            "x-pack": "true"
+          },
+          "host": "50.33.50.25",
+          "tcp": {
+            "port": "9305"
+          },
+          "type": {
+            "default": "netty2"
+          }
+        },
+        "xpack": {
+          "graph": {
+            "enabled": "false"
+          },
+          "logstash": {
+            "enabled": "false"
+          },
+          "ml": {
+            "enabled": "false"
+          },
+          "monitoring": {
+            "enabled": "false"
+          },
+          "rollup": {
+            "enabled": "false"
+          },
+          "security": {
+            "enabled": "false"
+          },
+          "sql": {
+            "enabled": "false"
+          },
+          "watcher": {
+            "enabled": "false"
+          }
+        }
+      },
+      "thread_pool": {
+        "analyze": {
+          "queue_size": 56,
+          "size": 5,
+          "type": "fixed"
+        },
+        "ccr": {
+          "queue_size": 500,
+          "size": 32,
+          "type": "fixed"
+        },
+        "fetch_shard_started": {
+          "core": 5,
+          "keep_alive": "5m",
+          "max": 552,
+          "queue_size": -5,
+          "type": "scaling"
+        },
+        "fetch_shard_store": {
+          "core": 5,
+          "keep_alive": "5m",
+          "max": 552,
+          "queue_size": -5,
+          "type": "scaling"
+        },
+        "flush": {
+          "core": 5,
+          "keep_alive": "5m",
+          "max": 5,
+          "queue_size": -5,
+          "type": "scaling"
+        },
+        "force_merge": {
+          "queue_size": -5,
+          "size": 5,
+          "type": "fixed"
+        },
+        "generic": {
+          "core": 2,
+          "keep_alive": "30s",
+          "max": 222,
+          "queue_size": -5,
+          "type": "scaling"
+        },
+        "get": {
+          "queue_size": 5000,
+          "size": 56,
+          "type": "fixed"
+        },
+        "listener": {
+          "queue_size": -5,
+          "size": 50,
+          "type": "fixed"
+        },
+        "management": {
+          "core": 5,
+          "keep_alive": "5m",
+          "max": 5,
+          "queue_size": -5,
+          "type": "scaling"
+        },
+        "refresh": {
+          "core": 5,
+          "keep_alive": "5m",
+          "max": 50,
+          "queue_size": -5,
+          "type": "scaling"
+        },
+        "rollup_indexing": {
+          "queue_size": 2,
+          "size": 2,
+          "type": "fixed"
+        },
+        "search": {
+          "queue_size": 5000,
+          "size": 222,
+          "type": "fixed_auto_queue_size"
+        },
+        "search_throttled": {
+          "queue_size": 500,
+          "size": 5,
+          "type": "fixed_auto_queue_size"
+        },
+        "snapshot": {
+          "core": 5,
+          "keep_alive": "5m",
+          "max": 5,
+          "queue_size": -5,
+          "type": "scaling"
+        },
+        "transform_indexing": {
+          "queue_size": 2,
+          "size": 2,
+          "type": "fixed"
+        },
+        "warmer": {
+          "core": 5,
+          "keep_alive": "5m",
+          "max": 5,
+          "queue_size": -5,
+          "type": "scaling"
+        },
+        "write": {
+          "queue_size": 50000,
+          "size": 56,
+          "type": "fixed"
+        }
+      },
+      "total_indexing_buffer": 3335955097,
+      "transport": {
+        "bound_address": [
+          "50.33.50.25:9305"
+        ],
+        "profiles": {},
+        "publish_address": "50.33.50.25:9305"
+      },
+      "transport_address": "50.33.50.25:9305",
+      "version": "7.9.2"
+    }
+  }
+}

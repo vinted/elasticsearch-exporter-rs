@@ -1,3 +1,4 @@
+use byte_unit::Byte;
 use serde_json::Value;
 use std::convert::TryFrom;
 use std::time::Duration;
@@ -52,6 +53,7 @@ impl<'s> TryFrom<RawMetric<'s>> for MetricType {
             } else {
                 value
                     .as_str()
+                    // .replace is handling string percent notation, e.g.: "3.44%"
                     .map(|n| n.replace("%", "").parse::<f64>())
                     .ok_or(unknown())?
                     .map_err(|e| MetricError::from_parse_float(e, Some(value.clone())))
@@ -70,9 +72,31 @@ impl<'s> TryFrom<RawMetric<'s>> for MetricType {
             return Ok(MetricType::Null);
         }
 
+        // "get.total": "0", INT
+        // "disk.total": "475894423552", BYTES
         match metric.0 {
-            "size" | "memory" | "store" | "bytes" => return Ok(MetricType::Bytes(parse_i64()?)),
-            "epoch" | "timestamp" | "date" | "time" | "millis" | "alive" => {
+            "indices" | "avail" | "used" | "size" | "memory" | "store" | "bytes" => {
+                // /_nodes/stats returns size with size postfix: kb, b, gb
+                // in case parsing to integer fails fallback and try to
+                // parse byte unit
+                return match parse_i64() {
+                    Ok(int) => Ok(MetricType::Bytes(int)),
+                    Err(e) => {
+                        if let Some(byte_str) = value.as_str() {
+                            return Ok(MetricType::Bytes(
+                                // FIX: Possible accuracy loss (Prometheus accepts up to 64 bits)
+                                Byte::from_str(byte_str).map(|b| b.get_bytes()).or(Err(e))? as i64,
+                            ));
+                        }
+
+                        Err(e)
+                    }
+                };
+            }
+            // Skip these metrics as highly variable
+            "date" | "epoch" | "timestamp" => return Ok(MetricType::Null),
+
+            "time" | "millis" | "alive" => {
                 return Ok(MetricType::Time(Duration::from_millis(
                     parse_i64().unwrap_or(0) as u64,
                 )))
@@ -89,16 +113,15 @@ impl<'s> TryFrom<RawMetric<'s>> for MetricType {
         }
 
         // TODO: rethink list matching, label could be matched by default with
-        // attempt to number before return
+        // attempt to parse number before return as default type label
         match metric.0 {
             // timed_out
-            "out" | "value" | "committed" | "searchable" | "compound" | "throttled" => {
-                Ok(MetricType::Switch(if value.as_bool().unwrap_or(false) {
-                    1
-                } else {
-                    0
-                }))
-            }
+            "enabled" | "out" | "value" | "committed" | "searchable" | "compound" | "throttled"
+            | "installed" => Ok(MetricType::Switch(if value.as_bool().unwrap_or(false) {
+                1
+            } else {
+                0
+            })),
 
             // Special cases
             // _cat/health: elasticsearch_cat_health_node_data{cluster="testing"}
@@ -110,12 +133,12 @@ impl<'s> TryFrom<RawMetric<'s>> for MetricType {
                 )),
             },
 
-            "primaries" | "min" | "max" | "successful" | "nodes" | "fetch" | "order"
-            | "largest" | "rejected" | "completed" | "queue" | "active" | "core" | "tasks"
-            | "relo" | "unassign" | "init" | "files" | "ops" | "recovered" | "generation"
-            | "contexts" | "listeners" | "pri" | "rep" | "docs" | "count" | "pid"
-            | "compilations" | "deleted" | "shards" | "indices" | "checkpoint" | "avail"
-            | "used" | "cpu" | "triggered" | "evictions" | "failed" | "total" | "current" => {
+            "processors" | "primaries" | "min" | "max" | "successful" | "nodes" | "fetch"
+            | "order" | "largest" | "rejected" | "completed" | "queue" | "active" | "core"
+            | "tasks" | "relo" | "unassign" | "init" | "files" | "ops" | "recovered"
+            | "generation" | "contexts" | "listeners" | "pri" | "rep" | "docs" | "count"
+            | "pid" | "compilations" | "deleted" | "shards" | "checkpoint" | "cpu"
+            | "triggered" | "evictions" | "failed" | "total" | "current" => {
                 Ok(MetricType::Gauge(parse_i64()?))
             }
 
@@ -123,7 +146,8 @@ impl<'s> TryFrom<RawMetric<'s>> for MetricType {
                 Ok(MetricType::GaugeF(parse_f64()?))
             }
 
-            "cluster" | "repository" | "snapshot" | "stage" | "uuid" | "component" | "master"
+            "types" | "usage" | "mount" | "group" | "rank" | "path" | "roles" | "context"
+            | "cluster" | "repository" | "snapshot" | "stage" | "uuid" | "component" | "master"
             | "role" | "uptime" | "alias" | "filter" | "search" | "flavor" | "string"
             | "address" | "health" | "build" | "node" | "state" | "patterns" | "of" | "segment"
             | "host" | "ip" | "prirep" | "id" | "status" | "at" | "for" | "details" | "reason"

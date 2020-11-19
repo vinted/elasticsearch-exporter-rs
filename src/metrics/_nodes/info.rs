@@ -1,14 +1,16 @@
-use elasticsearch::nodes::NodesUsageParts;
+use elasticsearch::nodes::NodesInfoParts;
 
 use super::responses::NodesResponse;
 
-pub(crate) const SUBSYSTEM: &'static str = "nodes_usage";
+pub(crate) const SUBSYSTEM: &'static str = "nodes_info";
 
+// https://www.elastic.co/guide/en/elasticsearch/reference/current/cluster-nodes-stats.html
 async fn metrics(exporter: &Exporter) -> Result<Vec<Metrics>, elasticsearch::Error> {
     let response = exporter
         .client()
         .nodes()
-        .usage(NodesUsageParts::None)
+        .info(NodesInfoParts::None)
+        // TODO: exclude by metric
         .request_timeout(exporter.options().elasticsearch_global_timeout)
         .send()
         .await?;
@@ -22,18 +24,40 @@ async fn metrics(exporter: &Exporter) -> Result<Vec<Metrics>, elasticsearch::Err
     Ok(metric::from_values(values))
 }
 
-const REMOVE_KEYS: &[&'static str; 2] = &["since", "timestamp"];
+const REMOVE_KEYS: &[&'static str; 21] = &[
+    "aggregations",
+    "timestamp",
+    "plugins",
+    "modules",
+    "ingest",
+    "input_arguments",
+    "memory_pools",
+    "gc_collectors",
+    "build_hash",
+    "build_type",
+    "build_flavor",
+    "using_compressed_ordinary_object_pointers",
+    "vm_vendor",
+    "arch",
+    "memory_lock",
+    "x-pack",
+    "strategy",
+    "default",
+    "pidfile",
+    "path",
+    "settings",
+];
 
 crate::poll_metrics!();
 
 #[tokio::test]
-async fn test_nodes_usage() {
+async fn test_nodes_info() {
     use tokio::sync::RwLock;
 
     use crate::metadata::node_data::{NodeData, NodeDataMap};
 
     let usage: NodesResponse =
-        serde_json::from_str(include_str!("../../tests/files/nodes_usage.json"))
+        serde_json::from_str(include_str!("../../tests/files/nodes_info.json"))
             .expect("valid json");
 
     let expected_name: String = "m1-nodename.example.com".into();
@@ -51,10 +75,7 @@ async fn test_nodes_usage() {
     let values = usage.into_values(&metadata, &["timestamp"]).await;
     assert!(!values.is_empty());
 
-    let aggregations = values[0].as_object().unwrap();
-    assert_eq!(
-        aggregations.get("name").unwrap().as_str().unwrap(),
-        expected_name
-    );
-    assert!(aggregations.get("timestamp").is_none());
+    let value = values[0].as_object().unwrap();
+    assert_eq!(value.get("name").unwrap().as_str().unwrap(), expected_name);
+    assert!(value.get("timestamp").is_none());
 }

@@ -149,32 +149,55 @@ impl Collection {
                     let _ = self.insert_gauge(&metric.key(), *value as f64, &labels, None)?;
                 }
                 MetricType::Bytes(value) => {
-                    if self.options.exporter_skip_zero_metrics && value > &0 {
-                        let _ = self.insert_gauge(
-                            &metric.key(),
-                            *value as f64,
-                            &labels,
-                            Some("_bytes"),
-                        )?;
+                    if self.options.exporter_skip_zero_metrics && value == &0 {
+                        continue;
                     }
+                    let postfix = if metric.key().ends_with("_bytes") {
+                        None
+                    } else {
+                        Some("_bytes")
+                    };
+                    let _ = self.insert_gauge(&metric.key(), *value as f64, &labels, postfix)?;
                 }
                 MetricType::GaugeF(value) => {
-                    if self.options.exporter_skip_zero_metrics && value > &0.0 {
-                        let _ = self.insert_gauge(&metric.key(), *value, &labels, None)?;
+                    // is_normal: returns true if the number is neither zero, infinite, subnormal, or NaN.
+                    if self.options.exporter_skip_zero_metrics && value.is_normal() {
+                        continue;
                     }
+                    let _ = self.insert_gauge(&metric.key(), *value, &labels, None)?;
                 }
                 MetricType::Gauge(value) => {
-                    if self.options.exporter_skip_zero_metrics && value > &0 {
-                        let _ = self.insert_gauge(&metric.key(), *value as f64, &labels, None)?;
+                    if self.options.exporter_skip_zero_metrics && value == &0 {
+                        continue;
                     }
+                    let _ = self.insert_gauge(&metric.key(), *value as f64, &labels, None)?;
                 }
                 MetricType::Time(duration) => {
-                    if !duration.is_zero() {
+                    if self.options.exporter_skip_zero_metrics && duration.is_zero() {
+                        continue;
+                    }
+
+                    if metric.key().contains("millis") {
+                        let adjusted_key = metric.key().replace("millis", "seconds");
+
+                        let _ = self.insert_histogram(
+                            &adjusted_key,
+                            duration.as_secs_f64(),
+                            &labels,
+                            None,
+                        )?;
+                    } else {
+                        let postfix = if metric.key().ends_with("_seconds") {
+                            None
+                        } else {
+                            Some("_seconds")
+                        };
+
                         let _ = self.insert_histogram(
                             &metric.key(),
                             duration.as_secs_f64(),
                             &labels,
-                            None,
+                            postfix,
                         )?;
                     }
                 }
@@ -184,4 +207,17 @@ impl Collection {
 
         Ok(())
     }
+}
+
+#[test]
+fn test_float_is_zero() {
+    let num: f64 = 0.000000000000000000000000000000000000000000000000000000000000000000001;
+    assert!(num != 0.0);
+    assert!(num.is_normal());
+
+    let zero: f64 = 0.0;
+    assert!(!zero.is_normal());
+
+    let negative: f64 = -0.000000000000000000000000000000000000000000000000000000000000000000001;
+    assert!(negative.is_normal());
 }
