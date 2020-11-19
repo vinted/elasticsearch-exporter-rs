@@ -39,6 +39,10 @@
 )]
 
 #[macro_use]
+extern crate prometheus;
+#[macro_use]
+extern crate lazy_static;
+#[macro_use]
 extern crate log;
 #[macro_use]
 extern crate serde_derive;
@@ -52,6 +56,10 @@ use std::time::Duration;
 pub mod collection;
 /// Metric
 pub mod metric;
+
+/// Exporter metrics
+pub mod exporter_metrics;
+
 mod options;
 pub use options::ExporterOptions;
 

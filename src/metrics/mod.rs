@@ -11,13 +11,15 @@ pub(crate) mod _nodes;
 #[macro_export]
 macro_rules! poll_metrics {
     () => {
-        use crate::collection::Collection;
-        use crate::metric::{self, Metrics};
-        use crate::Exporter;
         use futures_util::StreamExt;
         #[allow(unused)]
         use serde_json::Value;
         use std::time::Duration;
+
+        use crate::collection::Collection;
+        use crate::exporter_metrics::HTTP_REQ_HISTOGRAM;
+        use crate::metric::{self, Metrics};
+        use crate::Exporter;
 
         #[allow(unused)]
         pub(crate) async fn poll(exporter: Exporter) {
@@ -54,8 +56,11 @@ macro_rules! poll_metrics {
 
             let mut interval = tokio::time::interval_at(start, *poll_interval);
 
-            // TODO: add metric how long it takes to scape subsystem
             while interval.next().await.is_some() {
+                let timer = HTTP_REQ_HISTOGRAM
+                    .with_label_values(&[&format!("/{}", SUBSYSTEM)])
+                    .start_timer();
+
                 match metrics(&exporter).await {
                     Ok(metrics) => {
                         for metric in metrics.into_iter() {
@@ -66,6 +71,8 @@ macro_rules! poll_metrics {
                         error!("poll {} metrics err {}", collection.subsystem(), e);
                     }
                 }
+
+                timer.observe_duration();
             }
         }
     };

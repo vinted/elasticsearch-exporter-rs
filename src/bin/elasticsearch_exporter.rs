@@ -1,10 +1,6 @@
 #![feature(str_split_once)]
 
 #[macro_use]
-extern crate lazy_static;
-#[macro_use]
-extern crate prometheus;
-#[macro_use]
 extern crate log;
 
 use clap::Clap;
@@ -14,22 +10,13 @@ use hyper::{
     service::{make_service_fn, service_fn},
     Body, Request, Response, Server, StatusCode,
 };
-use prometheus::{Encoder, HistogramVec, TextEncoder, TEXT_FORMAT};
+use prometheus::{Encoder, TextEncoder, TEXT_FORMAT};
 use std::convert::Infallible;
 use std::env;
 use std::panic;
 use std::time::Duration;
 
-use elasticsearch_exporter::{Exporter, ExporterOptions};
-
-lazy_static! {
-    static ref HTTP_REQ_HISTOGRAM: HistogramVec = register_histogram_vec!(
-        "http_request_duration_seconds",
-        "The HTTP request latencies in seconds.",
-        &["handler"]
-    )
-    .expect("valid histogram vec metric");
-}
+use elasticsearch_exporter::{exporter_metrics::HTTP_REQ_HISTOGRAM, Exporter, ExporterOptions};
 
 fn build_response(status: StatusCode, body: Body) -> Response<Body> {
     Response::builder()
