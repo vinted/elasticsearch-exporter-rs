@@ -218,6 +218,7 @@ impl Exporter {
 
     pub(crate) fn random_delay() -> u64 {
         use rand::prelude::*;
+
         let mut rng = thread_rng();
         rng.gen_range(250, 1000)
     }
