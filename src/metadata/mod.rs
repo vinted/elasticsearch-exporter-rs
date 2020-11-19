@@ -4,9 +4,11 @@ use elasticsearch::{Elasticsearch, Error};
 use serde_json::Value;
 use std::collections::HashMap;
 
-type NodeIdToName = HashMap<String, String>;
+pub(crate) type IdToMetadata = HashMap<String, NodeData>;
 
-pub(crate) async fn nodes_id_map(client: &Elasticsearch) -> Result<NodeIdToName, Error> {
+// TODO: add `version` label
+// TODO: use RwLock
+pub(crate) async fn build(client: &Elasticsearch) -> Result<IdToMetadata, Error> {
     info!("Elasticsearch: fetching cluster node ID's");
     let nodes_os = client
         .nodes()
@@ -16,7 +18,7 @@ pub(crate) async fn nodes_id_map(client: &Elasticsearch) -> Result<NodeIdToName,
         .json::<NodesOs>()
         .await?;
 
-    Ok(nodes_os.into())
+    Ok(nodes_os.nodes)
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -24,21 +26,15 @@ struct NodesOs {
     nodes: HashMap<String, NodeData>,
 }
 
+/// Node metadata
 #[derive(Debug, Serialize, Deserialize)]
-struct NodeData {
-    name: String,
-}
-
-impl From<NodesOs> for HashMap<String, String> {
-    fn from(node_os: NodesOs) -> Self {
-        let mut map = NodeIdToName::new();
-
-        for (k, v) in node_os.nodes.into_iter() {
-            let _ = map.insert(k, v.name);
-        }
-
-        map
-    }
+pub struct NodeData {
+    /// Node FQDN
+    pub name: String,
+    /// IP
+    pub ip: String,
+    /// Node Elasticsearch version
+    pub version: String,
 }
 
 pub(crate) async fn cluster_name(client: &Elasticsearch) -> Result<String, Error> {

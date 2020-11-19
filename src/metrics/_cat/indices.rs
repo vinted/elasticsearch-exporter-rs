@@ -5,13 +5,13 @@ pub(crate) const SUBSYSTEM: &'static str = "cat_indices";
 
 async fn metrics(exporter: &Exporter) -> Result<Vec<Metrics>, elasticsearch::Error> {
     let response = exporter
-        .client
+        .client()
         .cat()
         .indices(CatIndicesParts::Index(&["*"]))
         .format("json")
         .h(&["*"])
         .bytes(Bytes::B)
-        .request_timeout(exporter.options.elasticsearch_global_timeout)
+        .request_timeout(exporter.options().elasticsearch_global_timeout)
         // Return local information, do not retrieve the state from master node (default: false)
         .local(true)
         .time(Time::Ms)

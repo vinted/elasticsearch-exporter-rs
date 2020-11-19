@@ -4,7 +4,7 @@ pub(crate) const SUBSYSTEM: &'static str = "cat_pending_tasks";
 
 async fn metrics(exporter: &Exporter) -> Result<Vec<Metrics>, elasticsearch::Error> {
     let response = exporter
-        .client
+        .client()
         .cat()
         .pending_tasks()
         .format("json")
@@ -12,7 +12,7 @@ async fn metrics(exporter: &Exporter) -> Result<Vec<Metrics>, elasticsearch::Err
         // Return local information, do not retrieve the state from master node (default: false)
         .local(true)
         .time(Time::Ms)
-        .request_timeout(exporter.options.elasticsearch_global_timeout)
+        .request_timeout(exporter.options().elasticsearch_global_timeout)
         .send()
         .await?;
 

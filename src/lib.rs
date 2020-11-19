@@ -47,6 +47,7 @@ extern crate serde_derive;
 use elasticsearch::http::transport::{SingleNodeConnectionPool, TransportBuilder};
 use elasticsearch::Elasticsearch;
 use std::collections::{BTreeMap, HashMap};
+use std::sync::Arc;
 use std::time::Duration;
 
 /// Generic collector of Elasticsearch metrics
@@ -84,20 +85,44 @@ pub type ExporterMetricsSwitch = BTreeMap<String, bool>;
 
 /// Elasticsearch exporter
 #[derive(Debug, Clone)]
-pub struct Exporter {
+pub struct Exporter(Arc<Inner>);
+
+#[derive(Debug)]
+struct Inner {
     /// Elasticsearch client instance
-    pub client: Elasticsearch,
+    client: Elasticsearch,
     /// Exporter options
-    pub options: ExporterOptions,
+    options: ExporterOptions,
     /// Constant exporter labels, e.g.: cluster
-    pub const_labels: HashMap<String, String>,
+    const_labels: HashMap<String, String>,
 
     /// Node ID to node name map for adding extra metadata labels
     /// {"U-WnGaTpRxucgde3miiDWw": "m1-supernode.example.com"}
-    pub id_to_name: HashMap<String, String>,
+    metadata: metadata::IdToMetadata,
 }
 
 impl Exporter {
+    /// Elasticsearch client instance
+    pub fn client(&self) -> &Elasticsearch {
+        &self.0.client
+    }
+
+    /// Exporter options
+    pub fn options(&self) -> &ExporterOptions {
+        &self.0.options
+    }
+
+    /// Exporter options
+    pub fn const_labels(&self) -> HashMap<String, String> {
+        self.0.const_labels.clone()
+    }
+
+    /// Node ID to node name map for adding extra metadata labels
+    /// {"U-WnGaTpRxucgde3miiDWw": "m1-supernode.example.com"}
+    pub fn metadata(&self) -> &metadata::IdToMetadata {
+        &self.0.metadata
+    }
+
     /// Spawn exporter
     pub async fn new(options: ExporterOptions) -> Result<Self, Box<dyn std::error::Error>> {
         let connection_pool = SingleNodeConnectionPool::new(options.elasticsearch_url.clone());
@@ -109,18 +134,18 @@ impl Exporter {
         info!("Elasticsearch: ping");
         let _ = client.ping().send().await?;
 
-        let id_to_name = metadata::nodes_id_map(&client).await?;
+        let metadata = metadata::build(&client).await?;
         let cluster_name = metadata::cluster_name(&client).await?;
 
         let mut const_labels = HashMap::new();
         let _ = const_labels.insert("cluster".into(), cluster_name);
 
-        Ok(Self {
+        Ok(Self(Arc::new(Inner {
             client,
             options,
             const_labels,
-            id_to_name,
-        })
+            metadata,
+        })))
     }
 
     /// Spawn collectors
@@ -189,7 +214,7 @@ impl Exporter {
 #[macro_export]
 macro_rules! is_metric_enabled {
     ($exporter:expr, $metric:ident) => {
-        if $exporter.options.is_metric_enabled($metric::SUBSYSTEM) {
+        if $exporter.options().is_metric_enabled($metric::SUBSYSTEM) {
             let _ = tokio::spawn($metric::poll($exporter.clone()));
         }
     };

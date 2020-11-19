@@ -1,6 +1,8 @@
 use serde_json::Value;
 use std::collections::HashMap;
 
+use crate::metadata::IdToMetadata;
+
 /// Nodes response
 #[derive(Debug, Serialize, Deserialize)]
 pub(crate) struct NodesResponse {
@@ -11,15 +13,15 @@ impl NodesResponse {
     /// Inject labels into nodes response
     pub(crate) fn into_values(
         mut self,
-        labels: &HashMap<String, String>,
+        metadata: &IdToMetadata,
         keys_to_remove: &[&'static str],
     ) -> Vec<Value> {
         let mut values: Vec<Value> = Vec::new();
 
         // Inject node label
-        for (node, mut data) in self.nodes.drain() {
-            if let Some(label) = labels.get(&node) {
-                inject_label(&mut data, &label, keys_to_remove);
+        for (node_id, mut data) in self.nodes.drain() {
+            if let Some(node_metadata) = metadata.get(&node_id) {
+                inject_label(&mut data, &node_metadata.name, keys_to_remove);
 
                 values.push(data);
             }

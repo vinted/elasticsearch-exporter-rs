@@ -20,29 +20,33 @@ macro_rules! poll_metrics {
 
         #[allow(unused)]
         pub(crate) async fn poll(exporter: Exporter) {
-            let mut collection = Collection::new(SUBSYSTEM, exporter.options.clone());
-            // Common to all /_cat metrics
-            collection.const_labels = exporter.const_labels.clone();
+            let options = exporter.options();
 
-            if let Some(skip_labels) = exporter.options.exporter_skip_labels.get(SUBSYSTEM) {
+            let mut collection = Collection::new(SUBSYSTEM, options.clone());
+            // Common to all /_cat metrics
+            collection.const_labels = exporter.const_labels();
+
+            if let Some(skip_labels) = options.exporter_skip_labels.get(SUBSYSTEM) {
                 collection.skip_labels = skip_labels.clone();
             }
 
-            if let Some(skip_metrics) = exporter.options.exporter_skip_metrics.get(SUBSYSTEM) {
+            if let Some(skip_metrics) = options.exporter_skip_metrics.get(SUBSYSTEM) {
                 collection.skip_metrics = skip_metrics.clone();
             }
 
-            if let Some(include_labels) = exporter.options.exporter_include_labels.get(SUBSYSTEM) {
+            if let Some(include_labels) = options.exporter_include_labels.get(SUBSYSTEM) {
                 collection.include_labels = include_labels.clone();
             }
 
+            // TODO: add random delay
             let start = tokio::time::Instant::now();
 
             let poll_interval = exporter
+                .0
                 .options
                 .exporter_poll_intervals
                 .get(SUBSYSTEM)
-                .unwrap_or(&exporter.options.exporter_poll_default_interval);
+                .unwrap_or(&exporter.0.options.exporter_poll_default_interval);
 
             info!(
                 "Starting subsystem: {} with poll interval: {:?}",

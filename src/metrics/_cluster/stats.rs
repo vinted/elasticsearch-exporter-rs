@@ -4,10 +4,10 @@ pub(crate) const SUBSYSTEM: &'static str = "cluster_stats";
 
 async fn metrics(exporter: &Exporter) -> Result<Vec<Metrics>, elasticsearch::Error> {
     let response = exporter
-        .client
+        .client()
         .cluster()
         .stats(ClusterStatsParts::None)
-        .request_timeout(exporter.options.elasticsearch_global_timeout)
+        .request_timeout(exporter.options().elasticsearch_global_timeout)
         .send()
         .await?;
 

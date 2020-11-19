@@ -6,17 +6,17 @@ pub(crate) const SUBSYSTEM: &'static str = "nodes_usage";
 
 async fn metrics(exporter: &Exporter) -> Result<Vec<Metrics>, elasticsearch::Error> {
     let response = exporter
-        .client
+        .client()
         .nodes()
         .usage(NodesUsageParts::None)
-        .request_timeout(exporter.options.elasticsearch_global_timeout)
+        .request_timeout(exporter.options().elasticsearch_global_timeout)
         .send()
         .await?;
 
     let values = response
         .json::<NodesResponse>()
         .await?
-        .into_values(&exporter.id_to_name, REMOVE_KEYS);
+        .into_values(exporter.metadata(), REMOVE_KEYS);
 
     Ok(metric::from_values(values))
 }

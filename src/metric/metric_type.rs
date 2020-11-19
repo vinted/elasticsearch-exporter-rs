@@ -72,6 +72,8 @@ impl<'s> TryFrom<RawMetric<'s>> for MetricType {
             return Ok(MetricType::Null);
         }
 
+        // "get.total": "0", INT
+        // "disk.total": "475894423552", BYTES
         match metric.0 {
             "indices" | "avail" | "used" | "size" | "memory" | "store" | "bytes" => {
                 // /_nodes/stats returns size with size postfix: kb, b, gb
