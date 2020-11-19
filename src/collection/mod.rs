@@ -160,7 +160,8 @@ impl Collection {
                     let _ = self.insert_gauge(&metric.key(), *value as f64, &labels, postfix)?;
                 }
                 MetricType::GaugeF(value) => {
-                    if self.options.exporter_skip_zero_metrics && value == &0.0 {
+                    // is_normal: returns true if the number is neither zero, infinite, subnormal, or NaN.
+                    if self.options.exporter_skip_zero_metrics && value.is_normal() {
                         continue;
                     }
                     let _ = self.insert_gauge(&metric.key(), *value, &labels, None)?;
@@ -206,4 +207,17 @@ impl Collection {
 
         Ok(())
     }
+}
+
+#[test]
+fn test_float_is_zero() {
+    let num: f64 = 0.000000000000000000000000000000000000000000000000000000000000000000001;
+    assert!(num != 0.0);
+    assert!(num.is_normal());
+
+    let zero: f64 = 0.0;
+    assert!(!zero.is_normal());
+
+    let negative: f64 = -0.000000000000000000000000000000000000000000000000000000000000000000001;
+    assert!(negative.is_normal());
 }
