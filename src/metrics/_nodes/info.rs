@@ -9,8 +9,12 @@ async fn metrics(exporter: &Exporter) -> Result<Vec<Metrics>, elasticsearch::Err
     let response = exporter
         .client()
         .nodes()
-        .info(NodesInfoParts::None)
-        // TODO: exclude by metric
+        .info(NodesInfoParts::Metric(&[
+            "http",
+            "ingest",
+            "jvm",
+            "thread_pool",
+        ]))
         .request_timeout(exporter.options().elasticsearch_global_timeout)
         .send()
         .await?;
@@ -24,12 +28,9 @@ async fn metrics(exporter: &Exporter) -> Result<Vec<Metrics>, elasticsearch::Err
     Ok(metric::from_values(values))
 }
 
-const REMOVE_KEYS: &[&'static str; 21] = &[
+const REMOVE_KEYS: &[&'static str; 10] = &[
     "aggregations",
     "timestamp",
-    "plugins",
-    "modules",
-    "ingest",
     "input_arguments",
     "memory_pools",
     "gc_collectors",
@@ -38,14 +39,6 @@ const REMOVE_KEYS: &[&'static str; 21] = &[
     "build_flavor",
     "using_compressed_ordinary_object_pointers",
     "vm_vendor",
-    "arch",
-    "memory_lock",
-    "x-pack",
-    "strategy",
-    "default",
-    "pidfile",
-    "path",
-    "settings",
 ];
 
 crate::poll_metrics!();
