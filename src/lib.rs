@@ -211,8 +211,6 @@ impl Exporter {
         is_metric_enabled!(exporter, repositories);
         is_metric_enabled!(exporter, templates);
         is_metric_enabled!(exporter, transforms);
-
-        is_metric_enabled!(exporter, transforms);
     }
 
     pub(crate) fn random_delay() -> u64 {
