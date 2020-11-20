@@ -1,4 +1,4 @@
-use prometheus::{default_registry, GaugeVec, HistogramOpts, HistogramVec, IntGaugeVec, Opts};
+use prometheus::{default_registry, GaugeVec, IntGaugeVec, Opts};
 use std::collections::HashMap;
 
 use crate::{
@@ -11,7 +11,6 @@ use crate::{
 pub struct Collection {
     gauges: HashMap<String, IntGaugeVec>,
     fgauges: HashMap<String, GaugeVec>,
-    histogram: HashMap<String, HistogramVec>,
     subsystem: &'static str,
     /// Remove metrics from registry
     pub skip_metrics: Vec<String>,
@@ -38,7 +37,6 @@ impl Collection {
             const_labels: HashMap::new(),
             gauges: HashMap::new(),
             fgauges: HashMap::new(),
-            histogram: HashMap::new(),
         }
     }
 
@@ -120,46 +118,6 @@ impl Collection {
         Ok(())
     }
 
-    /// Insert Histogram type metric into collection
-    pub fn insert_histogram(
-        &mut self,
-        key: &str,
-        value: f64,
-        labels: &Labels,
-        key_postfix: Option<&'static str>,
-    ) -> Result<(), prometheus::Error> {
-        let keys = || labels.keys().map(|s| s.as_str()).collect::<Vec<&str>>();
-        let values = labels.values().map(|s| s.as_str()).collect::<Vec<&str>>();
-
-        if let Some(gauge) = self.histogram.get(key) {
-            gauge.with_label_values(&values).observe(value);
-        } else {
-            let mut metric_key = key.to_string();
-
-            if let Some(postfix) = key_postfix {
-                metric_key.push_str(postfix);
-            }
-
-            let new_histogram = HistogramVec::new(
-                HistogramOpts::new(metric_key, key)
-                    .const_labels(self.const_labels.clone())
-                    .subsystem(self.subsystem)
-                    .buckets(self.options.exporter_histogram_buckets.clone())
-                    .namespace(crate::NAMESPACE),
-                &keys(),
-            )?;
-
-            // Register new metric
-            default_registry().register(Box::new(new_histogram.clone()))?;
-
-            new_histogram.with_label_values(&values).observe(value);
-
-            let _ = self.histogram.insert(key.to_string(), new_histogram);
-        }
-
-        Ok(())
-    }
-
     /// Return metric subsystem e.g.: cat_indices, cat_nodes, etc.
     pub fn subsystem(&self) -> &'static str {
         self.subsystem
@@ -214,21 +172,16 @@ impl Collection {
                     let _ = self.insert_gauge(&metric.key(), *value, &labels, None)?;
                 }
                 MetricType::Time(duration) => {
-                    if self.options.exporter_skip_zero_metrics
-                        && !duration.as_secs_f64().is_normal()
-                    {
+                    let secs = duration.as_secs_f64();
+
+                    if self.options.exporter_skip_zero_metrics && !secs.is_normal() {
                         continue;
                     }
 
                     if metric.key().contains("millis") {
                         let adjusted_key = metric.key().replace("millis", "seconds");
 
-                        let _ = self.insert_histogram(
-                            &adjusted_key,
-                            duration.as_secs_f64(),
-                            &labels,
-                            None,
-                        )?;
+                        let _ = self.insert_fgauge(&adjusted_key, secs, &labels, None)?;
                     } else {
                         let postfix = if metric.key().ends_with("_seconds") {
                             None
@@ -236,12 +189,7 @@ impl Collection {
                             Some("_seconds")
                         };
 
-                        let _ = self.insert_histogram(
-                            &metric.key(),
-                            duration.as_secs_f64(),
-                            &labels,
-                            postfix,
-                        )?;
+                        let _ = self.insert_fgauge(&metric.key(), secs, &labels, postfix)?;
                     }
                 }
                 _ => {}
