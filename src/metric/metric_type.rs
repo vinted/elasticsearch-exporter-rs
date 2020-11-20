@@ -94,7 +94,7 @@ impl<'s> TryFrom<RawMetric<'s>> for MetricType {
                 };
             }
             // Skip these metrics as highly variable or redundant
-            "installed" | "jdk" | "pid" | "date" | "epoch" | "timestamp" => {
+            "installed" | "jdk" | "pid" | "date" | "epoch" | "timestamp" | "uptime" => {
                 return Ok(MetricType::Null)
             }
 
@@ -149,10 +149,10 @@ impl<'s> TryFrom<RawMetric<'s>> for MetricType {
 
             "types" | "usage" | "mount" | "group" | "rank" | "path" | "roles" | "context"
             | "cluster" | "repository" | "snapshot" | "stage" | "uuid" | "component" | "master"
-            | "role" | "uptime" | "alias" | "filter" | "search" | "flavor" | "string"
-            | "address" | "health" | "build" | "node" | "state" | "patterns" | "of" | "segment"
-            | "host" | "ip" | "prirep" | "id" | "status" | "at" | "for" | "details" | "reason"
-            | "port" | "attr" | "field" | "shard" | "index" | "name" | "type" | "version"
+            | "role" | "alias" | "filter" | "search" | "flavor" | "string" | "address"
+            | "health" | "build" | "node" | "state" | "patterns" | "of" | "segment" | "host"
+            | "ip" | "prirep" | "id" | "status" | "at" | "for" | "details" | "reason" | "port"
+            | "attr" | "field" | "shard" | "index" | "name" | "type" | "version"
             | "description" => Ok(MetricType::Label(
                 value.as_str().ok_or(unknown())?.to_owned(),
             )),
