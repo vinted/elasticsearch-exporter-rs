@@ -93,8 +93,10 @@ impl<'s> TryFrom<RawMetric<'s>> for MetricType {
                     }
                 };
             }
-            // Skip these metrics as highly variable
-            "date" | "epoch" | "timestamp" => return Ok(MetricType::Null),
+            // Skip these metrics as highly variable or redundant
+            "installed" | "jdk" | "pid" | "date" | "epoch" | "timestamp" => {
+                return Ok(MetricType::Null)
+            }
 
             "time" | "millis" | "alive" => {
                 return Ok(MetricType::Time(Duration::from_millis(
@@ -116,12 +118,13 @@ impl<'s> TryFrom<RawMetric<'s>> for MetricType {
         // attempt to parse number before return as default type label
         match metric.0 {
             // timed_out
-            "enabled" | "out" | "value" | "committed" | "searchable" | "compound" | "throttled"
-            | "installed" => Ok(MetricType::Switch(if value.as_bool().unwrap_or(false) {
-                1
-            } else {
-                0
-            })),
+            "enabled" | "out" | "value" | "committed" | "searchable" | "compound" | "throttled" => {
+                Ok(MetricType::Switch(if value.as_bool().unwrap_or(false) {
+                    1
+                } else {
+                    0
+                }))
+            }
 
             // Special cases
             // _cat/health: elasticsearch_cat_health_node_data{cluster="testing"}
@@ -137,10 +140,8 @@ impl<'s> TryFrom<RawMetric<'s>> for MetricType {
             | "order" | "largest" | "rejected" | "completed" | "queue" | "active" | "core"
             | "tasks" | "relo" | "unassign" | "init" | "files" | "ops" | "recovered"
             | "generation" | "contexts" | "listeners" | "pri" | "rep" | "docs" | "count"
-            | "pid" | "compilations" | "deleted" | "shards" | "checkpoint" | "cpu"
-            | "triggered" | "evictions" | "failed" | "total" | "current" => {
-                Ok(MetricType::Gauge(parse_i64()?))
-            }
+            | "compilations" | "deleted" | "shards" | "checkpoint" | "cpu" | "triggered"
+            | "evictions" | "failed" | "total" | "current" => Ok(MetricType::Gauge(parse_i64()?)),
 
             "avg" | "1m" | "5m" | "15m" | "number" | "percent" => {
                 Ok(MetricType::GaugeF(parse_f64()?))
@@ -152,7 +153,7 @@ impl<'s> TryFrom<RawMetric<'s>> for MetricType {
             | "address" | "health" | "build" | "node" | "state" | "patterns" | "of" | "segment"
             | "host" | "ip" | "prirep" | "id" | "status" | "at" | "for" | "details" | "reason"
             | "port" | "attr" | "field" | "shard" | "index" | "name" | "type" | "version"
-            | "jdk" | "description" => Ok(MetricType::Label(
+            | "description" => Ok(MetricType::Label(
                 value.as_str().ok_or(unknown())?.to_owned(),
             )),
             _ => {

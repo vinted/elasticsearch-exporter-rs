@@ -77,7 +77,8 @@ fn _from_value<'f>(
 // thread_pool_transform_indexing_rejected
 //
 // This is inconvenient to use with exporter_include_labels CLI argument
-const SKIP_PREFIX_APPEND: &[&'static str; 4] = &["name", "ip", "host", reserved::CLUSTER_VERSION];
+const SKIP_PREFIX_APPEND: &[&'static str; 4] =
+    &["name", "ip", "host", reserved::INJECT_CLUSTER_VERSION];
 
 fn _from_map(prefix: &str, output: &mut Vec<Metrics>, map: &SerdeMap) -> Result<(), MetricError> {
     let mut metrics = Metrics::new();

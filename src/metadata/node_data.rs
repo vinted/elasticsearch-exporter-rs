@@ -4,7 +4,7 @@ use futures_util::StreamExt;
 use std::collections::HashMap;
 use tokio::sync::RwLock;
 
-use crate::Exporter;
+use crate::{exporter_metrics::HTTP_REQ_HISTOGRAM, Exporter};
 
 pub(crate) type IdToMetadata = RwLock<NodeDataMap>;
 
@@ -57,14 +57,19 @@ pub(crate) async fn poll(exporter: Exporter) {
     let mut interval =
         tokio::time::interval_at(start, exporter.options().exporter_metadata_refresh_interval);
 
-    // TODO: add metric how long it takes to scape subsystem
     while interval.next().await.is_some() {
+        let timer = HTTP_REQ_HISTOGRAM
+            .with_label_values(&["/_nodes/os"])
+            .start_timer();
+
         match _build(&exporter.client()).await {
             Ok(new_metadata) => update_map(&mut *exporter.metadata().write().await, new_metadata),
             Err(e) => {
                 error!("poll metadata metrics err {}", e);
             }
         }
+
+        timer.observe_duration();
     }
 }
 

@@ -40,7 +40,7 @@ fn inject_label(value: &mut Value, node_data: &NodeData, keys_to_remove: &[&'sta
     if let Some(map) = value.as_object_mut() {
         let _ = map.insert("name".into(), Value::String(node_data.name.to_string()));
         let _ = map.insert(
-            reserved::CLUSTER_VERSION.into(),
+            reserved::INJECT_CLUSTER_VERSION.into(),
             Value::String(node_data.version.to_string()),
         );
         let _ = map.insert("ip".into(), Value::String(node_data.ip.to_string()));

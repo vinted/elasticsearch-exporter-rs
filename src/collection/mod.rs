@@ -161,7 +161,7 @@ impl Collection {
                 }
                 MetricType::GaugeF(value) => {
                     // is_normal: returns true if the number is neither zero, infinite, subnormal, or NaN.
-                    if self.options.exporter_skip_zero_metrics && value.is_normal() {
+                    if self.options.exporter_skip_zero_metrics && !value.is_normal() {
                         continue;
                     }
                     let _ = self.insert_gauge(&metric.key(), *value, &labels, None)?;
@@ -173,7 +173,9 @@ impl Collection {
                     let _ = self.insert_gauge(&metric.key(), *value as f64, &labels, None)?;
                 }
                 MetricType::Time(duration) => {
-                    if self.options.exporter_skip_zero_metrics && duration.is_zero() {
+                    if self.options.exporter_skip_zero_metrics
+                        && !duration.as_secs_f64().is_normal()
+                    {
                         continue;
                     }
 

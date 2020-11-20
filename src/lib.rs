@@ -1,5 +1,3 @@
-#![feature(duration_zero)]
-
 //! # Vinted Elasticsearch exporter
 #![deny(
     warnings,
@@ -41,6 +39,10 @@
 )]
 
 #[macro_use]
+extern crate prometheus;
+#[macro_use]
+extern crate lazy_static;
+#[macro_use]
 extern crate log;
 #[macro_use]
 extern crate serde_derive;
@@ -54,6 +56,10 @@ use std::time::Duration;
 pub mod collection;
 /// Metric
 pub mod metric;
+
+/// Exporter metrics
+pub mod exporter_metrics;
+
 mod options;
 pub use options::ExporterOptions;
 
@@ -217,9 +223,7 @@ impl Exporter {
     }
 
     pub(crate) fn random_delay() -> u64 {
-        use rand::prelude::*;
-        let mut rng = thread_rng();
-        rng.gen_range(250, 1000)
+        oorandom::Rand64::new(292).rand_range(150..800)
     }
 }
 

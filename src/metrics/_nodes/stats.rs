@@ -7,12 +7,25 @@ pub(crate) const SUBSYSTEM: &'static str = "nodes_stats";
 // https://www.elastic.co/guide/en/elasticsearch/reference/current/cluster-nodes-stats.html
 async fn metrics(exporter: &Exporter) -> Result<Vec<Metrics>, elasticsearch::Error> {
     let response = exporter
-        .0
-        .client
+        .client()
         .nodes()
         .stats(NodesStatsParts::None)
-        // TODO: exclude by metric
-        .request_timeout(exporter.0.options.elasticsearch_global_timeout)
+        // TODO: make configurable
+        .fields(&[
+            "breaker",
+            "discovery",
+            "fs",
+            "http",
+            "indexing_pressure",
+            "indices",
+            "ingest",
+            "jvm",
+            "os",
+            "process",
+            "thread_pool",
+            "transport",
+        ])
+        .request_timeout(exporter.options().elasticsearch_global_timeout)
         .send()
         .await?;
 
