@@ -69,6 +69,14 @@ pub struct Opts {
     #[clap(long = "elasticsearch_global_timeout_ms", default_value = "30000")]
     pub elasticsearch_global_timeout_ms: u64,
 
+    /// Exporter timeout for subsystems, in case subsystem timeout is not defined
+    /// default global timeout is used
+    #[clap(
+        long = "elasticsearch_subsystem_timeouts",
+        default_value = "node_stats=15s"
+    )]
+    pub elasticsearch_subsystem_timeouts: HashMapDuration,
+
     /// Exporter skip labels
     #[clap(
         long = "exporter_skip_labels",

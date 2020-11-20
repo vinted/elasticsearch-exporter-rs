@@ -16,7 +16,7 @@ async fn metrics(exporter: &Exporter) -> Result<Vec<Metrics>, elasticsearch::Err
             "jvm",
             "thread_pool",
         ]))
-        .request_timeout(exporter.options().elasticsearch_global_timeout)
+        .request_timeout(exporter.options().timeout_for_subsystem(SUBSYSTEM))
         .send()
         .await?;
 

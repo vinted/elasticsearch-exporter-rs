@@ -9,7 +9,7 @@ async fn metrics(exporter: &Exporter) -> Result<Vec<Metrics>, elasticsearch::Err
         .h(&["*"])
         // Return local information, do not retrieve the state from master node (default: false)
         .local(true)
-        .request_timeout(exporter.options().elasticsearch_global_timeout)
+        .request_timeout(exporter.options().timeout_for_subsystem(SUBSYSTEM))
         .send()
         .await?;
 
