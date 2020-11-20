@@ -1,4 +1,4 @@
-use prometheus::{default_registry, GaugeVec, HistogramOpts, HistogramVec, Opts};
+use prometheus::{default_registry, GaugeVec, HistogramOpts, HistogramVec, IntGaugeVec, Opts};
 use std::collections::HashMap;
 
 use crate::{
@@ -9,7 +9,8 @@ use crate::{
 /// Generic collector of metrics
 #[derive(Debug)]
 pub struct Collection {
-    gauges: HashMap<String, GaugeVec>,
+    gauges: HashMap<String, IntGaugeVec>,
+    fgauges: HashMap<String, GaugeVec>,
     histogram: HashMap<String, HistogramVec>,
     subsystem: &'static str,
     /// Remove metrics from registry
@@ -36,15 +37,55 @@ impl Collection {
             include_labels: vec![],
             const_labels: HashMap::new(),
             gauges: HashMap::new(),
+            fgauges: HashMap::new(),
             histogram: HashMap::new(),
         }
+    }
+
+    /// Insert Gauge type metric into collection
+    pub fn insert_fgauge(
+        &mut self,
+        key: &str,
+        value: f64,
+        labels: &Labels,
+        key_postfix: Option<&'static str>,
+    ) -> Result<(), prometheus::Error> {
+        let keys = || labels.keys().map(|s| s.as_str()).collect::<Vec<&str>>();
+        let values = labels.values().map(|s| s.as_str()).collect::<Vec<&str>>();
+
+        if let Some(gauge) = self.fgauges.get(key) {
+            gauge.with_label_values(&values).set(value);
+        } else {
+            let mut metric_key = key.to_string();
+
+            if let Some(postfix) = key_postfix {
+                metric_key.push_str(postfix);
+            }
+
+            let new_gauge = GaugeVec::new(
+                Opts::new(metric_key, key)
+                    .const_labels(self.const_labels.clone())
+                    .subsystem(self.subsystem)
+                    .namespace(crate::NAMESPACE),
+                &keys(),
+            )?;
+
+            // Register new metric
+            default_registry().register(Box::new(new_gauge.clone()))?;
+
+            new_gauge.with_label_values(&values).set(value);
+
+            let _ = self.fgauges.insert(key.to_string(), new_gauge);
+        }
+
+        Ok(())
     }
 
     /// Insert Gauge type metric into collection
     pub fn insert_gauge(
         &mut self,
         key: &str,
-        value: f64,
+        value: i64,
         labels: &Labels,
         key_postfix: Option<&'static str>,
     ) -> Result<(), prometheus::Error> {
@@ -60,7 +101,7 @@ impl Collection {
                 metric_key.push_str(postfix);
             }
 
-            let new_gauge = GaugeVec::new(
+            let new_gauge = IntGaugeVec::new(
                 Opts::new(metric_key, key)
                     .const_labels(self.const_labels.clone())
                     .subsystem(self.subsystem)
@@ -146,7 +187,7 @@ impl Collection {
 
             match metric.metric_type() {
                 MetricType::Switch(value) => {
-                    let _ = self.insert_gauge(&metric.key(), *value as f64, &labels, None)?;
+                    let _ = self.insert_gauge(&metric.key(), *value as i64, &labels, None)?;
                 }
                 MetricType::Bytes(value) => {
                     if self.options.exporter_skip_zero_metrics && value == &0 {
@@ -157,20 +198,20 @@ impl Collection {
                     } else {
                         Some("_bytes")
                     };
-                    let _ = self.insert_gauge(&metric.key(), *value as f64, &labels, postfix)?;
+                    let _ = self.insert_gauge(&metric.key(), *value, &labels, postfix)?;
                 }
                 MetricType::GaugeF(value) => {
                     // is_normal: returns true if the number is neither zero, infinite, subnormal, or NaN.
                     if self.options.exporter_skip_zero_metrics && !value.is_normal() {
                         continue;
                     }
-                    let _ = self.insert_gauge(&metric.key(), *value, &labels, None)?;
+                    let _ = self.insert_fgauge(&metric.key(), *value, &labels, None)?;
                 }
                 MetricType::Gauge(value) => {
                     if self.options.exporter_skip_zero_metrics && value == &0 {
                         continue;
                     }
-                    let _ = self.insert_gauge(&metric.key(), *value as f64, &labels, None)?;
+                    let _ = self.insert_gauge(&metric.key(), *value, &labels, None)?;
                 }
                 MetricType::Time(duration) => {
                     if self.options.exporter_skip_zero_metrics
