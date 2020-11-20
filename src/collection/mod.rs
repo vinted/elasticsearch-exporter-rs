@@ -1,4 +1,4 @@
-use prometheus::{default_registry, GaugeVec, HistogramOpts, HistogramVec, Opts};
+use prometheus::{default_registry, GaugeVec, IntGaugeVec, Opts};
 use std::collections::HashMap;
 
 use crate::{
@@ -9,8 +9,8 @@ use crate::{
 /// Generic collector of metrics
 #[derive(Debug)]
 pub struct Collection {
-    gauges: HashMap<String, GaugeVec>,
-    histogram: HashMap<String, HistogramVec>,
+    gauges: HashMap<String, IntGaugeVec>,
+    fgauges: HashMap<String, GaugeVec>,
     subsystem: &'static str,
     /// Remove metrics from registry
     pub skip_metrics: Vec<String>,
@@ -36,12 +36,12 @@ impl Collection {
             include_labels: vec![],
             const_labels: HashMap::new(),
             gauges: HashMap::new(),
-            histogram: HashMap::new(),
+            fgauges: HashMap::new(),
         }
     }
 
     /// Insert Gauge type metric into collection
-    pub fn insert_gauge(
+    pub fn insert_fgauge(
         &mut self,
         key: &str,
         value: f64,
@@ -51,7 +51,7 @@ impl Collection {
         let keys = || labels.keys().map(|s| s.as_str()).collect::<Vec<&str>>();
         let values = labels.values().map(|s| s.as_str()).collect::<Vec<&str>>();
 
-        if let Some(gauge) = self.gauges.get(key) {
+        if let Some(gauge) = self.fgauges.get(key) {
             gauge.with_label_values(&values).set(value);
         } else {
             let mut metric_key = key.to_string();
@@ -73,25 +73,25 @@ impl Collection {
 
             new_gauge.with_label_values(&values).set(value);
 
-            let _ = self.gauges.insert(key.to_string(), new_gauge);
+            let _ = self.fgauges.insert(key.to_string(), new_gauge);
         }
 
         Ok(())
     }
 
-    /// Insert Histogram type metric into collection
-    pub fn insert_histogram(
+    /// Insert Gauge type metric into collection
+    pub fn insert_gauge(
         &mut self,
         key: &str,
-        value: f64,
+        value: i64,
         labels: &Labels,
         key_postfix: Option<&'static str>,
     ) -> Result<(), prometheus::Error> {
         let keys = || labels.keys().map(|s| s.as_str()).collect::<Vec<&str>>();
         let values = labels.values().map(|s| s.as_str()).collect::<Vec<&str>>();
 
-        if let Some(gauge) = self.histogram.get(key) {
-            gauge.with_label_values(&values).observe(value);
+        if let Some(gauge) = self.gauges.get(key) {
+            gauge.with_label_values(&values).set(value);
         } else {
             let mut metric_key = key.to_string();
 
@@ -99,21 +99,20 @@ impl Collection {
                 metric_key.push_str(postfix);
             }
 
-            let new_histogram = HistogramVec::new(
-                HistogramOpts::new(metric_key, key)
+            let new_gauge = IntGaugeVec::new(
+                Opts::new(metric_key, key)
                     .const_labels(self.const_labels.clone())
                     .subsystem(self.subsystem)
-                    .buckets(self.options.exporter_histogram_buckets.clone())
                     .namespace(crate::NAMESPACE),
                 &keys(),
             )?;
 
             // Register new metric
-            default_registry().register(Box::new(new_histogram.clone()))?;
+            default_registry().register(Box::new(new_gauge.clone()))?;
 
-            new_histogram.with_label_values(&values).observe(value);
+            new_gauge.with_label_values(&values).set(value);
 
-            let _ = self.histogram.insert(key.to_string(), new_histogram);
+            let _ = self.gauges.insert(key.to_string(), new_gauge);
         }
 
         Ok(())
@@ -146,7 +145,7 @@ impl Collection {
 
             match metric.metric_type() {
                 MetricType::Switch(value) => {
-                    let _ = self.insert_gauge(&metric.key(), *value as f64, &labels, None)?;
+                    let _ = self.insert_gauge(&metric.key(), *value as i64, &labels, None)?;
                 }
                 MetricType::Bytes(value) => {
                     if self.options.exporter_skip_zero_metrics && value == &0 {
@@ -157,37 +156,32 @@ impl Collection {
                     } else {
                         Some("_bytes")
                     };
-                    let _ = self.insert_gauge(&metric.key(), *value as f64, &labels, postfix)?;
+                    let _ = self.insert_gauge(&metric.key(), *value, &labels, postfix)?;
                 }
                 MetricType::GaugeF(value) => {
                     // is_normal: returns true if the number is neither zero, infinite, subnormal, or NaN.
                     if self.options.exporter_skip_zero_metrics && !value.is_normal() {
                         continue;
                     }
-                    let _ = self.insert_gauge(&metric.key(), *value, &labels, None)?;
+                    let _ = self.insert_fgauge(&metric.key(), *value, &labels, None)?;
                 }
                 MetricType::Gauge(value) => {
                     if self.options.exporter_skip_zero_metrics && value == &0 {
                         continue;
                     }
-                    let _ = self.insert_gauge(&metric.key(), *value as f64, &labels, None)?;
+                    let _ = self.insert_gauge(&metric.key(), *value, &labels, None)?;
                 }
                 MetricType::Time(duration) => {
-                    if self.options.exporter_skip_zero_metrics
-                        && !duration.as_secs_f64().is_normal()
-                    {
+                    let secs = duration.as_secs_f64();
+
+                    if self.options.exporter_skip_zero_metrics && !secs.is_normal() {
                         continue;
                     }
 
                     if metric.key().contains("millis") {
                         let adjusted_key = metric.key().replace("millis", "seconds");
 
-                        let _ = self.insert_histogram(
-                            &adjusted_key,
-                            duration.as_secs_f64(),
-                            &labels,
-                            None,
-                        )?;
+                        let _ = self.insert_fgauge(&adjusted_key, secs, &labels, None)?;
                     } else {
                         let postfix = if metric.key().ends_with("_seconds") {
                             None
@@ -195,12 +189,7 @@ impl Collection {
                             Some("_seconds")
                         };
 
-                        let _ = self.insert_histogram(
-                            &metric.key(),
-                            duration.as_secs_f64(),
-                            &labels,
-                            postfix,
-                        )?;
+                        let _ = self.insert_fgauge(&metric.key(), secs, &labels, postfix)?;
                     }
                 }
                 _ => {}
