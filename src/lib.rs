@@ -58,7 +58,7 @@ pub mod collection;
 pub mod metric;
 
 /// Exporter metrics
-pub mod exporter_metrics;
+mod exporter_metrics;
 
 mod options;
 pub use options::ExporterOptions;
@@ -99,6 +99,8 @@ pub struct Exporter(Arc<Inner>);
 
 #[derive(Debug)]
 struct Inner {
+    /// Name of Elasticsearch cluster exporter is working
+    cluster_name: String,
     /// Elasticsearch client instance
     client: Elasticsearch,
     /// Exporter options
@@ -115,6 +117,11 @@ impl Exporter {
     /// Elasticsearch client instance
     pub fn client(&self) -> &Elasticsearch {
         &self.0.client
+    }
+
+    /// Elasticsearch cluster name
+    pub fn cluster_name(&self) -> &str {
+        &self.0.cluster_name
     }
 
     /// Exporter options
@@ -148,9 +155,10 @@ impl Exporter {
         let cluster_name = metadata::cluster_name(&client).await?;
 
         let mut const_labels = HashMap::new();
-        let _ = const_labels.insert("cluster".into(), cluster_name);
+        let _ = const_labels.insert("cluster".into(), cluster_name.clone());
 
         Ok(Self(Arc::new(Inner {
+            cluster_name,
             client,
             options,
             const_labels,

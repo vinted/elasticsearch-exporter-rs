@@ -109,6 +109,39 @@ exporter_metrics_enabled:
 exporter_metadata_refresh_interval: 300s
 ```
 
+## Self exporter metrics
+
+```
+# HELP elasticsearch_subsystem_request_duration_seconds The Elasticsearch subsystem request latencies in seconds.
+# TYPE elasticsearch_subsystem_request_duration_seconds histogram
+elasticsearch_subsystem_request_duration_seconds_bucket{cluster="devnull",subsystem="/_nodes/os",le="0.005"} 0
+elasticsearch_subsystem_request_duration_seconds_sum{cluster="devnull",subsystem="/nodes_stats"} 0.130069193
+elasticsearch_subsystem_request_duration_seconds_count{cluster="devnull",subsystem="/nodes_stats"} 1
+# HELP http_request_duration_seconds The HTTP request latencies in seconds.
+# TYPE http_request_duration_seconds histogram
+http_request_duration_seconds_bucket{handler="/metrics",le="0.005"} 1
+http_request_duration_seconds_sum{handler="/metrics"} 0.004372555
+http_request_duration_seconds_count{handler="/metrics"} 1
+# HELP process_cpu_seconds_total Total user and system CPU time spent in seconds.
+# TYPE process_cpu_seconds_total counter
+process_cpu_seconds_total 0.24
+# HELP process_max_fds Maximum number of open file descriptors.
+# TYPE process_max_fds gauge
+process_max_fds 1024
+# HELP process_open_fds Number of open file descriptors.
+# TYPE process_open_fds gauge
+process_open_fds 16
+# HELP process_resident_memory_bytes Resident memory size in bytes.
+# TYPE process_resident_memory_bytes gauge
+process_resident_memory_bytes 25006080
+# HELP process_start_time_seconds Start time of the process since unix epoch in seconds.
+# TYPE process_start_time_seconds gauge
+process_start_time_seconds 1605894185.46
+# HELP process_virtual_memory_bytes Virtual memory size in bytes.
+# TYPE process_virtual_memory_bytes gauge
+process_virtual_memory_bytes 1345773568
+```
+
 ## Development
 
 To start:

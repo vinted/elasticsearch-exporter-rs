@@ -17,7 +17,7 @@ macro_rules! poll_metrics {
         use std::time::Duration;
 
         use crate::collection::Collection;
-        use crate::exporter_metrics::HTTP_REQ_HISTOGRAM;
+        use crate::exporter_metrics::SUBSYSTEM_REQ_HISTOGRAM;
         use crate::metric::{self, Metrics};
         use crate::Exporter;
 
@@ -57,8 +57,8 @@ macro_rules! poll_metrics {
             let mut interval = tokio::time::interval_at(start, *poll_interval);
 
             while interval.next().await.is_some() {
-                let timer = HTTP_REQ_HISTOGRAM
-                    .with_label_values(&[&format!("/{}", SUBSYSTEM)])
+                let timer = SUBSYSTEM_REQ_HISTOGRAM
+                    .with_label_values(&[&format!("/{}", SUBSYSTEM), exporter.cluster_name()])
                     .start_timer();
 
                 match metrics(&exporter).await {

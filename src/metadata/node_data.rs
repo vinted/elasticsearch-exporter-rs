@@ -4,7 +4,7 @@ use futures_util::StreamExt;
 use std::collections::HashMap;
 use tokio::sync::RwLock;
 
-use crate::{exporter_metrics::HTTP_REQ_HISTOGRAM, Exporter};
+use crate::{exporter_metrics::SUBSYSTEM_REQ_HISTOGRAM, Exporter};
 
 pub(crate) type IdToMetadata = RwLock<NodeDataMap>;
 
@@ -58,8 +58,8 @@ pub(crate) async fn poll(exporter: Exporter) {
         tokio::time::interval_at(start, exporter.options().exporter_metadata_refresh_interval);
 
     while interval.next().await.is_some() {
-        let timer = HTTP_REQ_HISTOGRAM
-            .with_label_values(&["/_nodes/os"])
+        let timer = SUBSYSTEM_REQ_HISTOGRAM
+            .with_label_values(&["/_nodes/os", exporter.cluster_name()])
             .start_timer();
 
         match _build(&exporter.client()).await {
