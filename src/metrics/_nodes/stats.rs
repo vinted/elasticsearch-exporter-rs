@@ -9,7 +9,9 @@ async fn metrics(exporter: &Exporter) -> Result<Vec<Metrics>, elasticsearch::Err
     let response = exporter
         .client()
         .nodes()
-        .stats(NodesStatsParts::None)
+        .stats(NodesStatsParts::Metric(
+            &exporter.options().path_parameters_for_subsystem(SUBSYSTEM),
+        ))
         .fields(
             &exporter
                 .options()
@@ -33,8 +35,17 @@ async fn metrics(exporter: &Exporter) -> Result<Vec<Metrics>, elasticsearch::Err
 
 // NOTE:
 // enabling adaptive_selection exposes metrics in nanoseconds, e.g.: "avg_response_time_ns": 196669342
-const REMOVE_KEYS: &[&'static str; 4] =
-    &["timestamp", "attributes", "cgroup", "adaptive_selection"];
+const REMOVE_KEYS: &[&'static str; 9] = &[
+    "timestamp",
+    "attributes",
+    "cgroup",
+    "adaptive_selection",
+    "mapped - 'non-volatile memory'",
+    "pipelines",
+    "classes",
+    "script",
+    "thread_pool",
+];
 
 crate::poll_metrics!();
 
