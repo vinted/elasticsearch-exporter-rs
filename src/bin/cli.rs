@@ -77,6 +77,14 @@ pub struct Opts {
     )]
     pub elasticsearch_subsystem_timeouts: HashMapDuration,
 
+    /// Elasticsearch path parameters
+    /// https://www.elastic.co/guide/en/elasticsearch/reference/current/cluster-nodes-info.html#cluster-nodes-info-api-path-params
+    #[clap(
+        long = "elasticsearch_path_parameters",
+        default_value = "nodes_info=http,ingest,jvm,thread_pool"
+    )]
+    pub elasticsearch_path_parameters: HashMapVec,
+
     /// Exporter skip labels
     #[clap(
         long = "exporter_skip_labels",

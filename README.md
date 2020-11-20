@@ -66,6 +66,8 @@ elasticsearch_global_timeout: 30s
 elasticsearch_nodes_stats_fields: breaker,discovery,fs,http,indexing_pressure,indices,ingest,jvm,os,process,thread_pool,transport
 elasticsearch_subsystem_timeouts:
  - node_stats: 15s
+elasticsearch_path_parameters:
+ - nodes_info: http,ingest,jvm,thread_pool
 exporter_skip_labels:
  - cat_allocation: health,status
  - cat_fielddata: id

@@ -17,7 +17,13 @@ pub struct ExporterOptions {
     /// Exporter timeout for subsystems, in case subsystem timeout is not defined
     /// default global timeout is used
     pub elasticsearch_subsystem_timeouts: ExporterPollIntervals,
+    /// Elasticsearch path parameters
+    /// https://www.elastic.co/guide/en/elasticsearch/reference/current/cluster-nodes-info.html#cluster-nodes-info-api-path-params
+    pub elasticsearch_path_parameters: CollectionLabels,
 
+    //
+    // Exporter
+    //
     /// Exporter labels to skip
     pub exporter_skip_labels: CollectionLabels,
     /// Exporter labels to include, caution this may increase metric cardinality
@@ -42,6 +48,14 @@ impl ExporterOptions {
     /// Check if metric is enabled
     pub fn is_metric_enabled(&self, subsystem: &'static str) -> bool {
         self.exporter_metrics_enabled.contains_key(subsystem)
+    }
+
+    /// Path parameters for subsystems
+    pub fn path_parameters_for_subsystem(&self, subsystem: &'static str) -> Vec<&str> {
+        self.elasticsearch_path_parameters
+            .get(subsystem)
+            .map(|params| params.iter().map(AsRef::as_ref).collect::<Vec<&str>>())
+            .unwrap_or(Vec::new())
     }
 
     /// Get timeout for subsystem or fallback to global
@@ -109,6 +123,12 @@ impl fmt::Display for ExporterOptions {
             &mut output,
             "elasticsearch_subsystem_timeouts",
             &self.elasticsearch_subsystem_timeouts,
+        );
+
+        collection_labels_to_string(
+            &mut output,
+            "elasticsearch_path_parameters",
+            &self.elasticsearch_path_parameters,
         );
 
         collection_labels_to_string(
