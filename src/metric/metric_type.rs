@@ -118,13 +118,12 @@ impl<'s> TryFrom<RawMetric<'s>> for MetricType {
         // attempt to parse number before return as default type label
         match metric.0 {
             // timed_out
-            "enabled" | "out" | "value" | "committed" | "searchable" | "compound" | "throttled" => {
-                Ok(MetricType::Switch(if value.as_bool().unwrap_or(false) {
-                    1
-                } else {
-                    0
-                }))
-            }
+            "tripped" | "enabled" | "out" | "value" | "committed" | "searchable" | "compound"
+            | "throttled" => Ok(MetricType::Switch(if value.as_bool().unwrap_or(false) {
+                1
+            } else {
+                0
+            })),
 
             // Special cases
             // _cat/health: elasticsearch_cat_health_node_data{cluster="testing"}
@@ -136,9 +135,9 @@ impl<'s> TryFrom<RawMetric<'s>> for MetricType {
                 )),
             },
 
-            "processors" | "primaries" | "min" | "max" | "successful" | "nodes" | "fetch"
-            | "order" | "largest" | "rejected" | "completed" | "queue" | "active" | "core"
-            | "tasks" | "relo" | "unassign" | "init" | "files" | "ops" | "recovered"
+            "overhead" | "processors" | "primaries" | "min" | "max" | "successful" | "nodes"
+            | "fetch" | "order" | "largest" | "rejected" | "completed" | "queue" | "active"
+            | "core" | "tasks" | "relo" | "unassign" | "init" | "files" | "ops" | "recovered"
             | "generation" | "contexts" | "listeners" | "pri" | "rep" | "docs" | "count"
             | "compilations" | "deleted" | "shards" | "checkpoint" | "cpu" | "triggered"
             | "evictions" | "failed" | "total" | "current" => Ok(MetricType::Gauge(parse_i64()?)),
