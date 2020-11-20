@@ -52,8 +52,9 @@ $ curl -s http://127.0.0.1:9222/metrics | wc
  - Configurable metadata collection (flag `exporter_metadata_refresh_interval`)
 
 ```shell
+$ curl -s http://127.0.0.1:9222
 Vinted Elasticsearch exporter
-elasticsearch_url: http://127.0.0.1:9201/
+elasticsearch_url: http://127.0.0.1:9200
 elasticsearch_global_timeout: 30s
 exporter_skip_labels:
  - cat_allocation: health,status
