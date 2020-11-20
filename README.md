@@ -20,6 +20,13 @@ $ curl -s http://127.0.0.1:9222/metrics | wc
  940272 1887011 153668390
 ```
 
+## Try it out with docker
+
+```bash
+# List brokers and topics in cluster
+$ docker run --network=host -it ernestasvinted/elasticsearch_exporter --elasticsearch_url=http://IP:PORT
+```
+
 ## Features
 
  - Metric collection is decoupled from serving `/metrics` page
@@ -140,6 +147,22 @@ process_start_time_seconds 1605894185.46
 # HELP process_virtual_memory_bytes Virtual memory size in bytes.
 # TYPE process_virtual_memory_bytes gauge
 process_virtual_memory_bytes 1345773568
+```
+
+## Debug
+
+Levels: info,warn,error,debug,trace
+
+To debug HTTP requests
+
+```
+export RUST_LOG=info,reqwest=debug
+```
+
+To trace everything
+
+```
+export RUST_LOG=trace
 ```
 
 ## Development
