@@ -10,21 +10,14 @@ async fn metrics(exporter: &Exporter) -> Result<Vec<Metrics>, elasticsearch::Err
         .client()
         .nodes()
         .stats(NodesStatsParts::None)
-        // TODO: make configurable
-        .fields(&[
-            "breaker",
-            "discovery",
-            "fs",
-            "http",
-            "indexing_pressure",
-            "indices",
-            "ingest",
-            "jvm",
-            "os",
-            "process",
-            "thread_pool",
-            "transport",
-        ])
+        .fields(
+            &exporter
+                .options()
+                .elasticsearch_nodes_stats_fields
+                .iter()
+                .map(AsRef::as_ref)
+                .collect::<Vec<&str>>(),
+        )
         .request_timeout(exporter.options().elasticsearch_global_timeout)
         .send()
         .await?;

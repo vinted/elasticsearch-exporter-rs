@@ -117,6 +117,14 @@ pub struct Opts {
         default_value = "300"
     )]
     pub exporter_metadata_refresh_interval_seconds: u64,
+
+    /// Elasticsearch /_nodes/stats fields comma-separated list or
+    /// wildcard expressions of fields to include in the statistics.
+    #[clap(
+        long = "elasticsearch_nodes_stats_fields",
+        default_value = "breaker,discovery,fs,http,indexing_pressure,indices,ingest,jvm,os,process,thread_pool,transport"
+    )]
+    pub elasticsearch_nodes_stats_fields: Vec<String>,
 }
 
 #[derive(Debug, Clone, Default)]

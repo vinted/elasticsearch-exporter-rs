@@ -63,6 +63,7 @@ $ curl -s http://127.0.0.1:9222
 Vinted Elasticsearch exporter
 elasticsearch_url: http://127.0.0.1:9200
 elasticsearch_global_timeout: 30s
+elasticsearch_nodes_stats_fields: breaker,discovery,fs,http,indexing_pressure,indices,ingest,jvm,os,process,thread_pool,transport
 exporter_skip_labels:
  - cat_allocation: health,status
  - cat_fielddata: id

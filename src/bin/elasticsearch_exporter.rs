@@ -101,6 +101,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let options = ExporterOptions {
         elasticsearch_url: opts.elasticsearch_url.clone(),
         elasticsearch_global_timeout: Duration::from_millis(opts.elasticsearch_global_timeout_ms),
+        elasticsearch_nodes_stats_fields: opts.elasticsearch_nodes_stats_fields,
+
         exporter_skip_labels: opts.exporter_skip_labels.0.clone(),
         exporter_skip_metrics: opts.exporter_skip_metrics.0.clone(),
         exporter_include_labels: opts.exporter_include_labels.0.clone(),

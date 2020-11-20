@@ -11,6 +11,9 @@ pub struct ExporterOptions {
     pub elasticsearch_url: Url,
     /// Global HTTP request timeout
     pub elasticsearch_global_timeout: Duration,
+    /// Elasticsearch /_nodes/stats fields comma-separated list or
+    /// wildcard expressions of fields to include in the statistics.
+    pub elasticsearch_nodes_stats_fields: Vec<String>,
 
     /// Exporter labels to skip
     pub exporter_skip_labels: CollectionLabels,
@@ -85,6 +88,12 @@ impl fmt::Display for ExporterOptions {
             "elasticsearch_global_timeout: {:?}",
             self.elasticsearch_global_timeout
         ));
+        output.push_str("\n");
+        output.push_str(&format!(
+            "elasticsearch_nodes_stats_fields: {}",
+            self.elasticsearch_nodes_stats_fields.join(",")
+        ));
+
         collection_labels_to_string(
             &mut output,
             "exporter_skip_labels",
