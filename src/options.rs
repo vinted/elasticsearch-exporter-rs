@@ -2,7 +2,7 @@ use std::fmt;
 use std::time::Duration;
 use url::Url;
 
-use crate::{CollectionLabels, ExporterMetricsSwitch, ExporterPollIntervals};
+use crate::{metrics, CollectionLabels, ExporterMetricsSwitch, ExporterPollIntervals};
 
 /// Elasticsearch exporter options
 #[derive(Debug, Clone)]
@@ -11,7 +11,19 @@ pub struct ExporterOptions {
     pub elasticsearch_url: Url,
     /// Global HTTP request timeout
     pub elasticsearch_global_timeout: Duration,
+    /// Elasticsearch /_nodes/stats fields comma-separated list or
+    /// wildcard expressions of fields to include in the statistics.
+    pub elasticsearch_nodes_stats_fields: Vec<String>,
+    /// Exporter timeout for subsystems, in case subsystem timeout is not defined
+    /// default global timeout is used
+    pub elasticsearch_subsystem_timeouts: ExporterPollIntervals,
+    /// Elasticsearch path parameters
+    /// https://www.elastic.co/guide/en/elasticsearch/reference/current/cluster-nodes-info.html#cluster-nodes-info-api-path-params
+    pub elasticsearch_path_parameters: CollectionLabels,
 
+    //
+    // Exporter
+    //
     /// Exporter labels to skip
     pub exporter_skip_labels: CollectionLabels,
     /// Exporter labels to include, caution this may increase metric cardinality
@@ -36,6 +48,59 @@ impl ExporterOptions {
     /// Check if metric is enabled
     pub fn is_metric_enabled(&self, subsystem: &'static str) -> bool {
         self.exporter_metrics_enabled.contains_key(subsystem)
+    }
+
+    /// Path parameters for subsystems
+    pub fn path_parameters_for_subsystem(&self, subsystem: &'static str) -> Vec<&str> {
+        self.elasticsearch_path_parameters
+            .get(subsystem)
+            .map(|params| params.iter().map(AsRef::as_ref).collect::<Vec<&str>>())
+            .unwrap_or(Vec::new())
+    }
+
+    /// Get timeout for subsystem or fallback to global
+    pub fn timeout_for_subsystem(&self, subsystem: &'static str) -> Duration {
+        self.elasticsearch_subsystem_timeouts
+            .get(subsystem)
+            .unwrap_or(&self.elasticsearch_global_timeout)
+            .clone()
+    }
+
+    /// /_cat subsystems
+    pub fn cat_subsystems() -> [&'static str; 16] {
+        use metrics::_cat::*;
+
+        [
+            allocation::SUBSYSTEM,
+            shards::SUBSYSTEM,
+            indices::SUBSYSTEM,
+            segments::SUBSYSTEM,
+            nodes::SUBSYSTEM,
+            recovery::SUBSYSTEM,
+            health::SUBSYSTEM,
+            pending_tasks::SUBSYSTEM,
+            aliases::SUBSYSTEM,
+            thread_pool::SUBSYSTEM,
+            plugins::SUBSYSTEM,
+            fielddata::SUBSYSTEM,
+            nodeattrs::SUBSYSTEM,
+            repositories::SUBSYSTEM,
+            templates::SUBSYSTEM,
+            transforms::SUBSYSTEM,
+        ]
+    }
+
+    /// /_cluster subsystems
+    pub fn cluster_subsystems() -> [&'static str; 1] {
+        use metrics::_cluster::*;
+
+        [health::SUBSYSTEM]
+    }
+
+    /// /_nodes subsystems
+    pub fn nodes_subsystems() -> [&'static str; 3] {
+        use metrics::_nodes::*;
+        [usage::SUBSYSTEM, stats::SUBSYSTEM, info::SUBSYSTEM]
     }
 }
 
@@ -74,10 +139,39 @@ fn poll_duration_to_string(
     }
 }
 
+fn vec_to_string(output: &mut String, field: &'static str, fields: &[&'static str]) {
+    output.push_str("\n");
+    output.push_str(&format!("{}:", field));
+    for field in fields.iter() {
+        output.push_str("\n");
+        output.push_str(&format!(" - {}", field));
+    }
+}
+
 impl fmt::Display for ExporterOptions {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let mut output = String::from("Vinted Elasticsearch exporter");
 
+        output.push_str("\n");
+        vec_to_string(
+            &mut output,
+            "Available /_cat subsystems",
+            &Self::cat_subsystems(),
+        );
+        vec_to_string(
+            &mut output,
+            "Available /_cluster subsystems",
+            &Self::cluster_subsystems(),
+        );
+        vec_to_string(
+            &mut output,
+            "Available /_nodes subsystems",
+            &Self::nodes_subsystems(),
+        );
+        output.push_str("\n");
+
+        output.push_str("\n");
+        output.push_str("Exporter settings:");
         output.push_str("\n");
         output.push_str(&format!("elasticsearch_url: {}", self.elasticsearch_url));
         output.push_str("\n");
@@ -85,6 +179,24 @@ impl fmt::Display for ExporterOptions {
             "elasticsearch_global_timeout: {:?}",
             self.elasticsearch_global_timeout
         ));
+        output.push_str("\n");
+        output.push_str(&format!(
+            "elasticsearch_nodes_stats_fields: {}",
+            self.elasticsearch_nodes_stats_fields.join(",")
+        ));
+
+        poll_duration_to_string(
+            &mut output,
+            "elasticsearch_subsystem_timeouts",
+            &self.elasticsearch_subsystem_timeouts,
+        );
+
+        collection_labels_to_string(
+            &mut output,
+            "elasticsearch_path_parameters",
+            &self.elasticsearch_path_parameters,
+        );
+
         collection_labels_to_string(
             &mut output,
             "exporter_skip_labels",

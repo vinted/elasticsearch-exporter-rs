@@ -7,7 +7,7 @@ async fn metrics(exporter: &Exporter) -> Result<Vec<Metrics>, elasticsearch::Err
         .client()
         .cluster()
         .health(ClusterHealthParts::None)
-        .request_timeout(exporter.options().elasticsearch_global_timeout)
+        .request_timeout(exporter.options().timeout_for_subsystem(SUBSYSTEM))
         // Return local information, do not retrieve the state from master node (default: false)
         .local(true)
         .send()

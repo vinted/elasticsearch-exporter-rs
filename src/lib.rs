@@ -88,7 +88,7 @@ pub type Labels = BTreeMap<String, String>;
 pub type CollectionLabels = BTreeMap<String, Vec<String>>;
 
 /// Exporter polling intervals
-pub type ExporterPollIntervals = BTreeMap<String, Duration>;
+pub type ExporterPollIntervals = HashMap<String, Duration>;
 
 /// Exporter metrics switch ON/OFF
 pub type ExporterMetricsSwitch = BTreeMap<String, bool>;

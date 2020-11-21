@@ -61,8 +61,40 @@ $ docker run --network=host -it ernestasvinted/elasticsearch_exporter --elastics
 ```shell
 $ curl -s http://127.0.0.1:9222
 Vinted Elasticsearch exporter
+
+Available /_cat subsystems:
+ - cat_allocation
+ - cat_shards
+ - cat_indices
+ - cat_segments
+ - cat_nodes
+ - cat_recovery
+ - cat_health
+ - cat_pending_tasks
+ - cat_aliases
+ - cat_thread_pool
+ - cat_plugins
+ - cat_fielddata
+ - cat_nodeattrs
+ - cat_repositories
+ - cat_templates
+ - cat_transforms
+Available /_cluster subsystems:
+ - cluster_health
+Available /_nodes subsystems:
+ - nodes_usage
+ - nodes_stats
+ - nodes_info
+
+Exporter settings:
 elasticsearch_url: http://127.0.0.1:9200
 elasticsearch_global_timeout: 30s
+elasticsearch_nodes_stats_fields: breaker,discovery,fs,http,indexing_pressure,indices,ingest,jvm,os,process,thread_pool,transport
+elasticsearch_subsystem_timeouts:
+ - node_stats: 15s
+elasticsearch_path_parameters:
+ - nodes_info: http,ingest,jvm,thread_pool
+ - nodes_stats: breaker,indexing_pressure,indices,jvm,os,process,transport
 exporter_skip_labels:
  - cat_allocation: health,status
  - cat_fielddata: id

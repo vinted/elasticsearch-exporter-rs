@@ -69,6 +69,22 @@ pub struct Opts {
     #[clap(long = "elasticsearch_global_timeout_ms", default_value = "30000")]
     pub elasticsearch_global_timeout_ms: u64,
 
+    /// Exporter timeout for subsystems, in case subsystem timeout is not defined
+    /// default global timeout is used
+    #[clap(
+        long = "elasticsearch_subsystem_timeouts",
+        default_value = "node_stats=15s"
+    )]
+    pub elasticsearch_subsystem_timeouts: HashMapDuration,
+
+    /// Elasticsearch path parameters
+    /// https://www.elastic.co/guide/en/elasticsearch/reference/current/cluster-nodes-info.html#cluster-nodes-info-api-path-params
+    #[clap(
+        long = "elasticsearch_path_parameters",
+        default_value = "nodes_info=http,ingest,jvm,thread_pool&nodes_stats=breaker,indexing_pressure,indices,jvm,os,process,transport"
+    )]
+    pub elasticsearch_path_parameters: HashMapVec,
+
     /// Exporter skip labels
     #[clap(
         long = "exporter_skip_labels",
@@ -117,6 +133,14 @@ pub struct Opts {
         default_value = "300"
     )]
     pub exporter_metadata_refresh_interval_seconds: u64,
+
+    /// Elasticsearch /_nodes/stats fields comma-separated list or
+    /// wildcard expressions of fields to include in the statistics.
+    #[clap(
+        long = "elasticsearch_nodes_stats_fields",
+        default_value = "breaker,discovery,fs,http,indexing_pressure,indices,ingest,jvm,os,process,thread_pool,transport"
+    )]
+    pub elasticsearch_nodes_stats_fields: Vec<String>,
 }
 
 #[derive(Debug, Clone, Default)]

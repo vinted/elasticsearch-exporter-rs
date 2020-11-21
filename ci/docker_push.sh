@@ -1,7 +1,6 @@
 #!/bin/bash
 
-GIT_TAG=$(git describe --tags `git rev-list --tags --max-count=1`)
-DOCKER_TAG=${TRAVIS_TAG:-$GIT_TAG}
+DOCKER_TAG=${TRAVIS_TAG:-latest}
 
 TAG="ernestasvinted/elasticsearch_exporter:$DOCKER_TAG"
 
