@@ -2,7 +2,7 @@ use std::fmt;
 use std::time::Duration;
 use url::Url;
 
-use crate::{CollectionLabels, ExporterMetricsSwitch, ExporterPollIntervals};
+use crate::{metrics, CollectionLabels, ExporterMetricsSwitch, ExporterPollIntervals};
 
 /// Elasticsearch exporter options
 #[derive(Debug, Clone)]
@@ -65,6 +65,43 @@ impl ExporterOptions {
             .unwrap_or(&self.elasticsearch_global_timeout)
             .clone()
     }
+
+    /// /_cat subsystems
+    pub fn cat_subsystems() -> [&'static str; 16] {
+        use metrics::_cat::*;
+
+        [
+            allocation::SUBSYSTEM,
+            shards::SUBSYSTEM,
+            indices::SUBSYSTEM,
+            segments::SUBSYSTEM,
+            nodes::SUBSYSTEM,
+            recovery::SUBSYSTEM,
+            health::SUBSYSTEM,
+            pending_tasks::SUBSYSTEM,
+            aliases::SUBSYSTEM,
+            thread_pool::SUBSYSTEM,
+            plugins::SUBSYSTEM,
+            fielddata::SUBSYSTEM,
+            nodeattrs::SUBSYSTEM,
+            repositories::SUBSYSTEM,
+            templates::SUBSYSTEM,
+            transforms::SUBSYSTEM,
+        ]
+    }
+
+    /// /_cluster subsystems
+    pub fn cluster_subsystems() -> [&'static str; 1] {
+        use metrics::_cluster::*;
+
+        [health::SUBSYSTEM]
+    }
+
+    /// /_nodes subsystems
+    pub fn nodes_subsystems() -> [&'static str; 3] {
+        use metrics::_nodes::*;
+        [usage::SUBSYSTEM, stats::SUBSYSTEM, info::SUBSYSTEM]
+    }
 }
 
 fn switch_to_string(output: &mut String, field: &'static str, switches: &ExporterMetricsSwitch) {
@@ -102,10 +139,39 @@ fn poll_duration_to_string(
     }
 }
 
+fn vec_to_string(output: &mut String, field: &'static str, fields: &[&'static str]) {
+    output.push_str("\n");
+    output.push_str(&format!("{}:", field));
+    for field in fields.iter() {
+        output.push_str("\n");
+        output.push_str(&format!(" - {}", field));
+    }
+}
+
 impl fmt::Display for ExporterOptions {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let mut output = String::from("Vinted Elasticsearch exporter");
 
+        output.push_str("\n");
+        vec_to_string(
+            &mut output,
+            "Available /_cat subsystems",
+            &Self::cat_subsystems(),
+        );
+        vec_to_string(
+            &mut output,
+            "Available /_cluster subsystems",
+            &Self::cluster_subsystems(),
+        );
+        vec_to_string(
+            &mut output,
+            "Available /_nodes subsystems",
+            &Self::nodes_subsystems(),
+        );
+        output.push_str("\n");
+
+        output.push_str("\n");
+        output.push_str("Exporter settings:");
         output.push_str("\n");
         output.push_str(&format!("elasticsearch_url: {}", self.elasticsearch_url));
         output.push_str("\n");
