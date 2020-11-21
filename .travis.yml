@@ -49,14 +49,25 @@ deploy:
     file_glob: true
     file: $CRATE_NAME-$TRAVIS_TAG-$TARGET.*
     on:
-      # In this example, there are some targets that are tested using the stable
-      # and nightly channels. This condition makes sure there is only one release
-      # for such targets and that's generated using the stable channel
       condition: $TRAVIS_RUST_VERSION = nightly
       tags: true
     skip_cleanup: true
+
+  # Push docker container with release tags
   - provider: script
     script: bash ci/docker_push.sh
+    on:
+      condition: $TARGET = x86_64-unknown-linux-musl
+      tags: true
+    skip_cleanup: true
+
+  # Push docker container with latest tag
+  - provider: script
+    script: bash ci/docker_push.sh
+    on:
+      condition: $TARGET = x86_64-unknown-linux-musl
+      branch: master
+    skip_cleanup: true
 
 cache: cargo
 before_cache:
