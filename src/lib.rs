@@ -73,14 +73,6 @@ pub(crate) mod metrics;
 
 const NAMESPACE: &'static str = "elasticsearch";
 
-/// The default [`Histogram`] buckets for Elasticsearch.
-pub const DEFAULT_BUCKETS: &[f64; 19] = &[
-    0.020, 0.040, 0.060, 0.080, 0.1, // <= 100ms
-    0.250, 0.500, 0.750, 1.0, // <= 1 second
-    2.0, 4.0, 6.0, 8.0, 10.0, // <= 10 seconds
-    20.0, 30.0, 40.0, 50.0, 60.0, // <= 1 minute
-];
-
 /// Labels type with ordered keys
 pub type Labels = BTreeMap<String, String>;
 
