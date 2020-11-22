@@ -110,10 +110,9 @@ pub struct Opts {
     #[clap(long = "exporter_poll_default_interval_ms", default_value = "5000")]
     pub exporter_poll_default_interval_ms: u64,
 
-    /// Exporter skip zero metrics, prevents exposing metrics that are empty
-    /// this greatly reduces response size
-    #[clap(long = "exporter_skip_zero_metrics")]
-    pub exporter_skip_zero_metrics: bool,
+    /// Exporter allow zero metrics, controls export of zero/empty  metrics
+    #[clap(long = "exporter_allow_zero_metrics")]
+    pub exporter_allow_zero_metrics: bool,
 
     /// Exporter custom poll intervals for metrics in case custom interval is not
     /// defined it will fall back to default polling interval
