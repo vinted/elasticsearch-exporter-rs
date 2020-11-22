@@ -107,8 +107,8 @@ pub struct Opts {
     pub exporter_skip_metrics: HashMapVec,
 
     /// Exporter default polling interval in milliseconds
-    #[clap(long = "exporter_poll_default_interval_ms", default_value = "5000")]
-    pub exporter_poll_default_interval_ms: u64,
+    #[clap(long = "exporter_poll_default_interval", default_value = "5s")]
+    pub exporter_poll_default_interval: humantime::Duration,
 
     /// Exporter allow zero metrics, controls export of zero/empty  metrics
     #[clap(long = "exporter_allow_zero_metrics")]

@@ -108,9 +108,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         exporter_skip_labels: opts.exporter_skip_labels.0.clone(),
         exporter_skip_metrics: opts.exporter_skip_metrics.0.clone(),
         exporter_include_labels: opts.exporter_include_labels.0.clone(),
-        exporter_poll_default_interval: Duration::from_millis(
-            opts.exporter_poll_default_interval_ms,
-        ),
+        exporter_poll_default_interval: *opts.exporter_poll_default_interval,
         exporter_histogram_buckets: elasticsearch_exporter::DEFAULT_BUCKETS.to_vec(),
         exporter_skip_zero_metrics: !opts.exporter_allow_zero_metrics,
         exporter_poll_intervals: opts.exporter_poll_intervals.0.clone(),
