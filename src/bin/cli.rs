@@ -127,11 +127,8 @@ pub struct Opts {
     pub exporter_metrics_enabled: HashMapSwitch,
 
     /// Exporter metadata refresh interval
-    #[clap(
-        long = "exporter_metadata_refresh_interval_seconds",
-        default_value = "300"
-    )]
-    pub exporter_metadata_refresh_interval_seconds: u64,
+    #[clap(long = "exporter_metadata_refresh_interval", default_value = "3m")]
+    pub exporter_metadata_refresh_interval: humantime::Duration,
 
     /// Elasticsearch /_nodes/stats fields comma-separated list or
     /// wildcard expressions of fields to include in the statistics.
