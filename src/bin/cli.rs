@@ -66,8 +66,8 @@ pub struct Opts {
     pub elasticsearch_url: Url,
 
     /// Elasticsearch global timeout of all metrics
-    #[clap(long = "elasticsearch_global_timeout_ms", default_value = "30000")]
-    pub elasticsearch_global_timeout_ms: u64,
+    #[clap(long = "elasticsearch_global_timeout", default_value = "30s")]
+    pub elasticsearch_global_timeout: humantime::Duration,
 
     /// Exporter timeout for subsystems, in case subsystem timeout is not defined
     /// default global timeout is used
