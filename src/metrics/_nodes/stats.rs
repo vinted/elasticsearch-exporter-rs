@@ -12,14 +12,7 @@ async fn metrics(exporter: &Exporter) -> Result<Vec<Metrics>, elasticsearch::Err
         .stats(NodesStatsParts::Metric(
             &exporter.options().path_parameters_for_subsystem(SUBSYSTEM),
         ))
-        .fields(
-            &exporter
-                .options()
-                .elasticsearch_nodes_stats_fields
-                .iter()
-                .map(AsRef::as_ref)
-                .collect::<Vec<&str>>(),
-        )
+        .fields(&exporter.options().query_fields_for_subsystem(SUBSYSTEM))
         .request_timeout(exporter.options().timeout_for_subsystem(SUBSYSTEM))
         .send()
         .await?;

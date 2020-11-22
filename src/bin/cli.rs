@@ -130,13 +130,10 @@ pub struct Opts {
     #[clap(long = "exporter_metadata_refresh_interval", default_value = "3m")]
     pub exporter_metadata_refresh_interval: humantime::Duration,
 
-    /// Elasticsearch /_nodes/stats fields comma-separated list or
+    /// Elasticsearch query ?fields= for /_nodes/stats fields comma-separated list or
     /// wildcard expressions of fields to include in the statistics.
-    #[clap(
-        long = "elasticsearch_nodes_stats_fields",
-        default_value = "breaker,discovery,fs,http,indices,ingest,jvm,os,process,thread_pool,transport"
-    )]
-    pub elasticsearch_nodes_stats_fields: Vec<String>,
+    #[clap(long = "elasticsearch_query_fields", default_value = "nodes_stats=*")]
+    pub elasticsearch_query_fields: HashMapVec,
 }
 
 #[derive(Debug, Clone, Default)]
