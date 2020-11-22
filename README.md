@@ -32,7 +32,6 @@ $ docker run --network=host -it ernestasvinted/elasticsearch_exporter --elastics
  - Skips zero/empty metrics (controlled with flag `exporter_allow_zero_metrics`)
  - Elasticsearch "millis" converted to seconds
  - Gauges everywhere
- - Histograms for time
  - All time based metrics are converted as f64 seconds, keywords `millis` replaced with `seconds`
  - Added `_bytes` and `_seconds` postfix
  - Preserves metrics tree namespace up to last leaf
@@ -53,7 +52,6 @@ $ docker run --network=host -it ernestasvinted/elasticsearch_exporter --elastics
  - Configurable global timeout (flag `elasticsearch_global_timeout`)
  - Configurable global polling interval (flag `exporter_poll_default_interval`)
  - Configurable per metric polling interval (flag `exporter_poll_intervals`)
- - Configurable histogram buckets (flag `exporter_histogram_buckets`)
  - Configurable metrics collection (flag `exporter_metrics_enabled`)
  - Configurable metadata collection (flag `exporter_metadata_refresh_interval`)
 
@@ -138,7 +136,6 @@ exporter_skip_metrics:
 exporter_poll_default_interval: 5s
 exporter_poll_intervals:
  - cluster_health: 5s
-exporter_histogram_buckets: [0.02, 0.04, 0.06, 0.08, 0.1, 0.25, 0.5, 0.75, 1.0, 2.0, 4.0, 6.0, 8.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0] in seconds
 exporter_skip_zero_metrics: true
 exporter_metrics_enabled:
  - cat_health: true

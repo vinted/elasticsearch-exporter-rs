@@ -34,8 +34,6 @@ pub struct ExporterOptions {
     pub exporter_poll_default_interval: Duration,
     /// Exporter skip zero metrics
     pub exporter_poll_intervals: ExporterPollIntervals,
-    /// Metrics histogram buckets
-    pub exporter_histogram_buckets: Vec<f64>,
     /// Exporter skip zero metrics
     pub exporter_skip_zero_metrics: bool,
     /// Exporter metrics switch either ON or OFF
@@ -234,12 +232,6 @@ impl fmt::Display for ExporterOptions {
             "exporter_poll_intervals",
             &self.exporter_poll_intervals,
         );
-
-        output.push_str("\n");
-        output.push_str(&format!(
-            "exporter_histogram_buckets: {:?} in seconds",
-            self.exporter_histogram_buckets
-        ));
 
         output.push_str("\n");
         output.push_str(&format!(
