@@ -54,26 +54,26 @@ pub struct Opts {
     pub hyper_http1_max_buf_size: usize,
 
     /// TCP keepalive
-    #[clap(long = "hyper_tcp_keepalive_sec", default_value = "30")]
-    pub hyper_tcp_keepalive_sec: u64,
+    #[clap(long = "hyper_tcp_keepalive", default_value = "30s")]
+    pub hyper_tcp_keepalive: humantime::Duration,
 
     /// HTTPS keepalive timeout
-    #[clap(long = "hyper_http2_keep_alive_timeout_sec", default_value = "60")]
-    pub hyper_http2_keep_alive_timeout_sec: u64,
+    #[clap(long = "hyper_http2_keep_alive_timeout", default_value = "1m")]
+    pub hyper_http2_keep_alive_timeout: humantime::Duration,
 
     /// Elasticsearch URL, provide with protocol "https?://"
     #[clap(long = "elasticsearch_url", default_value = "http://127.0.0.1:9200")]
     pub elasticsearch_url: Url,
 
     /// Elasticsearch global timeout of all metrics
-    #[clap(long = "elasticsearch_global_timeout_ms", default_value = "30000")]
-    pub elasticsearch_global_timeout_ms: u64,
+    #[clap(long = "elasticsearch_global_timeout", default_value = "30s")]
+    pub elasticsearch_global_timeout: humantime::Duration,
 
     /// Exporter timeout for subsystems, in case subsystem timeout is not defined
     /// default global timeout is used
     #[clap(
         long = "elasticsearch_subsystem_timeouts",
-        default_value = "node_stats=15s"
+        default_value = "nodes_stats=15s"
     )]
     pub elasticsearch_subsystem_timeouts: HashMapDuration,
 
@@ -81,7 +81,7 @@ pub struct Opts {
     /// https://www.elastic.co/guide/en/elasticsearch/reference/current/cluster-nodes-info.html#cluster-nodes-info-api-path-params
     #[clap(
         long = "elasticsearch_path_parameters",
-        default_value = "nodes_info=http,ingest,jvm,thread_pool&nodes_stats=breaker,indexing_pressure,indices,jvm,os,process,transport,thread_pool"
+        default_value = "nodes_info=http,jvm,thread_pool&nodes_stats=breaker,indices,jvm,os,process,transport,thread_pool"
     )]
     pub elasticsearch_path_parameters: HashMapVec,
 
@@ -107,8 +107,8 @@ pub struct Opts {
     pub exporter_skip_metrics: HashMapVec,
 
     /// Exporter default polling interval in milliseconds
-    #[clap(long = "exporter_poll_default_interval_ms", default_value = "5000")]
-    pub exporter_poll_default_interval_ms: u64,
+    #[clap(long = "exporter_poll_default_interval", default_value = "5s")]
+    pub exporter_poll_default_interval: humantime::Duration,
 
     /// Exporter allow zero metrics, controls export of zero/empty  metrics
     #[clap(long = "exporter_allow_zero_metrics")]
@@ -127,19 +127,13 @@ pub struct Opts {
     pub exporter_metrics_enabled: HashMapSwitch,
 
     /// Exporter metadata refresh interval
-    #[clap(
-        long = "exporter_metadata_refresh_interval_seconds",
-        default_value = "300"
-    )]
-    pub exporter_metadata_refresh_interval_seconds: u64,
+    #[clap(long = "exporter_metadata_refresh_interval", default_value = "3m")]
+    pub exporter_metadata_refresh_interval: humantime::Duration,
 
-    /// Elasticsearch /_nodes/stats fields comma-separated list or
+    /// Elasticsearch query ?fields= for /_nodes/stats fields comma-separated list or
     /// wildcard expressions of fields to include in the statistics.
-    #[clap(
-        long = "elasticsearch_nodes_stats_fields",
-        default_value = "breaker,discovery,fs,http,indexing_pressure,indices,ingest,jvm,os,process,thread_pool,transport"
-    )]
-    pub elasticsearch_nodes_stats_fields: Vec<String>,
+    #[clap(long = "elasticsearch_query_fields", default_value = "nodes_stats=*")]
+    pub elasticsearch_query_fields: HashMapVec,
 }
 
 #[derive(Debug, Clone, Default)]

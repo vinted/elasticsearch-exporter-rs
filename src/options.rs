@@ -13,7 +13,7 @@ pub struct ExporterOptions {
     pub elasticsearch_global_timeout: Duration,
     /// Elasticsearch /_nodes/stats fields comma-separated list or
     /// wildcard expressions of fields to include in the statistics.
-    pub elasticsearch_nodes_stats_fields: Vec<String>,
+    pub elasticsearch_query_fields: CollectionLabels,
     /// Exporter timeout for subsystems, in case subsystem timeout is not defined
     /// default global timeout is used
     pub elasticsearch_subsystem_timeouts: ExporterPollIntervals,
@@ -48,6 +48,14 @@ impl ExporterOptions {
     /// Check if metric is enabled
     pub fn is_metric_enabled(&self, subsystem: &'static str) -> bool {
         self.exporter_metrics_enabled.contains_key(subsystem)
+    }
+
+    /// ?fields= parameters for subsystems
+    pub fn query_fields_for_subsystem(&self, subsystem: &'static str) -> Vec<&str> {
+        self.elasticsearch_query_fields
+            .get(subsystem)
+            .map(|params| params.iter().map(AsRef::as_ref).collect::<Vec<&str>>())
+            .unwrap_or(Vec::new())
     }
 
     /// Path parameters for subsystems
@@ -179,11 +187,12 @@ impl fmt::Display for ExporterOptions {
             "elasticsearch_global_timeout: {:?}",
             self.elasticsearch_global_timeout
         ));
-        output.push_str("\n");
-        output.push_str(&format!(
-            "elasticsearch_nodes_stats_fields: {}",
-            self.elasticsearch_nodes_stats_fields.join(",")
-        ));
+
+        collection_labels_to_string(
+            &mut output,
+            "elasticsearch_query_fields",
+            &self.elasticsearch_query_fields,
+        );
 
         poll_duration_to_string(
             &mut output,

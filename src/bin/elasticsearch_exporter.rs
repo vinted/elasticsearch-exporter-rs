@@ -18,7 +18,6 @@ use prometheus::{Encoder, HistogramVec, TextEncoder, TEXT_FORMAT};
 use std::convert::Infallible;
 use std::env;
 use std::panic;
-use std::time::Duration;
 
 use elasticsearch_exporter::{Exporter, ExporterOptions};
 
@@ -100,24 +99,20 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let options = ExporterOptions {
         elasticsearch_url: opts.elasticsearch_url.clone(),
-        elasticsearch_global_timeout: Duration::from_millis(opts.elasticsearch_global_timeout_ms),
-        elasticsearch_nodes_stats_fields: opts.elasticsearch_nodes_stats_fields,
+        elasticsearch_global_timeout: *opts.elasticsearch_global_timeout,
+        elasticsearch_query_fields: opts.elasticsearch_query_fields.0.clone(),
         elasticsearch_subsystem_timeouts: opts.elasticsearch_subsystem_timeouts.0.clone(),
         elasticsearch_path_parameters: opts.elasticsearch_path_parameters.0.clone(),
 
         exporter_skip_labels: opts.exporter_skip_labels.0.clone(),
         exporter_skip_metrics: opts.exporter_skip_metrics.0.clone(),
         exporter_include_labels: opts.exporter_include_labels.0.clone(),
-        exporter_poll_default_interval: Duration::from_millis(
-            opts.exporter_poll_default_interval_ms,
-        ),
+        exporter_poll_default_interval: *opts.exporter_poll_default_interval,
         exporter_histogram_buckets: elasticsearch_exporter::DEFAULT_BUCKETS.to_vec(),
         exporter_skip_zero_metrics: !opts.exporter_allow_zero_metrics,
         exporter_poll_intervals: opts.exporter_poll_intervals.0.clone(),
         exporter_metrics_enabled: opts.exporter_metrics_enabled.0.clone(),
-        exporter_metadata_refresh_interval: Duration::from_secs(
-            opts.exporter_metadata_refresh_interval_seconds,
-        ),
+        exporter_metadata_refresh_interval: *opts.exporter_metadata_refresh_interval,
     };
 
     info!("{}", options);
@@ -148,15 +143,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     Server::bind(&opts.listen_addr)
         // TCP
-        .tcp_keepalive(Some(Duration::from_secs(opts.hyper_tcp_keepalive_sec)))
+        .tcp_keepalive(Some(*opts.hyper_tcp_keepalive))
         .tcp_nodelay(true)
         // HTTP 1
         .http1_keepalive(true)
         .http1_half_close(false)
         .http1_max_buf_size(opts.hyper_http1_max_buf_size)
         // HTTP 2
-        .http2_keep_alive_interval(Duration::from_secs(opts.hyper_tcp_keepalive_sec))
-        .http2_keep_alive_timeout(Duration::from_secs(opts.hyper_http2_keep_alive_timeout_sec))
+        .http2_keep_alive_interval(*opts.hyper_tcp_keepalive)
+        .http2_keep_alive_timeout(*opts.hyper_http2_keep_alive_timeout)
         .http2_adaptive_window(true)
         .serve(new_service)
         .with_graceful_shutdown(async move {

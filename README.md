@@ -88,12 +88,13 @@ Available /_nodes subsystems:
 Exporter settings:
 elasticsearch_url: http://127.0.0.1:9200
 elasticsearch_global_timeout: 30s
-elasticsearch_nodes_stats_fields: breaker,discovery,fs,http,indexing_pressure,indices,ingest,jvm,os,process,thread_pool,transport
+elasticsearch_query_fields:
+ - nodes_stats: *
 elasticsearch_subsystem_timeouts:
- - node_stats: 15s
+ - nodes_stats: 15s
 elasticsearch_path_parameters:
- - nodes_info: http,ingest,jvm,thread_pool
- - nodes_stats: breaker,indexing_pressure,indices,jvm,os,process,transport,thread_pool
+ - nodes_info: http,jvm,thread_pool
+ - nodes_stats: breaker,indices,jvm,os,process,transport,thread_pool
 exporter_skip_labels:
  - cat_allocation: health,status
  - cat_fielddata: id
