@@ -81,7 +81,7 @@ pub struct Opts {
     /// https://www.elastic.co/guide/en/elasticsearch/reference/current/cluster-nodes-info.html#cluster-nodes-info-api-path-params
     #[clap(
         long = "elasticsearch_path_parameters",
-        default_value = "nodes_info=http,ingest,jvm,thread_pool&nodes_stats=breaker,indexing_pressure,indices,jvm,os,process,transport"
+        default_value = "nodes_info=http,ingest,jvm,thread_pool&nodes_stats=breaker,indexing_pressure,indices,jvm,os,process,transport,thread_pool"
     )]
     pub elasticsearch_path_parameters: HashMapVec,
 
@@ -110,10 +110,9 @@ pub struct Opts {
     #[clap(long = "exporter_poll_default_interval_ms", default_value = "5000")]
     pub exporter_poll_default_interval_ms: u64,
 
-    /// Exporter skip zero metrics, prevents exposing metrics that are empty
-    /// this greatly reduces response size
-    #[clap(long = "exporter_skip_zero_metrics")]
-    pub exporter_skip_zero_metrics: bool,
+    /// Exporter allow zero metrics, controls export of zero/empty  metrics
+    #[clap(long = "exporter_allow_zero_metrics")]
+    pub exporter_allow_zero_metrics: bool,
 
     /// Exporter custom poll intervals for metrics in case custom interval is not
     /// defined it will fall back to default polling interval

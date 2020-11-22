@@ -29,7 +29,7 @@ $ docker run --network=host -it ernestasvinted/elasticsearch_exporter --elastics
 ## Features
 
  - Metric collection is decoupled from serving `/metrics` page
- - Skips zero/empty metrics (controlled with flag `exporter_skip_zero_metrics`)
+ - Skips zero/empty metrics (controlled with flag `exporter_allow_zero_metrics`)
  - Elasticsearch "millis" converted to seconds
  - Gauges everywhere
  - Histograms for time
@@ -93,7 +93,7 @@ elasticsearch_subsystem_timeouts:
  - node_stats: 15s
 elasticsearch_path_parameters:
  - nodes_info: http,ingest,jvm,thread_pool
- - nodes_stats: breaker,indexing_pressure,indices,jvm,os,process,transport
+ - nodes_stats: breaker,indexing_pressure,indices,jvm,os,process,transport,thread_pool
 exporter_skip_labels:
  - cat_allocation: health,status
  - cat_fielddata: id
