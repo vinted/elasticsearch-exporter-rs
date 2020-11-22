@@ -81,7 +81,7 @@ pub struct Opts {
     /// https://www.elastic.co/guide/en/elasticsearch/reference/current/cluster-nodes-info.html#cluster-nodes-info-api-path-params
     #[clap(
         long = "elasticsearch_path_parameters",
-        default_value = "nodes_info=http,jvm,thread_pool&nodes_stats=breaker,indexing_pressure,indices,jvm,os,process,transport,thread_pool"
+        default_value = "nodes_info=http,jvm,thread_pool&nodes_stats=breaker,indices,jvm,os,process,transport,thread_pool"
     )]
     pub elasticsearch_path_parameters: HashMapVec,
 
@@ -134,7 +134,7 @@ pub struct Opts {
     /// wildcard expressions of fields to include in the statistics.
     #[clap(
         long = "elasticsearch_nodes_stats_fields",
-        default_value = "breaker,discovery,fs,http,indexing_pressure,indices,ingest,jvm,os,process,thread_pool,transport"
+        default_value = "breaker,discovery,fs,http,indices,ingest,jvm,os,process,thread_pool,transport"
     )]
     pub elasticsearch_nodes_stats_fields: Vec<String>,
 }
