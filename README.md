@@ -91,7 +91,7 @@ elasticsearch_global_timeout: 30s
 elasticsearch_query_fields:
  - nodes_stats: *
 elasticsearch_subsystem_timeouts:
- - node_stats: 15s
+ - nodes_stats: 15s
 elasticsearch_path_parameters:
  - nodes_info: http,jvm,thread_pool
  - nodes_stats: breaker,indices,jvm,os,process,transport,thread_pool

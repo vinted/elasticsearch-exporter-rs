@@ -73,7 +73,7 @@ pub struct Opts {
     /// default global timeout is used
     #[clap(
         long = "elasticsearch_subsystem_timeouts",
-        default_value = "node_stats=15s"
+        default_value = "nodes_stats=15s"
     )]
     pub elasticsearch_subsystem_timeouts: HashMapDuration,
 
