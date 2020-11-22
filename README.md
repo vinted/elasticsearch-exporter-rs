@@ -92,7 +92,7 @@ elasticsearch_nodes_stats_fields: breaker,discovery,fs,http,indexing_pressure,in
 elasticsearch_subsystem_timeouts:
  - node_stats: 15s
 elasticsearch_path_parameters:
- - nodes_info: http,ingest,jvm,thread_pool
+ - nodes_info: http,jvm,thread_pool
  - nodes_stats: breaker,indexing_pressure,indices,jvm,os,process,transport,thread_pool
 exporter_skip_labels:
  - cat_allocation: health,status
