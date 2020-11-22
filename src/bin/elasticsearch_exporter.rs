@@ -18,7 +18,6 @@ use prometheus::{Encoder, HistogramVec, TextEncoder, TEXT_FORMAT};
 use std::convert::Infallible;
 use std::env;
 use std::panic;
-use std::time::Duration;
 
 use elasticsearch_exporter::{Exporter, ExporterOptions};
 
@@ -144,15 +143,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     Server::bind(&opts.listen_addr)
         // TCP
-        .tcp_keepalive(Some(Duration::from_secs(opts.hyper_tcp_keepalive_sec)))
+        .tcp_keepalive(Some(*opts.hyper_tcp_keepalive))
         .tcp_nodelay(true)
         // HTTP 1
         .http1_keepalive(true)
         .http1_half_close(false)
         .http1_max_buf_size(opts.hyper_http1_max_buf_size)
         // HTTP 2
-        .http2_keep_alive_interval(Duration::from_secs(opts.hyper_tcp_keepalive_sec))
-        .http2_keep_alive_timeout(Duration::from_secs(opts.hyper_http2_keep_alive_timeout_sec))
+        .http2_keep_alive_interval(*opts.hyper_tcp_keepalive)
+        .http2_keep_alive_timeout(*opts.hyper_http2_keep_alive_timeout)
         .http2_adaptive_window(true)
         .serve(new_service)
         .with_graceful_shutdown(async move {

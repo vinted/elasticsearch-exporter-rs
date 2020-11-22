@@ -54,12 +54,12 @@ pub struct Opts {
     pub hyper_http1_max_buf_size: usize,
 
     /// TCP keepalive
-    #[clap(long = "hyper_tcp_keepalive_sec", default_value = "30")]
-    pub hyper_tcp_keepalive_sec: u64,
+    #[clap(long = "hyper_tcp_keepalive", default_value = "30s")]
+    pub hyper_tcp_keepalive: humantime::Duration,
 
     /// HTTPS keepalive timeout
-    #[clap(long = "hyper_http2_keep_alive_timeout_sec", default_value = "60")]
-    pub hyper_http2_keep_alive_timeout_sec: u64,
+    #[clap(long = "hyper_http2_keep_alive_timeout", default_value = "1m")]
+    pub hyper_http2_keep_alive_timeout: humantime::Duration,
 
     /// Elasticsearch URL, provide with protocol "https?://"
     #[clap(long = "elasticsearch_url", default_value = "http://127.0.0.1:9200")]
