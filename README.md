@@ -23,7 +23,7 @@ $ curl -s http://127.0.0.1:9222/metrics | wc
 ## Try it out with docker
 
 ```bash
-$ docker run --network=host -it ernestasvinted/elasticsearch_exporter --elasticsearch_url=http://IP:PORT
+$ docker run --network=host -it vinted/elasticsearch_exporter --elasticsearch_url=http://IP:PORT
 ```
 
 ## Features
