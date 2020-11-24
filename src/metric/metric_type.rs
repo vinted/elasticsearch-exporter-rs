@@ -75,7 +75,7 @@ impl<'s> TryFrom<RawMetric<'s>> for MetricType {
         // "get.total": "0", INT
         // "disk.total": "475894423552", BYTES
         match metric.0 {
-            "indices" | "avail" | "used" | "size" | "memory" | "store" | "bytes" => {
+            "indices" | "avail" | "used" | "memory" | "store" | "bytes" => {
                 // /_nodes/stats returns size with size postfix: kb, b, gb
                 // in case parsing to integer fails fallback and try to
                 // parse byte unit
@@ -134,13 +134,14 @@ impl<'s> TryFrom<RawMetric<'s>> for MetricType {
                     value.as_str().ok_or(unknown())?.to_owned(),
                 )),
             },
-
-            "overhead" | "processors" | "primaries" | "min" | "max" | "successful" | "nodes"
-            | "fetch" | "order" | "largest" | "rejected" | "completed" | "queue" | "active"
-            | "core" | "tasks" | "relo" | "unassign" | "init" | "files" | "ops" | "recovered"
-            | "generation" | "contexts" | "listeners" | "pri" | "rep" | "docs" | "count"
-            | "compilations" | "deleted" | "shards" | "checkpoint" | "cpu" | "triggered"
-            | "evictions" | "failed" | "total" | "current" => Ok(MetricType::Gauge(parse_i64()?)),
+            "size" | "overhead" | "processors" | "primaries" | "min" | "max" | "successful"
+            | "nodes" | "fetch" | "order" | "largest" | "rejected" | "completed" | "queue"
+            | "active" | "core" | "tasks" | "relo" | "unassign" | "init" | "files" | "ops"
+            | "recovered" | "generation" | "contexts" | "listeners" | "pri" | "rep" | "docs"
+            | "count" | "compilations" | "deleted" | "shards" | "checkpoint" | "cpu"
+            | "triggered" | "evictions" | "failed" | "total" | "current" => {
+                Ok(MetricType::Gauge(parse_i64()?))
+            }
 
             "avg" | "1m" | "5m" | "15m" | "number" | "percent" => {
                 Ok(MetricType::GaugeF(parse_f64()?))
