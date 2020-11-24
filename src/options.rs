@@ -43,6 +43,15 @@ pub struct ExporterOptions {
 }
 
 impl ExporterOptions {
+    /// Enable metadata refresh?
+    pub(crate) fn enable_metadata_refresh(&self) -> bool {
+        let cluster_subsystems = Self::nodes_subsystems();
+
+        self.exporter_metrics_enabled
+            .iter()
+            .any(|(k, v)| cluster_subsystems.contains(&k.as_str()) && *v)
+    }
+
     /// Check if metric is enabled
     pub fn is_metric_enabled(&self, subsystem: &'static str) -> bool {
         self.exporter_metrics_enabled.contains_key(subsystem)

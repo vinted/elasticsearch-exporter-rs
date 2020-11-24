@@ -143,7 +143,14 @@ impl Exporter {
         info!("Elasticsearch: ping");
         let _ = client.ping().send().await?;
 
-        let metadata = metadata::build(&client).await?;
+        let metadata = if options.enable_metadata_refresh() {
+            metadata::build(&client).await?
+        } else {
+            info!("Skip metadata refresh");
+            // This will generate empty map
+            Default::default()
+        };
+
         let cluster_name = metadata::cluster_name(&client).await?;
 
         let mut const_labels = HashMap::new();
@@ -163,7 +170,10 @@ impl Exporter {
         Self::spawn_cat(self.clone());
         Self::spawn_cluster(self.clone());
         Self::spawn_nodes(self.clone());
-        Self::spawn_metadata(self);
+
+        if self.options().enable_metadata_refresh() {
+            Self::spawn_metadata(self);
+        }
     }
 
     fn spawn_metadata(exporter: Self) {
