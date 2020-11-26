@@ -151,7 +151,8 @@ impl Collection {
                     if self.options.exporter_skip_zero_metrics && value == &0 {
                         continue;
                     }
-                    let postfix = if metric.key().ends_with("_bytes") {
+                    // /_cat/recovery has key name `bytes`
+                    let postfix = if metric.key().ends_with("bytes") {
                         None
                     } else {
                         Some("_bytes")

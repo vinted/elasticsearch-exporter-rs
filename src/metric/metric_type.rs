@@ -134,14 +134,33 @@ impl<'s> TryFrom<RawMetric<'s>> for MetricType {
                     value.as_str().ok_or(unknown())?.to_owned(),
                 )),
             },
-            "size" | "overhead" | "processors" | "primaries" | "min" | "max" | "successful"
-            | "nodes" | "fetch" | "order" | "largest" | "rejected" | "completed" | "queue"
-            | "active" | "core" | "tasks" | "relo" | "unassign" | "init" | "files" | "ops"
-            | "recovered" | "generation" | "contexts" | "listeners" | "pri" | "rep" | "docs"
-            | "count" | "compilations" | "deleted" | "shards" | "checkpoint" | "cpu"
-            | "triggered" | "evictions" | "failed" | "total" | "current" => {
-                Ok(MetricType::Gauge(parse_i64()?))
+
+            // elasticsearch_cat_thread_pool_size - int
+            // elasticsearch_nodes_stats_indices_query_cache_cache_size should be MetricType::Bytes though
+            // pool_size is an int - MetricType::Gauge
+            "size" => {
+                // parse byte unit
+                return match parse_i64() {
+                    Ok(int) => Ok(MetricType::Gauge(int)),
+                    Err(e) => {
+                        if let Some(byte_str) = value.as_str() {
+                            return Ok(MetricType::Gauge(
+                                // FIX: Possible accuracy loss (Prometheus accepts up to 64 bits)
+                                Byte::from_str(byte_str).map(|b| b.get_bytes()).or(Err(e))? as i64,
+                            ));
+                        }
+
+                        Err(e)
+                    }
+                };
             }
+
+            "overhead" | "processors" | "primaries" | "min" | "max" | "successful" | "nodes"
+            | "fetch" | "order" | "largest" | "rejected" | "completed" | "queue" | "active"
+            | "core" | "tasks" | "relo" | "unassign" | "init" | "files" | "ops" | "recovered"
+            | "generation" | "contexts" | "listeners" | "pri" | "rep" | "docs" | "count"
+            | "compilations" | "deleted" | "shards" | "checkpoint" | "cpu" | "triggered"
+            | "evictions" | "failed" | "total" | "current" => Ok(MetricType::Gauge(parse_i64()?)),
 
             "avg" | "1m" | "5m" | "15m" | "number" | "percent" => {
                 Ok(MetricType::GaugeF(parse_f64()?))
