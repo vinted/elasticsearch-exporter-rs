@@ -113,7 +113,7 @@ exporter_include_labels:
  - cat_health: shards
  - cat_indices: index
  - cat_nodeattrs: node,attr
- - cat_nodes: index,name,node_role
+ - cat_nodes: ip,name,node_role
  - cat_pending_tasks: index
  - cat_plugins: name
  - cat_recovery: index,shard,stage,type
