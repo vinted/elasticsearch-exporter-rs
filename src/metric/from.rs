@@ -152,8 +152,17 @@ fn test_cluster_stats_from_map() {
 
     let expected = vec![
         Metric("top_level_bytes".into(), MetricType::Bytes(2)),
+        Metric(
+            "top_level_bytes_kB_size".into(),
+            MetricType::Gauge(77 * 1000),
+        ),
         Metric("top_level_one".into(), MetricType::Gauge(1)),
         Metric("top_level_size".into(), MetricType::Gauge(3)),
     ];
-    assert!(metrics.contains(&expected));
+    assert!(
+        metrics.contains(&expected),
+        "got {:?}\nexpected {:?}",
+        metrics,
+        expected
+    );
 }
