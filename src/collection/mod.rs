@@ -49,10 +49,17 @@ impl Collection {
         key_postfix: Option<&'static str>,
     ) -> Result<(), prometheus::Error> {
         let keys = || labels.keys().map(|s| s.as_str()).collect::<Vec<&str>>();
-        let values = labels.values().map(|s| s.as_str()).collect::<Vec<&str>>();
+        let label_values = labels.values().map(|s| s.as_str()).collect::<Vec<&str>>();
+
+        let set_labels = |gauge: &GaugeVec| -> Result<(), prometheus::Error> {
+            gauge
+                .get_metric_with_label_values(&label_values)?
+                .set(value);
+            Ok(())
+        };
 
         if let Some(gauge) = self.fgauges.get(key) {
-            gauge.with_label_values(&values).set(value);
+            let _ = set_labels(gauge)?;
         } else {
             let mut metric_key = key.to_string();
 
@@ -68,10 +75,10 @@ impl Collection {
                 &keys(),
             )?;
 
+            let _ = set_labels(&new_gauge)?;
+
             // Register new metric
             default_registry().register(Box::new(new_gauge.clone()))?;
-
-            new_gauge.with_label_values(&values).set(value);
 
             let _ = self.fgauges.insert(key.to_string(), new_gauge);
         }
@@ -88,10 +95,17 @@ impl Collection {
         key_postfix: Option<&'static str>,
     ) -> Result<(), prometheus::Error> {
         let keys = || labels.keys().map(|s| s.as_str()).collect::<Vec<&str>>();
-        let values = labels.values().map(|s| s.as_str()).collect::<Vec<&str>>();
+        let label_values = labels.values().map(|s| s.as_str()).collect::<Vec<&str>>();
+
+        let set_labels = |gauge: &IntGaugeVec| -> Result<(), prometheus::Error> {
+            gauge
+                .get_metric_with_label_values(&label_values)?
+                .set(value);
+            Ok(())
+        };
 
         if let Some(gauge) = self.gauges.get(key) {
-            gauge.with_label_values(&values).set(value);
+            let _ = set_labels(gauge)?;
         } else {
             let mut metric_key = key.to_string();
 
@@ -107,10 +121,10 @@ impl Collection {
                 &keys(),
             )?;
 
+            let _ = set_labels(&new_gauge)?;
+
             // Register new metric
             default_registry().register(Box::new(new_gauge.clone()))?;
-
-            new_gauge.with_label_values(&values).set(value);
 
             let _ = self.gauges.insert(key.to_string(), new_gauge);
         }
@@ -145,7 +159,10 @@ impl Collection {
 
             match metric.metric_type() {
                 MetricType::Switch(value) => {
-                    let _ = self.insert_gauge(&metric.key(), *value as i64, &labels, None)?;
+                    if let Err(e) = self.insert_gauge(&metric.key(), *value as i64, &labels, None) {
+                        error!("SWITCH insert_gauge {:?} err {}", metric, e);
+                        return Err(e);
+                    }
                 }
                 MetricType::Bytes(value) => {
                     if self.options.exporter_skip_zero_metrics && value == &0 {
@@ -157,20 +174,29 @@ impl Collection {
                     } else {
                         Some("_bytes")
                     };
-                    let _ = self.insert_gauge(&metric.key(), *value, &labels, postfix)?;
+                    if let Err(e) = self.insert_gauge(&metric.key(), *value, &labels, postfix) {
+                        error!("BYTES insert_gauge {:?} err {}", metric, e);
+                        return Err(e);
+                    }
                 }
                 MetricType::GaugeF(value) => {
                     // is_normal: returns true if the number is neither zero, infinite, subnormal, or NaN.
                     if self.options.exporter_skip_zero_metrics && !value.is_normal() {
                         continue;
                     }
-                    let _ = self.insert_fgauge(&metric.key(), *value, &labels, None)?;
+                    if let Err(e) = self.insert_fgauge(&metric.key(), *value, &labels, None) {
+                        error!("GAUGEF insert_fgauge {:?} err {}", metric, e);
+                        return Err(e);
+                    }
                 }
                 MetricType::Gauge(value) => {
                     if self.options.exporter_skip_zero_metrics && value == &0 {
                         continue;
                     }
-                    let _ = self.insert_gauge(&metric.key(), *value, &labels, None)?;
+                    if let Err(e) = self.insert_gauge(&metric.key(), *value, &labels, None) {
+                        error!("GAUGE insert_gauge {:?} err {}", metric, e);
+                        return Err(e);
+                    }
                 }
                 MetricType::Time(duration) => {
                     let secs = duration.as_secs_f64();
@@ -182,7 +208,10 @@ impl Collection {
                     if metric.key().contains("millis") {
                         let adjusted_key = metric.key().replace("millis", "seconds");
 
-                        let _ = self.insert_fgauge(&adjusted_key, secs, &labels, None)?;
+                        if let Err(e) = self.insert_fgauge(&adjusted_key, secs, &labels, None) {
+                            error!("TIME insert_fgauge {:?} err {}", metric, e);
+                            return Err(e);
+                        }
                     } else {
                         let postfix = if metric.key().ends_with("_seconds") {
                             None
@@ -190,7 +219,10 @@ impl Collection {
                             Some("_seconds")
                         };
 
-                        let _ = self.insert_fgauge(&metric.key(), secs, &labels, postfix)?;
+                        if let Err(e) = self.insert_fgauge(&metric.key(), secs, &labels, postfix) {
+                            error!("TIME insert_fgauge {:?} err {}", metric, e);
+                            return Err(e);
+                        }
                     }
                 }
                 _ => {}
