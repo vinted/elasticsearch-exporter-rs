@@ -31,7 +31,6 @@ $ docker run --network=host -it vinted/elasticsearch_exporter --elasticsearch_ur
  - Metric collection is decoupled from serving `/metrics` page
  - Skips zero/empty metrics (controlled with flag `exporter_allow_zero_metrics`)
  - Elasticsearch "millis" converted to seconds
- - Gauges everywhere
  - All time based metrics are converted as f64 seconds, keywords `millis` replaced with `seconds`
  - Added `_bytes` and `_seconds` postfix
  - Preserves metrics tree namespace up to last leaf

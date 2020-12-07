@@ -47,13 +47,13 @@ impl Collection {
         value: f64,
         labels: &Labels,
         key_postfix: Option<&'static str>,
+        skippable: bool,
     ) -> Result<(), prometheus::Error> {
-        let keys = || labels.keys().map(|s| s.as_str()).collect::<Vec<&str>>();
-        let label_values = labels.values().map(|s| s.as_str()).collect::<Vec<&str>>();
-
         let set_labels = |gauge: &GaugeVec| -> Result<(), prometheus::Error> {
             gauge
-                .get_metric_with_label_values(&label_values)?
+                .get_metric_with_label_values(
+                    &labels.values().map(|s| s.as_str()).collect::<Vec<&str>>(),
+                )?
                 .set(value);
             Ok(())
         };
@@ -61,6 +61,13 @@ impl Collection {
         if let Some(gauge) = self.fgauges.get(key) {
             let _ = set_labels(gauge)?;
         } else {
+            // If metric is skippable and haven't been registered skip it
+            // until value is not zero
+            // is_normal: returns true if the number is neither zero, infinite, subnormal, or NaN.
+            if skippable && self.options.exporter_skip_zero_metrics && !value.is_normal() {
+                return Ok(());
+            }
+
             let mut metric_key = key.to_string();
 
             if let Some(postfix) = key_postfix {
@@ -72,7 +79,7 @@ impl Collection {
                     .const_labels(self.const_labels.clone())
                     .subsystem(self.subsystem)
                     .namespace(crate::NAMESPACE),
-                &keys(),
+                &labels.keys().map(|s| s.as_str()).collect::<Vec<&str>>(),
             )?;
 
             let _ = set_labels(&new_gauge)?;
@@ -93,13 +100,13 @@ impl Collection {
         value: i64,
         labels: &Labels,
         key_postfix: Option<&'static str>,
+        skippable: bool,
     ) -> Result<(), prometheus::Error> {
-        let keys = || labels.keys().map(|s| s.as_str()).collect::<Vec<&str>>();
-        let label_values = labels.values().map(|s| s.as_str()).collect::<Vec<&str>>();
-
         let set_labels = |gauge: &IntGaugeVec| -> Result<(), prometheus::Error> {
             gauge
-                .get_metric_with_label_values(&label_values)?
+                .get_metric_with_label_values(
+                    &labels.values().map(|s| s.as_str()).collect::<Vec<&str>>(),
+                )?
                 .set(value);
             Ok(())
         };
@@ -107,6 +114,12 @@ impl Collection {
         if let Some(gauge) = self.gauges.get(key) {
             let _ = set_labels(gauge)?;
         } else {
+            // If metric is skippable and haven't been registered skip it
+            // until value is not zero
+            if skippable && self.options.exporter_skip_zero_metrics && value == 0 {
+                return Ok(());
+            }
+
             let mut metric_key = key.to_string();
 
             if let Some(postfix) = key_postfix {
@@ -118,7 +131,7 @@ impl Collection {
                     .const_labels(self.const_labels.clone())
                     .subsystem(self.subsystem)
                     .namespace(crate::NAMESPACE),
-                &keys(),
+                &labels.keys().map(|s| s.as_str()).collect::<Vec<&str>>(),
             )?;
 
             let _ = set_labels(&new_gauge)?;
@@ -159,70 +172,56 @@ impl Collection {
 
             match metric.metric_type() {
                 MetricType::Switch(value) => {
-                    if let Err(e) = self.insert_gauge(&metric.key(), *value as i64, &labels, None) {
+                    if let Err(e) =
+                        self.insert_gauge(&metric.key(), *value as i64, &labels, None, false)
+                    {
                         error!("SWITCH insert_gauge {:?} err {}", metric, e);
                         return Err(e);
                     }
                 }
                 MetricType::Bytes(value) => {
-                    if self.options.exporter_skip_zero_metrics && value == &0 {
-                        continue;
-                    }
                     // /_cat/recovery has key name `bytes`
                     let postfix = if metric.key().ends_with("bytes") {
                         None
                     } else {
                         Some("_bytes")
                     };
-                    if let Err(e) = self.insert_gauge(&metric.key(), *value, &labels, postfix) {
+                    if let Err(e) = self.insert_gauge(&metric.key(), *value, &labels, postfix, true)
+                    {
                         error!("BYTES insert_gauge {:?} err {}", metric, e);
                         return Err(e);
                     }
                 }
                 MetricType::GaugeF(value) => {
-                    // is_normal: returns true if the number is neither zero, infinite, subnormal, or NaN.
-                    if self.options.exporter_skip_zero_metrics && !value.is_normal() {
-                        continue;
-                    }
-                    if let Err(e) = self.insert_fgauge(&metric.key(), *value, &labels, None) {
+                    if let Err(e) = self.insert_fgauge(&metric.key(), *value, &labels, None, true) {
                         error!("GAUGEF insert_fgauge {:?} err {}", metric, e);
                         return Err(e);
                     }
                 }
                 MetricType::Gauge(value) => {
-                    if self.options.exporter_skip_zero_metrics && value == &0 {
-                        continue;
-                    }
-                    if let Err(e) = self.insert_gauge(&metric.key(), *value, &labels, None) {
+                    if let Err(e) = self.insert_gauge(&metric.key(), *value, &labels, None, true) {
                         error!("GAUGE insert_gauge {:?} err {}", metric, e);
                         return Err(e);
                     }
                 }
                 MetricType::Time(duration) => {
-                    let secs = duration.as_secs_f64();
+                    let adjusted_key = metric.key().replace("_millis", "_seconds");
 
-                    if self.options.exporter_skip_zero_metrics && !secs.is_normal() {
-                        continue;
-                    }
-
-                    if metric.key().contains("millis") {
-                        let adjusted_key = metric.key().replace("millis", "seconds");
-
-                        if let Err(e) = self.insert_fgauge(&adjusted_key, secs, &labels, None) {
-                            error!("TIME insert_fgauge {:?} err {}", metric, e);
-                            return Err(e);
-                        }
+                    let postfix = if adjusted_key.ends_with("_seconds") {
+                        None
                     } else {
-                        let postfix = if metric.key().ends_with("_seconds") {
-                            None
-                        } else {
-                            Some("_seconds")
-                        };
+                        Some("_seconds")
+                    };
 
-                        if let Err(e) = self.insert_fgauge(&metric.key(), secs, &labels, postfix) {
-                            error!("TIME insert_fgauge {:?} err {}", metric, e);
-                            return Err(e);
-                        }
+                    if let Err(e) = self.insert_fgauge(
+                        &adjusted_key,
+                        duration.as_secs_f64(),
+                        &labels,
+                        postfix,
+                        true,
+                    ) {
+                        error!("TIME insert_fgauge {:?} err {}", metric, e);
+                        return Err(e);
                     }
                 }
                 _ => {}
