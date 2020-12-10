@@ -1,0 +1,434 @@
+[
+  {
+    "alias": "nl-tore-index",
+    "filter": "-",
+    "index": "nl-nl-tore-index_20201203082900",
+    "is_write_index": "-",
+    "routing.index": "-",
+    "routing.searth": "-"
+  },
+  {
+    "alias": "nl-tore-index-es7",
+    "filter": "-",
+    "index": "nl-nl-tore-index_20201203082900",
+    "is_write_index": "-",
+    "routing.index": "-",
+    "routing.searth": "-"
+  },
+  {
+    "alias": "wr-tore-index",
+    "filter": "-",
+    "index": "wr-es-tore-index_20201203082900",
+    "is_write_index": "-",
+    "routing.index": "-",
+    "routing.searth": "-"
+  },
+  {
+    "alias": "wr-tore-index-es7",
+    "filter": "-",
+    "index": "wr-es-tore-index_20201203082900",
+    "is_write_index": "-",
+    "routing.index": "-",
+    "routing.searth": "-"
+  },
+  {
+    "alias": "wr-tore-index",
+    "filter": "-",
+    "index": "wr-tore-index_20201120062041_2019.01",
+    "is_write_index": "-",
+    "routing.index": "-",
+    "routing.searth": "-"
+  },
+  {
+    "alias": "wr-tore-index-es7",
+    "filter": "-",
+    "index": "wr-tore-index_20201120062041_2019.01",
+    "is_write_index": "-",
+    "routing.index": "-",
+    "routing.searth": "-"
+  },
+  {
+    "alias": "uk-tore-index",
+    "filter": "-",
+    "index": "uk-en-tore-index_20201203082900",
+    "is_write_index": "-",
+    "routing.index": "-",
+    "routing.searth": "-"
+  },
+  {
+    "alias": "uk-tore-index-es7",
+    "filter": "-",
+    "index": "uk-en-tore-index_20201203082900",
+    "is_write_index": "-",
+    "routing.index": "-",
+    "routing.searth": "-"
+  },
+  {
+    "alias": "wr-tore-index",
+    "filter": "-",
+    "index": "wr-it-tore-index_20201203082900",
+    "is_write_index": "-",
+    "routing.index": "-",
+    "routing.searth": "-"
+  },
+  {
+    "alias": "wr-tore-index-es7",
+    "filter": "-",
+    "index": "wr-it-tore-index_20201203082900",
+    "is_write_index": "-",
+    "routing.index": "-",
+    "routing.searth": "-"
+  },
+  {
+    "alias": "wr-tore-index",
+    "filter": "-",
+    "index": "wr-lt-tore-index_20201203082900",
+    "is_write_index": "-",
+    "routing.index": "-",
+    "routing.searth": "-"
+  },
+  {
+    "alias": "wr-tore-index-es7",
+    "filter": "-",
+    "index": "wr-lt-tore-index_20201203082900",
+    "is_write_index": "-",
+    "routing.index": "-",
+    "routing.searth": "-"
+  },
+  {
+    "alias": "wr-tore-index",
+    "filter": "-",
+    "index": "wr-tore-index_20201120062041_2020.04",
+    "is_write_index": "-",
+    "routing.index": "-",
+    "routing.searth": "-"
+  },
+  {
+    "alias": "wr-tore-index-es7",
+    "filter": "-",
+    "index": "wr-tore-index_20201120062041_2020.04",
+    "is_write_index": "-",
+    "routing.index": "-",
+    "routing.searth": "-"
+  },
+  {
+    "alias": "pl-tore-index",
+    "filter": "-",
+    "index": "pl-pl-tore-index_20201203082900",
+    "is_write_index": "-",
+    "routing.index": "-",
+    "routing.searth": "-"
+  },
+  {
+    "alias": "pl-tore-index-es7",
+    "filter": "-",
+    "index": "pl-pl-tore-index_20201203082900",
+    "is_write_index": "-",
+    "routing.index": "-",
+    "routing.searth": "-"
+  },
+  {
+    "alias": "wr-tore-index",
+    "filter": "-",
+    "index": "wr-de-tore-index_20201203082900",
+    "is_write_index": "-",
+    "routing.index": "-",
+    "routing.searth": "-"
+  },
+  {
+    "alias": "wr-tore-index-es7",
+    "filter": "-",
+    "index": "wr-de-tore-index_20201203082900",
+    "is_write_index": "-",
+    "routing.index": "-",
+    "routing.searth": "-"
+  },
+  {
+    "alias": ".kibana",
+    "filter": "-",
+    "index": ".kibana_1",
+    "is_write_index": "-",
+    "routing.index": "-",
+    "routing.searth": "-"
+  },
+  {
+    "alias": "wr-tore-index",
+    "filter": "-",
+    "index": "wr-tore-index_20201120062041_2019.04",
+    "is_write_index": "-",
+    "routing.index": "-",
+    "routing.searth": "-"
+  },
+  {
+    "alias": "wr-tore-index-es7",
+    "filter": "-",
+    "index": "wr-tore-index_20201120062041_2019.04",
+    "is_write_index": "-",
+    "routing.index": "-",
+    "routing.searth": "-"
+  },
+  {
+    "alias": "wr-tore-index",
+    "filter": "-",
+    "index": "wr-nl-tore-index_20201203082900",
+    "is_write_index": "-",
+    "routing.index": "-",
+    "routing.searth": "-"
+  },
+  {
+    "alias": "wr-tore-index-es7",
+    "filter": "-",
+    "index": "wr-nl-tore-index_20201203082900",
+    "is_write_index": "-",
+    "routing.index": "-",
+    "routing.searth": "-"
+  },
+  {
+    "alias": "wr-tore-index",
+    "filter": "-",
+    "index": "wr-tore-index_20201120062041_2019.07",
+    "is_write_index": "-",
+    "routing.index": "-",
+    "routing.searth": "-"
+  },
+  {
+    "alias": "wr-tore-index-es7",
+    "filter": "-",
+    "index": "wr-tore-index_20201120062041_2019.07",
+    "is_write_index": "-",
+    "routing.index": "-",
+    "routing.searth": "-"
+  },
+  {
+    "alias": "ltdw-tore-index",
+    "filter": "-",
+    "index": "ltdw-lt-tore-index_20201203082900",
+    "is_write_index": "-",
+    "routing.index": "-",
+    "routing.searth": "-"
+  },
+  {
+    "alias": "ltdw-tore-index-es7",
+    "filter": "-",
+    "index": "ltdw-lt-tore-index_20201203082900",
+    "is_write_index": "-",
+    "routing.index": "-",
+    "routing.searth": "-"
+  },
+  {
+    "alias": ".kibana_task_manager",
+    "filter": "-",
+    "index": ".kibana_task_manager_1",
+    "is_write_index": "-",
+    "routing.index": "-",
+    "routing.searth": "-"
+  },
+  {
+    "alias": "lt-tore-index",
+    "filter": "-",
+    "index": "lt-lt-tore-index_20201203082900",
+    "is_write_index": "-",
+    "routing.index": "-",
+    "routing.searth": "-"
+  },
+  {
+    "alias": "lt-tore-index-es7",
+    "filter": "-",
+    "index": "lt-lt-tore-index_20201203082900",
+    "is_write_index": "-",
+    "routing.index": "-",
+    "routing.searth": "-"
+  },
+  {
+    "alias": "wr-tore-index",
+    "filter": "-",
+    "index": "wr-tore-index_20201120062041_2020.10",
+    "is_write_index": "-",
+    "routing.index": "-",
+    "routing.searth": "-"
+  },
+  {
+    "alias": "wr-tore-index-es7",
+    "filter": "-",
+    "index": "wr-tore-index_20201120062041_2020.10",
+    "is_write_index": "-",
+    "routing.index": "-",
+    "routing.searth": "-"
+  },
+  {
+    "alias": "wr-tore-index",
+    "filter": "-",
+    "index": "wr-wr-tore-index_20201203082900",
+    "is_write_index": "-",
+    "routing.index": "-",
+    "routing.searth": "-"
+  },
+  {
+    "alias": "wr-tore-index-es7",
+    "filter": "-",
+    "index": "wr-wr-tore-index_20201203082900",
+    "is_write_index": "-",
+    "routing.index": "-",
+    "routing.searth": "-"
+  },
+  {
+    "alias": "wr-tore-index",
+    "filter": "-",
+    "index": "wr-tore-index_20201120062041_old",
+    "is_write_index": "-",
+    "routing.index": "-",
+    "routing.searth": "-"
+  },
+  {
+    "alias": "wr-tore-index-es7",
+    "filter": "-",
+    "index": "wr-tore-index_20201120062041_old",
+    "is_write_index": "-",
+    "routing.index": "-",
+    "routing.searth": "-"
+  },
+  {
+    "alias": "wr-tore-index",
+    "filter": "-",
+    "index": "wr-tore-index_20201120062041_2020.07",
+    "is_write_index": "-",
+    "routing.index": "-",
+    "routing.searth": "-"
+  },
+  {
+    "alias": "wr-tore-index-es7",
+    "filter": "-",
+    "index": "wr-tore-index_20201120062041_2020.07",
+    "is_write_index": "-",
+    "routing.index": "-",
+    "routing.searth": "-"
+  },
+  {
+    "alias": "us-tore-index",
+    "filter": "-",
+    "index": "us-en-tore-index_20201203082900",
+    "is_write_index": "-",
+    "routing.index": "-",
+    "routing.searth": "-"
+  },
+  {
+    "alias": "us-tore-index-es7",
+    "filter": "-",
+    "index": "us-en-tore-index_20201203082900",
+    "is_write_index": "-",
+    "routing.index": "-",
+    "routing.searth": "-"
+  },
+  {
+    "alias": "wr-tore-index",
+    "filter": "-",
+    "index": "wr-en-tore-index_20201203082900",
+    "is_write_index": "-",
+    "routing.index": "-",
+    "routing.searth": "-"
+  },
+  {
+    "alias": "wr-tore-index-es7",
+    "filter": "-",
+    "index": "wr-en-tore-index_20201203082900",
+    "is_write_index": "-",
+    "routing.index": "-",
+    "routing.searth": "-"
+  },
+  {
+    "alias": "de-tore-index",
+    "filter": "-",
+    "index": "de-de-tore-index_20201203082900",
+    "is_write_index": "-",
+    "routing.index": "-",
+    "routing.searth": "-"
+  },
+  {
+    "alias": "de-tore-index-es7",
+    "filter": "-",
+    "index": "de-de-tore-index_20201203082900",
+    "is_write_index": "-",
+    "routing.index": "-",
+    "routing.searth": "-"
+  },
+  {
+    "alias": "es-tore-index",
+    "filter": "-",
+    "index": "es-es-tore-index_20201203082900",
+    "is_write_index": "-",
+    "routing.index": "-",
+    "routing.searth": "-"
+  },
+  {
+    "alias": "es-tore-index-es7",
+    "filter": "-",
+    "index": "es-es-tore-index_20201203082900",
+    "is_write_index": "-",
+    "routing.index": "-",
+    "routing.searth": "-"
+  },
+  {
+    "alias": "tz-tore-index",
+    "filter": "-",
+    "index": "tz-tz-tore-index_20201203082900",
+    "is_write_index": "-",
+    "routing.index": "-",
+    "routing.searth": "-"
+  },
+  {
+    "alias": "tz-tore-index-es7",
+    "filter": "-",
+    "index": "tz-tz-tore-index_20201203082900",
+    "is_write_index": "-",
+    "routing.index": "-",
+    "routing.searth": "-"
+  },
+  {
+    "alias": "wr-tore-index",
+    "filter": "-",
+    "index": "wr-tore-index_20201120062041_2019.10",
+    "is_write_index": "-",
+    "routing.index": "-",
+    "routing.searth": "-"
+  },
+  {
+    "alias": "wr-tore-index-es7",
+    "filter": "-",
+    "index": "wr-tore-index_20201120062041_2019.10",
+    "is_write_index": "-",
+    "routing.index": "-",
+    "routing.searth": "-"
+  },
+  {
+    "alias": "dedw-tore-index",
+    "filter": "-",
+    "index": "dedw-de-tore-index_20201203082900",
+    "is_write_index": "-",
+    "routing.index": "-",
+    "routing.searth": "-"
+  },
+  {
+    "alias": "dedw-tore-index-es7",
+    "filter": "-",
+    "index": "dedw-de-tore-index_20201203082900",
+    "is_write_index": "-",
+    "routing.index": "-",
+    "routing.searth": "-"
+  },
+  {
+    "alias": "wr-tore-index",
+    "filter": "-",
+    "index": "wr-tore-index_20201120062041_2020.01",
+    "is_write_index": "-",
+    "routing.index": "-",
+    "routing.searth": "-"
+  },
+  {
+    "alias": "wr-tore-index-es7",
+    "filter": "-",
+    "index": "wr-tore-index_20201120062041_2020.01",
+    "is_write_index": "-",
+    "routing.index": "-",
+    "routing.searth": "-"
+  }
+]
