@@ -1,6 +1,5 @@
 use elasticsearch::nodes::NodesInfoParts;
 use elasticsearch::{Elasticsearch, Error};
-use futures_util::StreamExt;
 use std::collections::HashMap;
 use tokio::sync::RwLock;
 
@@ -57,7 +56,9 @@ pub(crate) async fn poll(exporter: Exporter) {
     let mut interval =
         tokio::time::interval_at(start, exporter.options().exporter_metadata_refresh_interval);
 
-    while interval.next().await.is_some() {
+    loop {
+        let _ = interval.tick().await;
+
         let timer = SUBSYSTEM_REQ_HISTOGRAM
             .with_label_values(&["/_nodes/os", exporter.cluster_name()])
             .start_timer();

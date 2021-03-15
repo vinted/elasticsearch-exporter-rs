@@ -11,7 +11,6 @@ pub(crate) mod _nodes;
 #[macro_export]
 macro_rules! poll_metrics {
     () => {
-        use futures_util::StreamExt;
         #[allow(unused)]
         use serde_json::Value;
         use std::time::Duration;
@@ -56,7 +55,9 @@ macro_rules! poll_metrics {
 
             let mut interval = tokio::time::interval_at(start, *poll_interval);
 
-            while interval.next().await.is_some() {
+            loop {
+                let _ = interval.tick().await;
+
                 let timer = SUBSYSTEM_REQ_HISTOGRAM
                     .with_label_values(&[&format!("/{}", SUBSYSTEM), exporter.cluster_name()])
                     .start_timer();
