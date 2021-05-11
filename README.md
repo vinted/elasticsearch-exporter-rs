@@ -2,14 +2,14 @@
 
 [![Crates.io][crates-badge]][crates-url]
 [![Documentation][docs-badge]][docs-url]
-[![BSD-3 licensed][bsd-badge]][bsd-url]
+[![MIT licensed][mit-badge]][mit-url]
 
 [crates-badge]: https://img.shields.io/crates/v/elasticsearch_exporter.svg
 [crates-url]: https://crates.io/crates/elasticsearch_exporter
 [docs-badge]: https://docs.rs/elasticsearch_exporter/badge.svg
 [docs-url]: https://docs.rs/elasticsearch_exporter
-[bsd-badge]: https://img.shields.io/badge/license-bsd-3.svg
-[bsd-url]: LICENSE
+[mit-badge]: https://img.shields.io/badge/license-mit.svg
+[mit-url]: LICENSE
 
 Prometheus Elasticsearch exporter capable of working with large clusters.
 **Caution you may overload Prometheus server by enabling all metrics**, exporter is capable to export over near 1 million metrics.
@@ -209,4 +209,4 @@ cargo test
 
 # License
 
-BSD-3-Clause
+MIT

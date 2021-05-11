@@ -8,7 +8,7 @@ Vinted Elasticsearch exporter
 """
 documentation = "https://docs.rs/elasticsearch_exporter"
 homepage = "https://github.com/vinted/elasticsearch-exporter-rs"
-license = "BSD-3-Clause"
+license = "MIT"
 repository = "https://github.com/vinted/elasticsearch-exporter-rs"
 autobins = false
 
