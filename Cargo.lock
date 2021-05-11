@@ -207,7 +207,7 @@ dependencies = [
 
 [[package]]
 name = "elasticsearch_exporter"
-version = "0.16.0"
+version = "0.17.0"
 dependencies = [
  "byte-unit",
  "clap",
