@@ -166,31 +166,38 @@ impl Exporter {
 
     /// Spawn collectors
     pub async fn spawn(self) {
-        Self::spawn_cat(self.clone());
-        Self::spawn_cluster(self.clone());
-        Self::spawn_nodes(self.clone());
+        self.spawn_cat();
+        self.spawn_cluster();
+        self.spawn_nodes();
+        self.spawn_stats();
 
         if self.options().enable_metadata_refresh() {
-            Self::spawn_metadata(self);
+            self.spawn_metadata();
         }
     }
 
-    fn spawn_metadata(exporter: Self) {
-        let _ = tokio::spawn(metadata::poll(exporter.clone()));
+    fn spawn_metadata(&self) {
+        let _ = tokio::spawn(metadata::poll(self.clone()));
     }
 
-    fn spawn_cluster(exporter: Self) {
+    fn spawn_cluster(&self) {
         use metrics::_cluster::*;
 
-        is_metric_enabled!(exporter, health);
+        is_metric_enabled!(self.clone(), health);
     }
 
-    fn spawn_nodes(exporter: Self) {
+    fn spawn_stats(&self) {
+        use metrics::_stats::*;
+
+        is_metric_enabled!(self.clone(), _all);
+    }
+
+    fn spawn_nodes(&self) {
         use metrics::_nodes::*;
 
-        is_metric_enabled!(exporter, usage);
-        is_metric_enabled!(exporter, stats);
-        is_metric_enabled!(exporter, info);
+        is_metric_enabled!(self.clone(), usage);
+        is_metric_enabled!(self.clone(), stats);
+        is_metric_enabled!(self.clone(), info);
     }
 
     // =^.^=
@@ -210,25 +217,25 @@ impl Exporter {
     // /_cat/repositories
     // /_cat/templates
     // /_cat/transforms
-    fn spawn_cat(exporter: Self) {
+    fn spawn_cat(&self) {
         use metrics::_cat::*;
 
-        is_metric_enabled!(exporter, allocation);
-        is_metric_enabled!(exporter, shards);
-        is_metric_enabled!(exporter, indices);
-        is_metric_enabled!(exporter, segments);
-        is_metric_enabled!(exporter, nodes);
-        is_metric_enabled!(exporter, recovery);
-        is_metric_enabled!(exporter, health);
-        is_metric_enabled!(exporter, pending_tasks);
-        is_metric_enabled!(exporter, aliases);
-        is_metric_enabled!(exporter, thread_pool);
-        is_metric_enabled!(exporter, plugins);
-        is_metric_enabled!(exporter, fielddata);
-        is_metric_enabled!(exporter, nodeattrs);
-        is_metric_enabled!(exporter, repositories);
-        is_metric_enabled!(exporter, templates);
-        is_metric_enabled!(exporter, transforms);
+        is_metric_enabled!(self.clone(), allocation);
+        is_metric_enabled!(self.clone(), shards);
+        is_metric_enabled!(self.clone(), indices);
+        is_metric_enabled!(self.clone(), segments);
+        is_metric_enabled!(self.clone(), nodes);
+        is_metric_enabled!(self.clone(), recovery);
+        is_metric_enabled!(self.clone(), health);
+        is_metric_enabled!(self.clone(), pending_tasks);
+        is_metric_enabled!(self.clone(), aliases);
+        is_metric_enabled!(self.clone(), thread_pool);
+        is_metric_enabled!(self.clone(), plugins);
+        is_metric_enabled!(self.clone(), fielddata);
+        is_metric_enabled!(self.clone(), nodeattrs);
+        is_metric_enabled!(self.clone(), repositories);
+        is_metric_enabled!(self.clone(), templates);
+        is_metric_enabled!(self.clone(), transforms);
     }
 
     pub(crate) fn random_delay() -> u64 {

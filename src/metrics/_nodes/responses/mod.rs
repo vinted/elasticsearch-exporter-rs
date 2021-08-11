@@ -7,7 +7,7 @@ use crate::{
 };
 
 /// Nodes response
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Deserialize)]
 pub(crate) struct NodesResponse {
     nodes: HashMap<String, Value>,
 }

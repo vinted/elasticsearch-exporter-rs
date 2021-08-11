@@ -82,10 +82,10 @@ impl ExporterOptions {
     }
 
     /// /_cat subsystems
-    pub fn cat_subsystems() -> [&'static str; 16] {
+    pub fn cat_subsystems() -> &'static [&'static str] {
         use metrics::_cat::*;
 
-        [
+        &[
             allocation::SUBSYSTEM,
             shards::SUBSYSTEM,
             indices::SUBSYSTEM,
@@ -106,16 +106,24 @@ impl ExporterOptions {
     }
 
     /// /_cluster subsystems
-    pub fn cluster_subsystems() -> [&'static str; 1] {
+    pub fn cluster_subsystems() -> &'static [&'static str] {
         use metrics::_cluster::*;
 
-        [health::SUBSYSTEM]
+        &[health::SUBSYSTEM]
     }
 
     /// /_nodes subsystems
-    pub fn nodes_subsystems() -> [&'static str; 3] {
+    pub fn nodes_subsystems() -> &'static [&'static str] {
         use metrics::_nodes::*;
-        [usage::SUBSYSTEM, stats::SUBSYSTEM, info::SUBSYSTEM]
+
+        &[usage::SUBSYSTEM, stats::SUBSYSTEM, info::SUBSYSTEM]
+    }
+
+    /// /_stats subsystems
+    pub fn stats_subsystems() -> &'static [&'static str] {
+        use metrics::_stats::*;
+
+        &[_all::SUBSYSTEM]
     }
 }
 
@@ -182,6 +190,11 @@ impl fmt::Display for ExporterOptions {
             &mut output,
             "Available /_nodes subsystems",
             &Self::nodes_subsystems(),
+        );
+        vec_to_string(
+            &mut output,
+            "Available /_stats subsystems",
+            &Self::stats_subsystems(),
         );
         output.push_str("\n");
 

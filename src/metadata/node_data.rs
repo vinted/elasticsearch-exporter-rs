@@ -26,13 +26,13 @@ pub(crate) async fn _build(client: &Elasticsearch) -> Result<NodeDataMap, Error>
     Ok(nodes_os.nodes)
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Deserialize)]
 struct NodesOs {
     nodes: HashMap<String, NodeData>,
 }
 
 /// Node metadata
-#[derive(Debug, Serialize, Deserialize, Default)]
+#[derive(Debug, Deserialize, Default)]
 pub struct NodeData {
     /// Node FQDN
     pub name: String,
