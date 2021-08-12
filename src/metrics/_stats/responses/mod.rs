@@ -2,10 +2,8 @@ use serde_json::Value;
 use std::collections::HashMap;
 
 /// Nodes response
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Deserialize)]
 pub(crate) struct StatsResponse {
-    _shards: HashMap<String, Value>,
-    _all: HashMap<String, Value>,
     indices: HashMap<String, Value>,
 }
 
@@ -21,11 +19,7 @@ impl StatsResponse {
             values.push(data);
         }
 
-        for (_, data) in self._all.drain() {
-            values.push(data);
-        }
-
-        for (_, data) in self._shards.drain() {
+        for (_, data) in self.indices.drain() {
             values.push(data);
         }
 
@@ -46,6 +40,7 @@ fn inject_index(value: &mut Value, index_name: &str, keys_to_remove: &[&'static 
             inject_index(object_value, index_name, keys_to_remove);
         }
     }
+
     if let Some(array) = value.as_array_mut() {
         for object_array in array {
             inject_index(object_array, index_name, keys_to_remove);

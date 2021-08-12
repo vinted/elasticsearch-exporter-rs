@@ -1,6 +1,6 @@
 use serde_json::{Map, Value};
 
-#[derive(Deserialize, Debug)]
+#[derive(Debug, Deserialize)]
 pub(crate) struct CatResponse(Vec<Value>);
 
 impl CatResponse {

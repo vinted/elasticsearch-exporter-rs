@@ -25,7 +25,7 @@ async fn metrics(exporter: &Exporter) -> Result<Vec<Metrics>, elasticsearch::Err
     Ok(metric::from_values(values))
 }
 
-const REMOVE_KEYS: &[&'static str; 15] = &[
+const REMOVE_KEYS: &[&'static str] = &[
     "aggregations",
     "timestamp",
     "plugins",

@@ -81,6 +81,8 @@ Available /_nodes subsystems:
  - nodes_usage
  - nodes_stats
  - nodes_info
+Available /_stats subsystems:
+ - stats
 
 Exporter settings:
 elasticsearch_url: http://127.0.0.1:9200
@@ -126,6 +128,7 @@ exporter_include_labels:
  - nodes_info: name
  - nodes_stats: name,vin_cluster_version
  - nodes_usage: name
+ - stats: index
 exporter_skip_metrics:
  - cat_aliases: filter,routing_index,routing_search,is_write_index
  - cat_nodeattrs: pid

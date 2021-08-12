@@ -28,7 +28,7 @@ async fn metrics(exporter: &Exporter) -> Result<Vec<Metrics>, elasticsearch::Err
 
 // NOTE:
 // enabling adaptive_selection exposes metrics in nanoseconds, e.g.: "avg_response_time_ns": 196669342
-const REMOVE_KEYS: &[&'static str; 8] = &[
+const REMOVE_KEYS: &[&'static str] = &[
     "timestamp",
     "attributes",
     "cgroup",

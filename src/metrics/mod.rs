@@ -1,6 +1,7 @@
 pub(crate) mod _cat;
 pub(crate) mod _cluster;
 pub(crate) mod _nodes;
+pub(crate) mod _stats;
 
 // TODO: add metrics of
 // - https://www.elastic.co/guide/en/elasticsearch/reference/current/cluster-pending.html
