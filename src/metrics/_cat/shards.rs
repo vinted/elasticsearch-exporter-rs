@@ -3,7 +3,7 @@ use elasticsearch::params::{Bytes, Time};
 
 use super::responses::CatResponse;
 
-pub(crate) const SUBSYSTEM: &'static str = "cat_shards";
+pub(crate) const SUBSYSTEM: &str = "cat_shards";
 
 async fn metrics(exporter: &Exporter) -> Result<Vec<Metrics>, elasticsearch::Error> {
     let response = exporter

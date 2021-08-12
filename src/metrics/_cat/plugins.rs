@@ -1,4 +1,4 @@
-pub(crate) const SUBSYSTEM: &'static str = "cat_plugins";
+pub(crate) const SUBSYSTEM: &str = "cat_plugins";
 
 async fn metrics(exporter: &Exporter) -> Result<Vec<Metrics>, elasticsearch::Error> {
     let response = exporter

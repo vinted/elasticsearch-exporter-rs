@@ -2,7 +2,7 @@ use elasticsearch::indices::IndicesStatsParts;
 
 use super::responses::StatsResponse;
 
-pub(crate) const SUBSYSTEM: &'static str = "stats";
+pub(crate) const SUBSYSTEM: &str = "stats";
 
 async fn metrics(exporter: &Exporter) -> Result<Vec<Metrics>, elasticsearch::Error> {
     let response = exporter
@@ -23,7 +23,7 @@ async fn metrics(exporter: &Exporter) -> Result<Vec<Metrics>, elasticsearch::Err
     Ok(metric::from_values(values))
 }
 
-const REMOVE_KEYS: &[&'static str] = &["uuid"];
+const REMOVE_KEYS: &[&str] = &["uuid"];
 
 crate::poll_metrics!();
 

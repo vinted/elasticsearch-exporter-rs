@@ -42,7 +42,7 @@ impl<'s> TryFrom<RawMetric<'s>> for MetricType {
                 value
                     .as_str()
                     .map(|n| n.parse::<i64>())
-                    .ok_or(unknown())?
+                    .ok_or_else(unknown)?
                     .map_err(|e| MetricError::from_parse_int(e, Some(value.clone())))
             }
         };
@@ -55,7 +55,7 @@ impl<'s> TryFrom<RawMetric<'s>> for MetricType {
                     .as_str()
                     // .replace is handling string percent notation, e.g.: "3.44%"
                     .map(|n| n.replace("%", "").parse::<f64>())
-                    .ok_or(unknown())?
+                    .ok_or_else(unknown)?
                     .map_err(|e| MetricError::from_parse_float(e, Some(value.clone())))
             }
         };
@@ -131,7 +131,7 @@ impl<'s> TryFrom<RawMetric<'s>> for MetricType {
             "data" => match parse_i64() {
                 Ok(number) => Ok(MetricType::Gauge(number)),
                 Err(_) => Ok(MetricType::Label(
-                    value.as_str().ok_or(unknown())?.to_owned(),
+                    value.as_str().ok_or_else(unknown)?.to_owned(),
                 )),
             },
 
@@ -173,7 +173,7 @@ impl<'s> TryFrom<RawMetric<'s>> for MetricType {
             | "ip" | "prirep" | "id" | "status" | "at" | "for" | "details" | "reason" | "port"
             | "attr" | "field" | "shard" | "index" | "name" | "type" | "version"
             | "description" => Ok(MetricType::Label(
-                value.as_str().ok_or(unknown())?.to_owned(),
+                value.as_str().ok_or_else(unknown)?.to_owned(),
             )),
             _ => {
                 if cfg!(debug_assertions) {
@@ -187,7 +187,7 @@ impl<'s> TryFrom<RawMetric<'s>> for MetricType {
                 }
 
                 Ok(MetricType::Label(
-                    value.as_str().ok_or(unknown())?.to_owned(),
+                    value.as_str().ok_or_else(unknown)?.to_owned(),
                 ))
             }
         }

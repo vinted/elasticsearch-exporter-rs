@@ -1,6 +1,6 @@
 use elasticsearch::cat::CatThreadPoolParts;
 
-pub(crate) const SUBSYSTEM: &'static str = "cat_thread_pool";
+pub(crate) const SUBSYSTEM: &str = "cat_thread_pool";
 
 async fn metrics(exporter: &Exporter) -> Result<Vec<Metrics>, elasticsearch::Error> {
     let response = exporter

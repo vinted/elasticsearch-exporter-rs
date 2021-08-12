@@ -43,7 +43,7 @@ async fn serve_req(req: Request<Body>, options: String) -> Result<Response<Body>
 
     let response = match path {
         "/health" | "/healthy" | "/healthz" => build_response(StatusCode::OK, Body::from("Ok")),
-        "/" => build_response(StatusCode::OK, Body::from(options.to_string())),
+        "/" => build_response(StatusCode::OK, Body::from(options)),
 
         "/metrics" => {
             let encoder = TextEncoder::new();

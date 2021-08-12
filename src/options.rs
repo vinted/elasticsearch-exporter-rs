@@ -62,7 +62,7 @@ impl ExporterOptions {
         self.elasticsearch_query_fields
             .get(subsystem)
             .map(|params| params.iter().map(AsRef::as_ref).collect::<Vec<&str>>())
-            .unwrap_or(Vec::new())
+            .unwrap_or_default()
     }
 
     /// Path parameters for subsystems
@@ -70,15 +70,15 @@ impl ExporterOptions {
         self.elasticsearch_path_parameters
             .get(subsystem)
             .map(|params| params.iter().map(AsRef::as_ref).collect::<Vec<&str>>())
-            .unwrap_or(Vec::new())
+            .unwrap_or_default()
     }
 
     /// Get timeout for subsystem or fallback to global
     pub fn timeout_for_subsystem(&self, subsystem: &'static str) -> Duration {
-        self.elasticsearch_subsystem_timeouts
+        *self
+            .elasticsearch_subsystem_timeouts
             .get(subsystem)
             .unwrap_or(&self.elasticsearch_global_timeout)
-            .clone()
     }
 
     /// /_cat subsystems
@@ -128,10 +128,10 @@ impl ExporterOptions {
 }
 
 fn switch_to_string(output: &mut String, field: &'static str, switches: &ExporterMetricsSwitch) {
-    output.push_str("\n");
+    output.push('\n');
     output.push_str(&format!("{}:", field));
     for (k, v) in switches.iter() {
-        output.push_str("\n");
+        output.push('\n');
         output.push_str(&format!(" - {}: {}", k, v));
     }
 }
@@ -141,10 +141,10 @@ fn collection_labels_to_string(
     field: &'static str,
     labels: &CollectionLabels,
 ) {
-    output.push_str("\n");
+    output.push('\n');
     output.push_str(&format!("{}:", field));
     for (k, v) in labels.iter() {
-        output.push_str("\n");
+        output.push('\n');
         output.push_str(&format!(" - {}: {}", k, v.join(",")));
     }
 }
@@ -154,19 +154,19 @@ fn poll_duration_to_string(
     field: &'static str,
     labels: &ExporterPollIntervals,
 ) {
-    output.push_str("\n");
+    output.push('\n');
     output.push_str(&format!("{}:", field));
     for (k, v) in labels.iter() {
-        output.push_str("\n");
+        output.push('\n');
         output.push_str(&format!(" - {}: {:?}", k, v));
     }
 }
 
 fn vec_to_string(output: &mut String, field: &'static str, fields: &[&'static str]) {
-    output.push_str("\n");
+    output.push('\n');
     output.push_str(&format!("{}:", field));
     for field in fields.iter() {
-        output.push_str("\n");
+        output.push('\n');
         output.push_str(&format!(" - {}", field));
     }
 }
@@ -175,34 +175,34 @@ impl fmt::Display for ExporterOptions {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let mut output = String::from("Vinted Elasticsearch exporter");
 
-        output.push_str("\n");
+        output.push('\n');
         vec_to_string(
             &mut output,
             "Available /_cat subsystems",
-            &Self::cat_subsystems(),
+            Self::cat_subsystems(),
         );
         vec_to_string(
             &mut output,
             "Available /_cluster subsystems",
-            &Self::cluster_subsystems(),
+            Self::cluster_subsystems(),
         );
         vec_to_string(
             &mut output,
             "Available /_nodes subsystems",
-            &Self::nodes_subsystems(),
+            Self::nodes_subsystems(),
         );
         vec_to_string(
             &mut output,
             "Available /_stats subsystems",
-            &Self::stats_subsystems(),
+            Self::stats_subsystems(),
         );
-        output.push_str("\n");
+        output.push('\n');
 
-        output.push_str("\n");
+        output.push('\n');
         output.push_str("Exporter settings:");
-        output.push_str("\n");
+        output.push('\n');
         output.push_str(&format!("elasticsearch_url: {}", self.elasticsearch_url));
-        output.push_str("\n");
+        output.push('\n');
         output.push_str(&format!(
             "elasticsearch_global_timeout: {:?}",
             self.elasticsearch_global_timeout
@@ -243,7 +243,7 @@ impl fmt::Display for ExporterOptions {
         );
 
         // Exporter
-        output.push_str("\n");
+        output.push('\n');
         output.push_str(&format!(
             "exporter_poll_default_interval: {:?}",
             self.exporter_poll_default_interval
@@ -255,7 +255,7 @@ impl fmt::Display for ExporterOptions {
             &self.exporter_poll_intervals,
         );
 
-        output.push_str("\n");
+        output.push('\n');
         output.push_str(&format!(
             "exporter_skip_zero_metrics: {:?}",
             self.exporter_skip_zero_metrics
@@ -267,13 +267,13 @@ impl fmt::Display for ExporterOptions {
             &self.exporter_metrics_enabled,
         );
 
-        output.push_str("\n");
+        output.push('\n');
         output.push_str(&format!(
             "exporter_metadata_refresh_interval: {:?}",
             self.exporter_metadata_refresh_interval
         ));
 
-        output.push_str("\n");
+        output.push('\n');
         write!(f, "{}", output)
     }
 }

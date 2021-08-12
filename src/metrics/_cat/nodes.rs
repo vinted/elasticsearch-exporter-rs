@@ -1,6 +1,6 @@
 use elasticsearch::params::Bytes;
 
-pub(crate) const SUBSYSTEM: &'static str = "cat_nodes";
+pub(crate) const SUBSYSTEM: &str = "cat_nodes";
 
 async fn metrics(exporter: &Exporter) -> Result<Vec<Metrics>, elasticsearch::Error> {
     let response = exporter

@@ -41,7 +41,7 @@ impl fmt::Display for SimpleError {
 
 impl StdError for SimpleError {}
 
-const HASH_MAP_STR_FORMAT: &'static str = "cat_indices=id,pri,rep&cat_nodes=heap.percent,jdk";
+const HASH_MAP_STR_FORMAT: &str = "cat_indices=id,pri,rep&cat_nodes=heap.percent,jdk";
 
 #[derive(Clap, Clone, Debug)]
 pub struct Opts {
@@ -161,10 +161,10 @@ impl FromStr for HashMapDuration {
     fn from_str(input: &str) -> Result<Self, Self::Err> {
         let mut map = ExporterPollIntervals::new();
 
-        let parts = input.trim().split("&").into_iter().collect::<Vec<&str>>();
+        let parts = input.trim().split('&').collect::<Vec<&str>>();
 
-        for part in parts.into_iter() {
-            match part.split_once("=") {
+        for part in parts {
+            match part.split_once('=') {
                 Some((key, value)) => match value.parse::<humantime::Duration>() {
                     Ok(time) => {
                         let _ = map.insert(key.to_string(), *time);
@@ -198,13 +198,13 @@ impl FromStr for HashMapVec {
     fn from_str(input: &str) -> Result<Self, Self::Err> {
         let mut map = CollectionLabels::new();
 
-        let parts = input.trim().split("&").into_iter().collect::<Vec<&str>>();
+        let parts = input.trim().split('&').collect::<Vec<&str>>();
 
-        for part in parts.into_iter() {
-            match part.split_once("=") {
+        for part in parts {
+            match part.split_once('=') {
                 Some((key, value)) => {
                     let labels = value
-                        .split(",")
+                        .split(',')
                         .map(|value| value.to_string())
                         .collect::<Vec<String>>();
 

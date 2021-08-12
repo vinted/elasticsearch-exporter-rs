@@ -156,14 +156,14 @@ impl Collection {
 
         metrics.retain(|metric| match metric.metric_type() {
             MetricType::Label(label) => {
-                if self.include_labels.contains(&metric.string_ref()) {
+                if self.include_labels.contains(metric.string_ref()) {
                     let _ = labels.insert(metric.key().to_string(), label.to_string());
                 }
                 false
             }
             _ => {
-                !self.skip_labels.contains(&metric.string_ref())
-                    && !self.skip_metrics.contains(&metric.string_ref())
+                !self.skip_labels.contains(metric.string_ref())
+                    && !self.skip_metrics.contains(metric.string_ref())
             }
         });
 
@@ -173,7 +173,7 @@ impl Collection {
             match metric.metric_type() {
                 MetricType::Switch(value) => {
                     if let Err(e) =
-                        self.insert_gauge(&metric.key(), *value as i64, &labels, None, false)
+                        self.insert_gauge(metric.key(), *value as i64, &labels, None, false)
                     {
                         error!("SWITCH insert_gauge {:?} err {}", metric, e);
                         return Err(e);
@@ -186,20 +186,20 @@ impl Collection {
                     } else {
                         Some("_bytes")
                     };
-                    if let Err(e) = self.insert_gauge(&metric.key(), *value, &labels, postfix, true)
+                    if let Err(e) = self.insert_gauge(metric.key(), *value, &labels, postfix, true)
                     {
                         error!("BYTES insert_gauge {:?} err {}", metric, e);
                         return Err(e);
                     }
                 }
                 MetricType::GaugeF(value) => {
-                    if let Err(e) = self.insert_fgauge(&metric.key(), *value, &labels, None, true) {
+                    if let Err(e) = self.insert_fgauge(metric.key(), *value, &labels, None, true) {
                         error!("GAUGEF insert_fgauge {:?} err {}", metric, e);
                         return Err(e);
                     }
                 }
                 MetricType::Gauge(value) => {
-                    if let Err(e) = self.insert_gauge(&metric.key(), *value, &labels, None, true) {
+                    if let Err(e) = self.insert_gauge(metric.key(), *value, &labels, None, true) {
                         error!("GAUGE insert_gauge {:?} err {}", metric, e);
                         return Err(e);
                     }
@@ -232,15 +232,20 @@ impl Collection {
     }
 }
 
-#[test]
-fn test_float_is_zero() {
-    let num: f64 = 0.000000000000000000000000000000000000000000000000000000000000000000001;
-    assert!(num != 0.0);
-    assert!(num.is_normal());
+#[cfg(test)]
+mod tests {
 
-    let zero: f64 = 0.0;
-    assert!(!zero.is_normal());
+    #[test]
+    fn test_float_is_zero() {
+        let num: f64 = 0.000000000000000000000000000000000000000000000000000000000000000000001;
+        assert!(num != 0.0);
+        assert!(num.is_normal());
 
-    let negative: f64 = -0.000000000000000000000000000000000000000000000000000000000000000000001;
-    assert!(negative.is_normal());
+        let zero: f64 = 0.0;
+        assert!(!zero.is_normal());
+
+        let negative: f64 =
+            -0.000000000000000000000000000000000000000000000000000000000000000000001;
+        assert!(negative.is_normal());
+    }
 }

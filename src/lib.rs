@@ -70,7 +70,7 @@ pub mod metadata;
 
 pub(crate) mod metrics;
 
-const NAMESPACE: &'static str = "elasticsearch";
+const NAMESPACE: &str = "elasticsearch";
 
 /// Labels type with ordered keys
 pub type Labels = BTreeMap<String, String>;
@@ -101,7 +101,11 @@ struct Inner {
 
     /// Node ID to node name map for adding extra metadata labels
     /// {"U-WnGaTpRxucgde3miiDWw": "m1-supernode.example.com"}
-    metadata: metadata::IdToMetadata,
+    nodes_metadata: metadata::IdToMetadata,
+
+    /// Node ID to node name map for adding extra metadata labels
+    /// {"U-WnGaTpRxucgde3miiDWw": "m1-supernode.example.com"}
+    index_metadata: metadata::IndexToMetadata,
 }
 
 impl Exporter {
@@ -127,8 +131,13 @@ impl Exporter {
 
     /// Node ID to node name map for adding extra metadata labels
     /// {"U-WnGaTpRxucgde3miiDWw": "m1-supernode.example.com"}
-    pub fn metadata(&self) -> &metadata::IdToMetadata {
-        &self.0.metadata
+    pub fn nodes_metadata(&self) -> &metadata::IdToMetadata {
+        &self.0.nodes_metadata
+    }
+
+    /// Index to index metadata
+    pub fn index_metadata(&self) -> &metadata::IndexToMetadata {
+        &self.0.index_metadata
     }
 
     /// Spawn exporter
@@ -142,13 +151,16 @@ impl Exporter {
         info!("Elasticsearch: ping");
         let _ = client.ping().send().await?;
 
-        let metadata = if options.enable_metadata_refresh() {
-            metadata::build(&client).await?
+        let nodes_metadata = if options.enable_metadata_refresh() {
+            metadata::node_data::build(&client).await?
         } else {
             info!("Skip metadata refresh");
             // This will generate empty map
             Default::default()
         };
+
+        // Skip initializing of /_cat/indices metadata
+        let index_metadata = Default::default();
 
         let cluster_name = metadata::cluster_name(&client).await?;
 
@@ -160,7 +172,8 @@ impl Exporter {
             client,
             options,
             const_labels,
-            metadata,
+            nodes_metadata,
+            index_metadata,
         })))
     }
 
@@ -172,12 +185,11 @@ impl Exporter {
         self.spawn_stats();
 
         if self.options().enable_metadata_refresh() {
-            self.spawn_metadata();
+            let _ = tokio::spawn(metadata::node_data::poll(self.clone()));
         }
-    }
 
-    fn spawn_metadata(&self) {
-        let _ = tokio::spawn(metadata::poll(self.clone()));
+        // Spawn /_cat/indices metadata refresh
+        let _ = tokio::spawn(metadata::index::poll(self));
     }
 
     fn spawn_cluster(&self) {

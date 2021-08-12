@@ -24,7 +24,7 @@ pub fn from_value(value: Value) -> Vec<Metrics> {
 
     // Instead of returning error print error and return
     // any metrics that were processed
-    match _from_value("".into(), &mut output, &value) {
+    match _from_value("", &mut output, &value) {
         Ok(metrics) => {
             debug_assert!(metrics.is_empty());
         }
@@ -77,7 +77,7 @@ fn _from_value<'f>(
 // thread_pool_transform_indexing_rejected
 //
 // This is inconvenient to use with exporter_include_labels CLI argument
-const SKIP_PREFIX_APPEND: &[&'static str] = &[
+const SKIP_PREFIX_APPEND: &[&str] = &[
     "name",
     "ip",
     "host",
@@ -91,7 +91,7 @@ fn _from_map(prefix: &str, output: &mut Vec<Metrics>, map: &SerdeMap) -> Result<
     for (key, value) in map.iter() {
         trace!("_from_map PREFIX {} K {}", prefix, key);
 
-        let inner_metrics = if prefix == "" || SKIP_PREFIX_APPEND.contains(&key.as_str()) {
+        let inner_metrics = if prefix.is_empty() || SKIP_PREFIX_APPEND.contains(&key.as_str()) {
             _from_value(key, output, value)?
         } else {
             _from_value(&format!("{}_{}", prefix, key), output, value)?
@@ -109,10 +109,10 @@ fn _from_map(prefix: &str, output: &mut Vec<Metrics>, map: &SerdeMap) -> Result<
     Ok(())
 }
 
-fn from_array<'f>(
+fn from_array(
     prefix: &str,
     output: &mut Vec<Metrics>,
-    values: &'f Vec<Value>,
+    values: &[Value],
 ) -> Result<(), MetricError> {
     let mut metrics = Metrics::new();
 
@@ -127,47 +127,51 @@ fn from_array<'f>(
     Ok(())
 }
 
-#[test]
-fn test_cluster_stats_from_map() {
-    use super::MetricType;
+#[cfg(test)]
+mod tests {
+    use super::super::MetricType;
+    use super::*;
 
-    let value: Value =
-        serde_json::from_str(include_str!("../tests/files/types.json")).expect("valid json");
+    #[test]
+    fn test_cluster_stats_from_map() {
+        let value: Value =
+            serde_json::from_str(include_str!("../tests/files/types.json")).expect("valid json");
 
-    let metrics = from_value(value);
+        let metrics = from_value(value);
 
-    let expected = vec![
-        Metric("_nodes_failed".into(), MetricType::Gauge(9329292)),
-        Metric("_nodes_some_float".into(), MetricType::GaugeF(1.13)),
-        Metric("_nodes_some_total".into(), MetricType::Gauge(22)),
-    ];
-    assert!(metrics.contains(&expected));
+        let expected = vec![
+            Metric("_nodes_failed".into(), MetricType::Gauge(9329292)),
+            Metric("_nodes_some_float".into(), MetricType::GaugeF(1.13)),
+            Metric("_nodes_some_total".into(), MetricType::Gauge(22)),
+        ];
+        assert!(metrics.contains(&expected));
 
-    let expected = vec![Metric("array_map".into(), MetricType::Gauge(1))];
-    assert!(metrics.contains(&expected));
+        let expected = vec![Metric("array_map".into(), MetricType::Gauge(1))];
+        assert!(metrics.contains(&expected));
 
-    let expected = vec![
-        Metric("array_second_dimension".into(), MetricType::Gauge(14)),
-        Metric(
-            "array_second_my_label".into(),
-            MetricType::Label("super".into()),
-        ),
-    ];
-    assert!(metrics.contains(&expected));
+        let expected = vec![
+            Metric("array_second_dimension".into(), MetricType::Gauge(14)),
+            Metric(
+                "array_second_my_label".into(),
+                MetricType::Label("super".into()),
+            ),
+        ];
+        assert!(metrics.contains(&expected));
 
-    let expected = vec![
-        Metric("top_level_bytes".into(), MetricType::Bytes(2)),
-        Metric(
-            "top_level_bytes_kB_size".into(),
-            MetricType::Gauge(77 * 1000),
-        ),
-        Metric("top_level_one".into(), MetricType::Gauge(1)),
-        Metric("top_level_size".into(), MetricType::Gauge(3)),
-    ];
-    assert!(
-        metrics.contains(&expected),
-        "got {:?}\nexpected {:?}",
-        metrics,
-        expected
-    );
+        let expected = vec![
+            Metric("top_level_bytes".into(), MetricType::Bytes(2)),
+            Metric(
+                "top_level_bytes_kB_size".into(),
+                MetricType::Gauge(77 * 1000),
+            ),
+            Metric("top_level_one".into(), MetricType::Gauge(1)),
+            Metric("top_level_size".into(), MetricType::Gauge(3)),
+        ];
+        assert!(
+            metrics.contains(&expected),
+            "got {:?}\nexpected {:?}",
+            metrics,
+            expected
+        );
+    }
 }

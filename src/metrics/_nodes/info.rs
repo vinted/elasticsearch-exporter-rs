@@ -2,7 +2,7 @@ use elasticsearch::nodes::NodesInfoParts;
 
 use super::responses::NodesResponse;
 
-pub(crate) const SUBSYSTEM: &'static str = "nodes_info";
+pub(crate) const SUBSYSTEM: &str = "nodes_info";
 
 // https://www.elastic.co/guide/en/elasticsearch/reference/current/cluster-nodes-stats.html
 async fn metrics(exporter: &Exporter) -> Result<Vec<Metrics>, elasticsearch::Error> {
@@ -19,13 +19,13 @@ async fn metrics(exporter: &Exporter) -> Result<Vec<Metrics>, elasticsearch::Err
     let values = response
         .json::<NodesResponse>()
         .await?
-        .into_values(exporter.metadata(), REMOVE_KEYS)
+        .into_values(exporter.nodes_metadata(), REMOVE_KEYS)
         .await;
 
     Ok(metric::from_values(values))
 }
 
-const REMOVE_KEYS: &[&'static str] = &[
+const REMOVE_KEYS: &[&str] = &[
     "aggregations",
     "timestamp",
     "plugins",

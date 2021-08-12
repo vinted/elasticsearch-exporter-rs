@@ -63,8 +63,10 @@ pub(crate) async fn poll(exporter: Exporter) {
             .with_label_values(&["/_nodes/os", exporter.cluster_name()])
             .start_timer();
 
-        match _build(&exporter.client()).await {
-            Ok(new_metadata) => update_map(&mut *exporter.metadata().write().await, new_metadata),
+        match _build(exporter.client()).await {
+            Ok(new_metadata) => {
+                update_map(&mut *exporter.nodes_metadata().write().await, new_metadata)
+            }
             Err(e) => {
                 error!("poll metadata metrics err {}", e);
             }
@@ -74,33 +76,38 @@ pub(crate) async fn poll(exporter: Exporter) {
     }
 }
 
-#[test]
-fn test_update_map() {
-    let test_key = "testtsss".to_string();
-    let test_ip = "0.0.0.0".to_string();
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-    let mut old = NodeDataMap::new();
-    let _ = old.insert(
-        test_key.clone(),
-        NodeData {
-            name: "name.fqdn.com".into(),
-            ip: test_ip.clone(),
-            version: "7.7.0".into(),
-        },
-    );
+    #[test]
+    fn test_update_map() {
+        let test_key = "testtsss".to_string();
+        let test_ip = "0.0.0.0".to_string();
 
-    let mut new = NodeDataMap::new();
-    let _ = new.insert(
-        test_key.clone(),
-        NodeData {
-            name: "name.fqdn.com".into(),
-            ip: test_ip.clone(),
-            version: "7.9.3".into(),
-        },
-    );
+        let mut old = NodeDataMap::new();
+        let _ = old.insert(
+            test_key.clone(),
+            NodeData {
+                name: "name.fqdn.com".into(),
+                ip: test_ip.clone(),
+                version: "7.7.0".into(),
+            },
+        );
 
-    update_map(&mut old, new);
+        let mut new = NodeDataMap::new();
+        let _ = new.insert(
+            test_key.clone(),
+            NodeData {
+                name: "name.fqdn.com".into(),
+                ip: test_ip.clone(),
+                version: "7.9.3".into(),
+            },
+        );
 
-    // Version is updated
-    assert_eq!(old.get(&test_key).unwrap().version, "7.9.3");
+        update_map(&mut old, new);
+
+        // Version is updated
+        assert_eq!(old.get(&test_key).unwrap().version, "7.9.3");
+    }
 }

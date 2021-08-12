@@ -1,6 +1,6 @@
 use elasticsearch::cat::CatTemplatesParts;
 
-pub(crate) const SUBSYSTEM: &'static str = "cat_templates";
+pub(crate) const SUBSYSTEM: &str = "cat_templates";
 
 async fn metrics(exporter: &Exporter) -> Result<Vec<Metrics>, elasticsearch::Error> {
     let response = exporter

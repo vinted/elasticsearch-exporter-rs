@@ -26,7 +26,7 @@ impl NodesResponse {
         // Inject node label
         for (node_id, mut data) in self.nodes.drain() {
             if let Some(node_metadata) = metadata_read.get(&node_id) {
-                inject_label(&mut data, &node_metadata, keys_to_remove);
+                inject_label(&mut data, node_metadata, keys_to_remove);
 
                 values.push(data);
             }
