@@ -44,14 +44,14 @@ impl<'s> TryFrom<RawMetric<'s>> for Metric {
 
         let underscore_index = key.rfind('_').unwrap_or(0);
 
-        let shift = if key.contains("_") { 1 } else { 0 };
+        let shift = if key.contains('_') { 1 } else { 0 };
 
         let last = key
             .get(underscore_index + shift..key.len())
             .unwrap_or("UNKNOWN");
 
-        debug_assert!(!last.contains("_"));
-        debug_assert!(!last.contains("."));
+        debug_assert!(!last.contains('_'));
+        debug_assert!(!last.contains('.'));
 
         let metric_type = MetricType::try_from((last, metric.1))?;
 
@@ -59,28 +59,33 @@ impl<'s> TryFrom<RawMetric<'s>> for Metric {
     }
 }
 
-#[test]
-fn test_try_from_raw_metric() {
-    use std::time::Duration;
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-    let metric = "elasticsearch.test_metric.total".to_string();
-    let raw: RawMetric = (&metric, &Value::from("2299291"));
+    #[test]
+    fn test_try_from_raw_metric() {
+        use std::time::Duration;
 
-    let m = Metric::try_from(raw);
-    assert!(m.is_ok());
-    let m = m.unwrap();
-    assert_eq!(&m.key(), &"elasticsearch_test_metric_total");
-    assert_eq!(m.metric_type(), &MetricType::Gauge(2299291));
+        let metric = "elasticsearch.test_metric.total".to_string();
+        let raw: RawMetric = (&metric, &Value::from("2299291"));
 
-    let metric = "elasticsearch.test_metric.time".to_string();
-    let raw: RawMetric = (&metric, &Value::from("10"));
+        let m = Metric::try_from(raw);
+        assert!(m.is_ok());
+        let m = m.unwrap();
+        assert_eq!(&m.key(), &"elasticsearch_test_metric_total");
+        assert_eq!(m.metric_type(), &MetricType::Gauge(2299291));
 
-    let m = Metric::try_from(raw);
-    assert!(m.is_ok());
-    let m = m.unwrap();
-    assert_eq!(&m.key(), &"elasticsearch_test_metric_time");
-    assert_eq!(
-        m.metric_type(),
-        &MetricType::Time(Duration::from_millis(10))
-    );
+        let metric = "elasticsearch.test_metric.time".to_string();
+        let raw: RawMetric = (&metric, &Value::from("10"));
+
+        let m = Metric::try_from(raw);
+        assert!(m.is_ok());
+        let m = m.unwrap();
+        assert_eq!(&m.key(), &"elasticsearch_test_metric_time");
+        assert_eq!(
+            m.metric_type(),
+            &MetricType::Time(Duration::from_millis(10))
+        );
+    }
 }

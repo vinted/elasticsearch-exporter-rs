@@ -1,6 +1,6 @@
 use elasticsearch::cluster::ClusterHealthParts;
 
-pub(crate) const SUBSYSTEM: &'static str = "cluster_health";
+pub(crate) const SUBSYSTEM: &str = "cluster_health";
 
 async fn metrics(exporter: &Exporter) -> Result<Vec<Metrics>, elasticsearch::Error> {
     let response = exporter

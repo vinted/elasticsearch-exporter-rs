@@ -1,6 +1,6 @@
 use elasticsearch::params::Time;
 
-pub(crate) const SUBSYSTEM: &'static str = "cat_health";
+pub(crate) const SUBSYSTEM: &str = "cat_health";
 
 async fn metrics(exporter: &Exporter) -> Result<Vec<Metrics>, elasticsearch::Error> {
     let response = exporter

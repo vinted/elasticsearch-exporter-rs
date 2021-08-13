@@ -3,7 +3,7 @@ use serde_json::Map as SerdeMap;
 
 use super::responses::CatResponse;
 
-pub(crate) const SUBSYSTEM: &'static str = "cat_aliases";
+pub(crate) const SUBSYSTEM: &str = "cat_aliases";
 
 async fn metrics(exporter: &Exporter) -> Result<Vec<Metrics>, elasticsearch::Error> {
     let response = exporter
@@ -29,7 +29,7 @@ async fn metrics(exporter: &Exporter) -> Result<Vec<Metrics>, elasticsearch::Err
 fn inject_cat_aliases_info(map: &mut SerdeMap<String, Value>) {
     let is_system_index: bool = map
         .get("index")
-        .map(|index| index.as_str().map(|s| s.starts_with(".")).unwrap_or(false))
+        .map(|index| index.as_str().map(|s| s.starts_with('.')).unwrap_or(false))
         .unwrap_or(false);
 
     if is_system_index {

@@ -2,7 +2,7 @@ use elasticsearch::nodes::NodesStatsParts;
 
 use super::responses::NodesResponse;
 
-pub(crate) const SUBSYSTEM: &'static str = "nodes_stats";
+pub(crate) const SUBSYSTEM: &str = "nodes_stats";
 
 // https://www.elastic.co/guide/en/elasticsearch/reference/current/cluster-nodes-stats.html
 async fn metrics(exporter: &Exporter) -> Result<Vec<Metrics>, elasticsearch::Error> {
@@ -20,7 +20,7 @@ async fn metrics(exporter: &Exporter) -> Result<Vec<Metrics>, elasticsearch::Err
     let values = response
         .json::<NodesResponse>()
         .await?
-        .into_values(&exporter.metadata(), REMOVE_KEYS)
+        .into_values(exporter.nodes_metadata(), REMOVE_KEYS)
         .await;
 
     Ok(metric::from_values(values))
@@ -28,7 +28,7 @@ async fn metrics(exporter: &Exporter) -> Result<Vec<Metrics>, elasticsearch::Err
 
 // NOTE:
 // enabling adaptive_selection exposes metrics in nanoseconds, e.g.: "avg_response_time_ns": 196669342
-const REMOVE_KEYS: &[&'static str] = &[
+const REMOVE_KEYS: &[&str] = &[
     "timestamp",
     "attributes",
     "cgroup",
