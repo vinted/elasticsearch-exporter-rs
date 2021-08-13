@@ -1,3 +1,5 @@
+#![feature(hash_drain_filter)]
+
 //! # Vinted Elasticsearch exporter
 #![deny(
     warnings,

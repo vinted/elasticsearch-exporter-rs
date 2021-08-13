@@ -1,6 +1,9 @@
 use prometheus::{default_registry, GaugeVec, IntGaugeVec, Opts};
 use std::collections::HashMap;
 
+/// Lifetime of a metric based on heartbeat
+pub mod lifetime;
+
 use crate::{
     metric::{Metric, MetricType},
     ExporterOptions, Labels,
@@ -9,8 +12,10 @@ use crate::{
 /// Generic collector of metrics
 #[derive(Debug)]
 pub struct Collection {
-    gauges: HashMap<String, IntGaugeVec>,
-    fgauges: HashMap<String, GaugeVec>,
+    /// Integer gauges of collection
+    pub gauges: HashMap<String, IntGaugeVec>,
+    /// Float gauges of collection
+    pub fgauges: HashMap<String, GaugeVec>,
     subsystem: &'static str,
     /// Remove metrics from registry
     pub skip_metrics: Vec<String>,
@@ -22,6 +27,10 @@ pub struct Collection {
     pub const_labels: HashMap<String, String>,
     /// Exporter options
     options: ExporterOptions,
+    /// Metric lifetime is used to remove stale metrics
+    pub gauges_lifetime: lifetime::MetricLifetimeMap,
+    /// Metric lifetime is used to remove stale metrics
+    pub fgauges_lifetime: lifetime::MetricLifetimeMap,
 }
 
 impl Collection {
@@ -37,6 +46,8 @@ impl Collection {
             const_labels: HashMap::new(),
             gauges: HashMap::new(),
             fgauges: HashMap::new(),
+            gauges_lifetime: Default::default(),
+            fgauges_lifetime: Default::default(),
         }
     }
 
@@ -48,18 +59,33 @@ impl Collection {
         labels: &Labels,
         key_postfix: Option<&'static str>,
         skippable: bool,
+        now: chrono::DateTime<chrono::Utc>,
     ) -> Result<(), prometheus::Error> {
-        let set_labels = |gauge: &GaugeVec| -> Result<(), prometheus::Error> {
-            gauge
-                .get_metric_with_label_values(
-                    &labels.values().map(|s| s.as_str()).collect::<Vec<&str>>(),
-                )?
-                .set(value);
+        let set_labels = |gauge: &GaugeVec,
+                          lifetime: &mut lifetime::MetricLifetimeMap|
+         -> Result<(), prometheus::Error> {
+            // BTreeMap ensures that values returned are always sorted
+            let label_values = &labels.values().map(|s| s.as_str()).collect::<Vec<&str>>();
+
+            gauge.get_metric_with_label_values(label_values)?.set(value);
+
+            if !label_values.is_empty() {
+                let _ = lifetime
+                    .entry(lifetime::hash_label(key, label_values))
+                    .or_insert_with(|| {
+                        lifetime::MetricLifetime::new(
+                            key.to_string(),
+                            labels.values().cloned().collect(),
+                        )
+                    })
+                    .reset_heartbeat(Some(now));
+            }
+
             Ok(())
         };
 
-        if let Some(gauge) = self.fgauges.get(key) {
-            let _ = set_labels(gauge)?;
+        if let Some(fgauge) = self.fgauges.get(key) {
+            let _ = set_labels(fgauge, &mut self.fgauges_lifetime)?;
         } else {
             // If metric is skippable and haven't been registered skip it
             // until value is not zero
@@ -74,7 +100,7 @@ impl Collection {
                 metric_key.push_str(postfix);
             }
 
-            let new_gauge = GaugeVec::new(
+            let new_fgauge = GaugeVec::new(
                 Opts::new(metric_key, key)
                     .const_labels(self.const_labels.clone())
                     .subsystem(self.subsystem)
@@ -82,12 +108,12 @@ impl Collection {
                 &labels.keys().map(|s| s.as_str()).collect::<Vec<&str>>(),
             )?;
 
-            let _ = set_labels(&new_gauge)?;
+            let _ = set_labels(&new_fgauge, &mut self.fgauges_lifetime)?;
 
             // Register new metric
-            default_registry().register(Box::new(new_gauge.clone()))?;
+            default_registry().register(Box::new(new_fgauge.clone()))?;
 
-            let _ = self.fgauges.insert(key.to_string(), new_gauge);
+            let _ = self.fgauges.insert(key.to_string(), new_fgauge);
         }
 
         Ok(())
@@ -101,18 +127,33 @@ impl Collection {
         labels: &Labels,
         key_postfix: Option<&'static str>,
         skippable: bool,
+        now: chrono::DateTime<chrono::Utc>,
     ) -> Result<(), prometheus::Error> {
-        let set_labels = |gauge: &IntGaugeVec| -> Result<(), prometheus::Error> {
-            gauge
-                .get_metric_with_label_values(
-                    &labels.values().map(|s| s.as_str()).collect::<Vec<&str>>(),
-                )?
-                .set(value);
+        let set_labels = |gauge: &IntGaugeVec,
+                          lifetime: &mut lifetime::MetricLifetimeMap|
+         -> Result<(), prometheus::Error> {
+            // BTreeMap ensures that values returned are always sorted
+            let label_values = &labels.values().map(|s| s.as_str()).collect::<Vec<&str>>();
+
+            gauge.get_metric_with_label_values(label_values)?.set(value);
+
+            if !label_values.is_empty() {
+                let _ = lifetime
+                    .entry(lifetime::hash_label(key, label_values))
+                    .or_insert_with(|| {
+                        lifetime::MetricLifetime::new(
+                            key.to_string(),
+                            labels.values().cloned().collect(),
+                        )
+                    })
+                    .reset_heartbeat(Some(now));
+            }
+
             Ok(())
         };
 
         if let Some(gauge) = self.gauges.get(key) {
-            let _ = set_labels(gauge)?;
+            let _ = set_labels(gauge, &mut self.gauges_lifetime)?;
         } else {
             // If metric is skippable and haven't been registered skip it
             // until value is not zero
@@ -134,7 +175,7 @@ impl Collection {
                 &labels.keys().map(|s| s.as_str()).collect::<Vec<&str>>(),
             )?;
 
-            let _ = set_labels(&new_gauge)?;
+            let _ = set_labels(&new_gauge, &mut self.gauges_lifetime)?;
 
             // Register new metric
             default_registry().register(Box::new(new_gauge.clone()))?;
@@ -167,13 +208,18 @@ impl Collection {
             }
         });
 
+        // Finding current time on each metric insert is expensive (requires syscall)
+        // cloning is way cheaper thus initializing current time once for all collected
+        // metrics batch is more correct approach
+        let now = lifetime::now();
+
         for metric in metrics.into_iter() {
             trace!("Collection metric: {:?}", metric);
 
             match metric.metric_type() {
                 MetricType::Switch(value) => {
                     if let Err(e) =
-                        self.insert_gauge(metric.key(), *value as i64, &labels, None, false)
+                        self.insert_gauge(metric.key(), *value as i64, &labels, None, false, now)
                     {
                         error!("SWITCH insert_gauge {:?} err {}", metric, e);
                         return Err(e);
@@ -186,20 +232,25 @@ impl Collection {
                     } else {
                         Some("_bytes")
                     };
-                    if let Err(e) = self.insert_gauge(metric.key(), *value, &labels, postfix, true)
+                    if let Err(e) =
+                        self.insert_gauge(metric.key(), *value, &labels, postfix, true, now)
                     {
                         error!("BYTES insert_gauge {:?} err {}", metric, e);
                         return Err(e);
                     }
                 }
                 MetricType::GaugeF(value) => {
-                    if let Err(e) = self.insert_fgauge(metric.key(), *value, &labels, None, true) {
+                    if let Err(e) =
+                        self.insert_fgauge(metric.key(), *value, &labels, None, true, now)
+                    {
                         error!("GAUGEF insert_fgauge {:?} err {}", metric, e);
                         return Err(e);
                     }
                 }
                 MetricType::Gauge(value) => {
-                    if let Err(e) = self.insert_gauge(metric.key(), *value, &labels, None, true) {
+                    if let Err(e) =
+                        self.insert_gauge(metric.key(), *value, &labels, None, true, now)
+                    {
                         error!("GAUGE insert_gauge {:?} err {}", metric, e);
                         return Err(e);
                     }
@@ -219,6 +270,7 @@ impl Collection {
                         &labels,
                         postfix,
                         true,
+                        now,
                     ) {
                         error!("TIME insert_fgauge {:?} err {}", metric, e);
                         return Err(e);

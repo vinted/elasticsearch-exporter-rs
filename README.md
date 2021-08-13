@@ -144,7 +144,12 @@ exporter_metrics_enabled:
  - cat_indices: true
  - nodes_info: true
  - nodes_stats: true
-exporter_metadata_refresh_interval: 300s
+exporter_metadata_refresh_interval: 180s
+exporter_metrics_lifetime_default_interval: 600s
+exporter_metrics_lifetime_interval:
+ - cat_indices: 180s
+ - cat_nodes: 60s
+ - cat_recovery: 60s
 ```
 
 ## Self exporter metrics

@@ -106,7 +106,7 @@ pub struct Opts {
     )]
     pub exporter_skip_metrics: HashMapVec,
 
-    /// Exporter default polling interval in milliseconds
+    /// Exporter default polling interval in seconds
     #[clap(long = "exporter_poll_default_interval", default_value = "5s")]
     pub exporter_poll_default_interval: humantime::Duration,
 
@@ -134,6 +134,22 @@ pub struct Opts {
     /// wildcard expressions of fields to include in the statistics.
     #[clap(long = "elasticsearch_query_fields", default_value = "nodes_stats=*")]
     pub elasticsearch_query_fields: HashMapVec,
+
+    /// Exporter default metrics lifeimte interval in seconds
+    #[clap(
+        long = "exporter_metrics_lifetime_default_interval",
+        default_value = "10m"
+    )]
+    pub exporter_metrics_lifetime_default_interval: humantime::Duration,
+
+    /// Exporter custom metrics lifetime intervals for defining how long
+    /// metrics should be kept in memory, in case custom interval is not
+    /// defined it will fall back to default polling interval
+    #[clap(
+        long = "exporter_metrics_lifetime_interval",
+        default_value = "cat_indices=180s&cat_nodes=60s&cat_recovery=60s"
+    )]
+    pub exporter_metrics_lifetime_interval: HashMapDuration,
 }
 
 #[derive(Debug, Clone, Default)]
