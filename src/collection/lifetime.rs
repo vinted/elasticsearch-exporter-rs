@@ -43,8 +43,8 @@ impl MetricLifetime {
     }
 
     /// Set heartbeat
-    pub fn reset_heartbeat(&mut self, last: Option<DateTime<Utc>>) -> &mut Self {
-        self.last_hearbeat = last.unwrap_or_else(now);
+    pub fn reset_heartbeat(&mut self, last: DateTime<Utc>) -> &mut Self {
+        self.last_hearbeat = last;
         self
     }
 

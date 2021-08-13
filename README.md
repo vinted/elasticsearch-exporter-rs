@@ -43,6 +43,8 @@ $ docker run --network=host -it vinted/elasticsearch_exporter --elasticsearch_ur
    - name (map from node ID to name) namespaced -> `name`
    - version (Elasticsearch node version) namespaced to `vin_cluster_version`
    - IP namespaced -> `ip`
+ - Automatic metrics deletion based on lifetime settings, by default metric by value will be
+   deleted after 600s since last occurrence.
 
 ## Options
 

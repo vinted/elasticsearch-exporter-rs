@@ -78,7 +78,7 @@ impl Collection {
                             labels.values().cloned().collect(),
                         )
                     })
-                    .reset_heartbeat(Some(now));
+                    .reset_heartbeat(now);
             }
 
             Ok(())
@@ -146,7 +146,7 @@ impl Collection {
                             labels.values().cloned().collect(),
                         )
                     })
-                    .reset_heartbeat(Some(now));
+                    .reset_heartbeat(now);
             }
 
             Ok(())
