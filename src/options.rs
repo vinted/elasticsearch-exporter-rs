@@ -30,16 +30,22 @@ pub struct ExporterOptions {
     pub exporter_include_labels: CollectionLabels,
     /// Exporter labels to skip completely such as segment "id"
     pub exporter_skip_metrics: CollectionLabels,
-    /// Metrics polling interval
-    pub exporter_poll_default_interval: Duration,
-    /// Exporter skip zero metrics
-    pub exporter_poll_intervals: ExporterPollIntervals,
     /// Exporter skip zero metrics
     pub exporter_skip_zero_metrics: bool,
     /// Exporter metrics switch either ON or OFF
     pub exporter_metrics_enabled: ExporterMetricsSwitch,
     /// Exporter metadata refresh interval
     pub exporter_metadata_refresh_interval: Duration,
+
+    /// Metrics polling interval
+    pub exporter_poll_default_interval: Duration,
+    /// Exporter skip zero metrics
+    pub exporter_poll_intervals: ExporterPollIntervals,
+
+    /// Exporter metrics lifetime interval
+    pub exporter_metrics_lifetime_interval: ExporterPollIntervals,
+    /// Metrics metrics lifetime
+    pub exporter_metrics_lifetime_default_interval: Duration,
 }
 
 impl ExporterOptions {
@@ -272,6 +278,18 @@ impl fmt::Display for ExporterOptions {
             "exporter_metadata_refresh_interval: {:?}",
             self.exporter_metadata_refresh_interval
         ));
+
+        output.push('\n');
+        output.push_str(&format!(
+            "exporter_metrics_lifetime_default_interval: {:?}",
+            self.exporter_metrics_lifetime_default_interval
+        ));
+
+        poll_duration_to_string(
+            &mut output,
+            "exporter_metrics_lifetime_interval",
+            &self.exporter_metrics_lifetime_interval,
+        );
 
         output.push('\n');
         write!(f, "{}", output)

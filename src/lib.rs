@@ -1,3 +1,5 @@
+#![feature(hash_drain_filter)]
+
 //! # Vinted Elasticsearch exporter
 #![deny(
     warnings,
@@ -102,10 +104,6 @@ struct Inner {
     /// Node ID to node name map for adding extra metadata labels
     /// {"U-WnGaTpRxucgde3miiDWw": "m1-supernode.example.com"}
     nodes_metadata: metadata::IdToMetadata,
-
-    /// Node ID to node name map for adding extra metadata labels
-    /// {"U-WnGaTpRxucgde3miiDWw": "m1-supernode.example.com"}
-    index_metadata: metadata::IndexToMetadata,
 }
 
 impl Exporter {
@@ -135,11 +133,6 @@ impl Exporter {
         &self.0.nodes_metadata
     }
 
-    /// Index to index metadata
-    pub fn index_metadata(&self) -> &metadata::IndexToMetadata {
-        &self.0.index_metadata
-    }
-
     /// Spawn exporter
     pub async fn new(options: ExporterOptions) -> Result<Self, Box<dyn std::error::Error>> {
         let connection_pool = SingleNodeConnectionPool::new(options.elasticsearch_url.clone());
@@ -159,9 +152,6 @@ impl Exporter {
             Default::default()
         };
 
-        // Skip initializing of /_cat/indices metadata
-        let index_metadata = Default::default();
-
         let cluster_name = metadata::cluster_name(&client).await?;
 
         let mut const_labels = HashMap::new();
@@ -173,7 +163,6 @@ impl Exporter {
             options,
             const_labels,
             nodes_metadata,
-            index_metadata,
         })))
     }
 
@@ -187,9 +176,6 @@ impl Exporter {
         if self.options().enable_metadata_refresh() {
             let _ = tokio::spawn(metadata::node_data::poll(self.clone()));
         }
-
-        // Spawn /_cat/indices metadata refresh
-        let _ = tokio::spawn(metadata::index::poll(self));
     }
 
     fn spawn_cluster(&self) {

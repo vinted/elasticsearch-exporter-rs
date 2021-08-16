@@ -226,6 +226,7 @@ dependencies = [
  "chrono",
  "clap",
  "elasticsearch",
+ "fnv",
  "humantime 2.1.0",
  "hyper",
  "lazy_static",

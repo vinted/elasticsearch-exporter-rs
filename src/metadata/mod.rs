@@ -4,8 +4,6 @@ use serde_json::Value;
 
 pub(crate) mod node_data;
 pub(crate) use node_data::{IdToMetadata, NodeData};
-pub(crate) mod index;
-pub(crate) use index::IndexToMetadata;
 
 pub(crate) async fn cluster_name(client: &Elasticsearch) -> Result<String, Error> {
     info!("Elasticsearch: fetching cluster_name");

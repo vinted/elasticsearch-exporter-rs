@@ -1,48 +1,63 @@
 [package]
-name = "elasticsearch_exporter"
-version = "0.17.0"
 authors = ["Ernestas Poskus <ernestas@vinted.com>"]
-edition = "2018"
-description = """
-Vinted Elasticsearch exporter
-"""
+autobins = false
+description = "Vinted Elasticsearch exporter\n"
 documentation = "https://docs.rs/elasticsearch_exporter"
+edition = "2018"
 homepage = "https://github.com/vinted/elasticsearch-exporter-rs"
 license = "MIT"
+name = "elasticsearch_exporter"
 repository = "https://github.com/vinted/elasticsearch-exporter-rs"
-autobins = false
-
+version = "0.17.0"
 [[bin]]
 name = "elasticsearch_exporter"
 
-[profile.release]
-opt-level = 3
-lto = true
-codegen-units = 1
-
 [dependencies]
-elasticsearch = { version = "7.12.1-alpha.1", features = ["rustls-tls"], default-features = false }
-prometheus = { version = "0.12.0", default-features = false, features = ["process", "protobuf"] }
-serde = "1.0.124"
-serde_json = "1.0.64"
-lazy_static = "1.4.0"
-clap = { version = "3.0.0-beta.2", default-features = false, features = ["suggestions", "color", "derive", "std", "cargo"] }
-log = "0.4.14"
-pretty_env_logger = "0.4.0"
-url = "2.2.1"
-humantime = "2.1.0"
-serde_derive = "1.0.124"
-serde_qs = "0.8.3"
 byte-unit = "4.0.9"
+fnv = "1.0.3"
+humantime = "2.1.0"
+lazy_static = "1.4.0"
+log = "0.4.14"
 oorandom = "11.1.3"
-chrono = { version = "0.4", default-features = false, features = ["clock"] }
+pretty_env_logger = "0.4.0"
+serde = "1.0.124"
+serde_derive = "1.0.124"
+serde_json = "1.0.64"
+serde_qs = "0.8.3"
+url = "2.2.1"
+
+[dependencies.chrono]
+default-features = false
+features = ["clock"]
+version = "0.4"
+
+[dependencies.clap]
+default-features = false
+features = ["suggestions", "color", "derive", "std", "cargo"]
+version = "3.0.0-beta.2"
+
+[dependencies.elasticsearch]
+default-features = false
+features = ["rustls-tls"]
+version = "7.12.1-alpha.1"
 
 [dependencies.hyper]
-version = "0.14.4"
 default-features = false
 features = ["runtime", "tcp", "server"]
+version = "0.14.4"
+
+[dependencies.prometheus]
+default-features = false
+features = ["process", "protobuf"]
+version = "0.12.0"
 
 [dependencies.tokio]
-version = "1.3.0"
 default-features = false
 features = ["rt-multi-thread", "signal", "sync", "macros", "time"]
+version = "1.3.0"
+
+[profile]
+[profile.release]
+codegen-units = 1
+lto = true
+opt-level = 3
