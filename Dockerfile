@@ -19,7 +19,7 @@ COPY . .
 
 RUN cargo build --bin elasticsearch_exporter --release --target x86_64-unknown-linux-musl
 
-FROM alpine:3.12.1
+FROM alpine:3.14.1
 
 COPY --from=build /app/target/x86_64-unknown-linux-musl/release/elasticsearch_exporter /usr/bin/elasticsearch_exporter
 

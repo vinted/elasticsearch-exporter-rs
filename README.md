@@ -1,4 +1,4 @@
-# Elasticsearch exporter [![Build Status](https://travis-ci.com/vinted/elasticsearch-exporter-rs.svg?branch=master)](https://travis-ci.com/vinted/elasticsearch-exporter-rs)
+# Elasticsearch exporter ![Build status](https://github.com/vinted/elasticsearch-exporter-rs/actions/workflows/ci.yml/badge.svg)
 
 [![Crates.io][crates-badge]][crates-url]
 [![Documentation][docs-badge]][docs-url]
