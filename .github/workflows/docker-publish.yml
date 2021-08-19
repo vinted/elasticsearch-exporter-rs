@@ -17,8 +17,6 @@ env:
   REGISTRY: docker.io
   # github.repository as <account>/<repo>
   IMAGE_NAME: ${{ github.repository }}
-  CARGO_TERM_COLOR: always
-
 
 jobs:
   build:
@@ -28,10 +26,6 @@ jobs:
       packages: write
 
     steps:
-      - uses: actions/checkout@v2
-      - name: Build
-        run: cargo build --verbose --release --target x86_64-unknown-linux-musl
-
       - name: Checkout repository
         uses: actions/checkout@v2
 
