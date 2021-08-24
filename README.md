@@ -137,7 +137,7 @@ exporter_skip_metrics:
  - cat_recovery: start_time,start_time_millis,stop_time,stop_time_millis
  - cat_templates: order
  - nodes_usage: _nodes_total,_nodes_successful,since
-exporter_poll_default_interval: 5s
+exporter_poll_default_interval: 15s
 exporter_poll_intervals:
  - cluster_health: 5s
 exporter_skip_zero_metrics: true
@@ -147,7 +147,7 @@ exporter_metrics_enabled:
  - nodes_info: true
  - nodes_stats: true
 exporter_metadata_refresh_interval: 180s
-exporter_metrics_lifetime_default_interval: 600s
+exporter_metrics_lifetime_default_interval: 15s
 exporter_metrics_lifetime_interval:
  - cat_indices: 180s
  - cat_nodes: 60s

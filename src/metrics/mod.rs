@@ -14,9 +14,10 @@ macro_rules! poll_metrics {
     () => {
         #[allow(unused)]
         use serde_json::Value;
+        use std::cmp;
         use std::time::Duration;
 
-        use crate::collection::{lifetime::MetricLifetimeMap, Collection};
+        use crate::collection::{lifetime, lifetime::MetricLifetimeMap, Collection};
         use crate::exporter_metrics::SUBSYSTEM_REQ_HISTOGRAM;
         use crate::metric::{self, Metrics};
         use crate::Exporter;
@@ -54,6 +55,9 @@ macro_rules! poll_metrics {
                 .get(SUBSYSTEM)
                 .unwrap_or(&options.exporter_metrics_lifetime_default_interval);
 
+            // Metric lifetime must be more of the same than poll interval else metrics will get deleted sooner
+            let metric_lifetime = *cmp::max(poll_interval, metric_lifetime);
+
             info!(
                 "Starting subsystem: {} with poll interval: {}sec lifetime: {}sec",
                 SUBSYSTEM,
@@ -66,7 +70,7 @@ macro_rules! poll_metrics {
             let metric_lifetime = chrono::Duration::seconds(metric_lifetime.as_secs() as i64);
 
             loop {
-                let now = chrono::Utc::now() - metric_lifetime;
+                let now = lifetime::now() - metric_lifetime;
 
                 let _ = interval.tick().await;
 
