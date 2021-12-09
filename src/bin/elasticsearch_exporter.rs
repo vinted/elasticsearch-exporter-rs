@@ -5,7 +5,7 @@ extern crate prometheus;
 #[macro_use]
 extern crate log;
 
-use clap::Clap;
+use clap::Parser;
 use hyper::{
     header::CONTENT_TYPE,
     server::conn::AddrStream,
