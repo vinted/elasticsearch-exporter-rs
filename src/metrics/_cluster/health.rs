@@ -43,7 +43,7 @@ fn inject_cluster_health(map: &mut SerdeMap<String, Value>) {
         .map(|v| v.as_str())
         .flatten()
         .map(ToOwned::to_owned)
-        .unwrap_or("red".into());
+        .unwrap_or_else(|| "red".into());
 
     let cluster_name: String = map
         .get("cluster_name")
