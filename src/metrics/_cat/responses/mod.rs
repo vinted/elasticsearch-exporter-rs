@@ -7,8 +7,8 @@ impl CatResponse {
     /// Inject labels into nodes response
     pub(crate) fn into_values(mut self, value_mangle: fn(&mut Map<String, Value>)) -> Vec<Value> {
         for value in self.0.iter_mut() {
-            if let Some(mut map) = value.as_object_mut() {
-                value_mangle(&mut map)
+            if let Some(map) = value.as_object_mut() {
+                value_mangle(map)
             }
         }
 

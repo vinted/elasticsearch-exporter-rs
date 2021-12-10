@@ -1,4 +1,4 @@
-use clap::Clap;
+use clap::Parser;
 use std::error::Error as StdError;
 use std::fmt;
 use std::net::SocketAddr;
@@ -43,7 +43,7 @@ impl StdError for SimpleError {}
 
 const HASH_MAP_STR_FORMAT: &str = "cat_indices=id,pri,rep&cat_nodes=heap.percent,jdk";
 
-#[derive(Clap, Clone, Debug)]
+#[derive(Parser, Clone, Debug)]
 pub struct Opts {
     /// Application listen address
     #[clap(long = "listen_addr", default_value = "0.0.0.0:9222")]

@@ -174,7 +174,7 @@ impl Exporter {
         self.spawn_stats();
 
         if self.options().enable_metadata_refresh() {
-            let _ = tokio::spawn(metadata::node_data::poll(self.clone()));
+            let _ = tokio::spawn(metadata::node_data::poll(self));
         }
     }
 

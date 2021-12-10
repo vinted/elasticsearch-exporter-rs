@@ -43,7 +43,7 @@ fn inject_cluster_health(map: &mut SerdeMap<String, Value>) {
         .map(|v| v.as_str())
         .flatten()
         .map(ToOwned::to_owned)
-        .unwrap_or("red".into());
+        .unwrap_or_else(|| "red".into());
 
     let cluster_name: String = map
         .get("cluster_name")
@@ -78,6 +78,6 @@ async fn test_cluster_health() {
     let metrics = metric::from_value(values);
     assert!(!metrics.is_empty());
 
-    let cluster_status_injection = metrics[0].iter().find(|m| m.key() == "cluster_status");
+    let cluster_status_injection = metrics[0].iter().find(|m| m.key() == "status");
     assert!(cluster_status_injection.is_some());
 }
