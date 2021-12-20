@@ -1,0 +1,1220 @@
+{
+  "__inputs": [],
+  "__requires": [
+    {
+      "type": "grafana",
+      "id": "grafana",
+      "name": "Grafana",
+      "version": "7.5.11"
+    },
+    {
+      "type": "panel",
+      "id": "graph",
+      "name": "Graph",
+      "version": ""
+    },
+    {
+      "type": "datasource",
+      "id": "prometheus",
+      "name": "Prometheus",
+      "version": "1.0.0"
+    }
+  ],
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "description": "Returns information on the usage of features.",
+  "editable": true,
+  "gnetId": null,
+  "graphTooltip": 0,
+  "id": null,
+  "iteration": 1639752900875,
+  "links": [],
+  "panels": [
+    {
+      "collapsed": false,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 111,
+      "panels": [],
+      "title": "Nodes /_nodes/usage main actions",
+      "type": "row"
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$source",
+      "description": "Rest action: search\n\nhttps://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-nodes-usage.html",
+      "fieldConfig": {
+        "defaults": {
+          "links": []
+        },
+        "overrides": []
+      },
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 13,
+        "w": 12,
+        "x": 0,
+        "y": 1
+      },
+      "hiddenSeries": false,
+      "id": 112,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "max": true,
+        "min": true,
+        "rightSide": true,
+        "show": true,
+        "total": true,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.5.11",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "max(increase(elasticsearch_nodes_usage_rest_actions_search_action{cluster=~\"$cluster\"}[$time])) by (name)",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "{{name}}",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Search action",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "decimals": null,
+          "format": "short",
+          "label": "Count",
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "decimals": null,
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$source",
+      "description": "Rest action: bulk\n\nhttps://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-nodes-usage.html",
+      "fieldConfig": {
+        "defaults": {
+          "links": []
+        },
+        "overrides": []
+      },
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 13,
+        "w": 12,
+        "x": 12,
+        "y": 1
+      },
+      "hiddenSeries": false,
+      "id": 116,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "max": true,
+        "min": true,
+        "rightSide": true,
+        "show": true,
+        "sort": "avg",
+        "sortDesc": true,
+        "total": true,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.5.11",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "max(increase(elasticsearch_nodes_usage_rest_actions_bulk_action{cluster=~\"$cluster\"}[$time])) by (name)",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "{{name}}",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Bulk action",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "decimals": null,
+          "format": "short",
+          "label": "Count",
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "decimals": null,
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$source",
+      "description": "Rest action: count\n\nhttps://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-nodes-usage.html",
+      "fieldConfig": {
+        "defaults": {
+          "links": []
+        },
+        "overrides": []
+      },
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 13,
+        "w": 12,
+        "x": 0,
+        "y": 14
+      },
+      "hiddenSeries": false,
+      "id": 117,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "max": true,
+        "min": true,
+        "rightSide": true,
+        "show": true,
+        "sort": "avg",
+        "sortDesc": true,
+        "total": true,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.5.11",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "max(increase(elasticsearch_nodes_usage_rest_actions_count_action{cluster=~\"$cluster\"}[$time])) by (name)",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "{{name}}",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Count action",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "decimals": null,
+          "format": "short",
+          "label": "Count",
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "decimals": null,
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "collapsed": false,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 27
+      },
+      "id": 109,
+      "panels": [],
+      "title": "Nodes /_nodes/usage: aggregations",
+      "type": "row"
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$source",
+      "description": "Nodes usage: aggregation terms\n\nhttps://www.elastic.co/guide/en/elasticsearch/reference/current/cluster-nodes-usage.html",
+      "fieldConfig": {
+        "defaults": {
+          "links": []
+        },
+        "overrides": []
+      },
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 8,
+        "w": 6,
+        "x": 0,
+        "y": 28
+      },
+      "hiddenSeries": false,
+      "id": 64,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.5.11",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "alias": "/used/",
+          "fill": 1
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "max(increase(elasticsearch_nodes_usage_aggregations_terms_bytes{cluster=~\"$cluster\", name=~\"$name\"}[$time])) by (name)",
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "{{name}}",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Aggregations terms",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "bytes",
+          "label": "Size in bytes",
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$source",
+      "description": "Top hits other\n\nhttps://www.elastic.co/guide/en/elasticsearch/reference/master/search-aggregations-metrics-top-hits-aggregation.html#search-aggregations-metrics-top-hits-aggregation",
+      "fieldConfig": {
+        "defaults": {
+          "links": []
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 8,
+        "w": 6,
+        "x": 6,
+        "y": 28
+      },
+      "hiddenSeries": false,
+      "id": 98,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.5.11",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "max(increase(elasticsearch_nodes_usage_aggregations_top_hits_other{cluster=~\"$cluster\", name=~\"$name\"}[$time])) by (name)",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "{{name}}",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Aggregations top hits other",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "decimals": null,
+          "format": "short",
+          "label": "Count",
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "decimals": null,
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "collapsed": false,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 36
+      },
+      "id": 115,
+      "panels": [],
+      "title": "Nodes /_nodes/usage rest actions",
+      "type": "row"
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$source",
+      "description": "Rest actions\n\nhttps://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-nodes-usage.html",
+      "fieldConfig": {
+        "defaults": {
+          "links": []
+        },
+        "overrides": []
+      },
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 37
+      },
+      "hiddenSeries": false,
+      "id": 113,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "max": true,
+        "min": false,
+        "rightSide": true,
+        "show": true,
+        "sort": null,
+        "sortDesc": null,
+        "total": true,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.5.11",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "max(increase(elasticsearch_nodes_usage_rest_actions_cat_alias_action{cluster=~\"$cluster\"}[$time])) by (name)",
+          "hide": false,
+          "interval": "",
+          "intervalFactor": 10,
+          "legendFormat": "/_cat/alias: {{name}}",
+          "refId": "A"
+        },
+        {
+          "expr": "max(increase(elasticsearch_nodes_usage_rest_actions_cat_allocation_action{cluster=~\"$cluster\"}[$time])) by (name)",
+          "hide": false,
+          "interval": "",
+          "intervalFactor": 10,
+          "legendFormat": "/_cat/allocation: {{name}}",
+          "refId": "B"
+        },
+        {
+          "expr": "max(increase(elasticsearch_nodes_usage_rest_actions_cat_fielddata_action{cluster=~\"$cluster\"}[$time])) by (name)",
+          "hide": false,
+          "interval": "",
+          "intervalFactor": 10,
+          "legendFormat": "/_cat/fielddata: {{name}}",
+          "refId": "C"
+        },
+        {
+          "expr": "max(increase(elasticsearch_nodes_usage_rest_actions_cat_indices_action{cluster=~\"$cluster\"}[$time])) by (name)",
+          "hide": false,
+          "interval": "",
+          "intervalFactor": 10,
+          "legendFormat": "/_cat/indices: {{name}}",
+          "refId": "D"
+        },
+        {
+          "expr": "max(increase(elasticsearch_nodes_usage_rest_actions_cat_nodes_action{cluster=~\"$cluster\"}[$time])) by (name)",
+          "hide": false,
+          "interval": "",
+          "intervalFactor": 10,
+          "legendFormat": "/_cat/nodes: {{name}}",
+          "refId": "E"
+        },
+        {
+          "expr": "max(increase(elasticsearch_nodes_usage_rest_actions_cat_recovery_action{cluster=~\"$cluster\"}[$time])) by (name)",
+          "hide": false,
+          "interval": "",
+          "intervalFactor": 10,
+          "legendFormat": "/_cat/recovery: {{name}}",
+          "refId": "F"
+        },
+        {
+          "expr": "max(increase(elasticsearch_nodes_usage_rest_actions_cat_shards_action{cluster=~\"$cluster\"}[$time])) by (name)",
+          "hide": false,
+          "interval": "",
+          "intervalFactor": 10,
+          "legendFormat": "/_cat/shards: {{name}}",
+          "refId": "G"
+        },
+        {
+          "expr": "max(increase(elasticsearch_nodes_usage_rest_actions_cat_templates_action{cluster=~\"$cluster\"}[$time])) by (name)",
+          "hide": false,
+          "interval": "",
+          "intervalFactor": 10,
+          "legendFormat": "/_cat/templates: {{name}}",
+          "refId": "H"
+        },
+        {
+          "expr": "max(increase(elasticsearch_nodes_usage_rest_actions_cat_threadpool_action{cluster=~\"$cluster\"}[$time])) by (name)",
+          "hide": false,
+          "interval": "",
+          "intervalFactor": 10,
+          "legendFormat": "/_cat/thread_pool: {{name}}",
+          "refId": "I"
+        },
+        {
+          "expr": "max(increase(elasticsearch_nodes_usage_rest_actions_cluster_allocation_explain_action{cluster=~\"$cluster\"}[$time])) by (name)",
+          "hide": false,
+          "interval": "",
+          "intervalFactor": 10,
+          "legendFormat": "/_cluster/allocation/explain: {{name}}",
+          "refId": "J"
+        },
+        {
+          "expr": "max(increase(elasticsearch_nodes_usage_rest_actions_cluster_get_settings_action{cluster=~\"$cluster\"}[$time])) by (name)",
+          "hide": false,
+          "interval": "",
+          "intervalFactor": 10,
+          "legendFormat": "get cluster settings: {{name}}",
+          "refId": "K"
+        },
+        {
+          "expr": "max(increase(elasticsearch_nodes_usage_rest_actions_cluster_health_action{cluster=~\"$cluster\"}[$time])) by (name)",
+          "hide": false,
+          "interval": "",
+          "intervalFactor": 10,
+          "legendFormat": "/_cluster/health: {{name}}",
+          "refId": "L"
+        },
+        {
+          "expr": "max(increase(elasticsearch_nodes_usage_rest_actions_cluster_reroute_action{cluster=~\"$cluster\"}[$time])) by (name)",
+          "hide": false,
+          "interval": "",
+          "intervalFactor": 10,
+          "legendFormat": "cluster reroute: {{name}}",
+          "refId": "M"
+        },
+        {
+          "expr": "max(increase(elasticsearch_nodes_usage_rest_actions_create_index_action{cluster=~\"$cluster\"}[$time])) by (name)",
+          "hide": false,
+          "interval": "",
+          "intervalFactor": 10,
+          "legendFormat": "create index: {{name}}",
+          "refId": "N"
+        },
+        {
+          "expr": "max(increase(elasticsearch_nodes_usage_rest_actions_cluster_update_settings_action{cluster=~\"$cluster\"}[$time])) by (name)",
+          "hide": false,
+          "interval": "",
+          "intervalFactor": 10,
+          "legendFormat": "cluster update settings: {{name}}",
+          "refId": "O"
+        },
+        {
+          "expr": "max(increase(elasticsearch_nodes_usage_rest_actions_delete_index_action{cluster=~\"$cluster\"}[$time])) by (name)",
+          "hide": false,
+          "interval": "",
+          "intervalFactor": 10,
+          "legendFormat": "delete index: {{name}}",
+          "refId": "P"
+        },
+        {
+          "expr": "max(increase(elasticsearch_nodes_usage_rest_actions_force_merge_action{cluster=~\"$cluster\"}[$time])) by (name)",
+          "hide": false,
+          "interval": "",
+          "intervalFactor": 10,
+          "legendFormat": "force merge: {{name}}",
+          "refId": "R"
+        },
+        {
+          "expr": "max(increase(elasticsearch_nodes_usage_rest_actions_get_aliases_action{cluster=~\"$cluster\"}[$time])) by (name)",
+          "hide": false,
+          "interval": "",
+          "intervalFactor": 10,
+          "legendFormat": "get aliases: {{name}}",
+          "refId": "S"
+        },
+        {
+          "expr": "max(increase(elasticsearch_nodes_usage_rest_actions_get_index_template_action{cluster=~\"$cluster\"}[$time])) by (name)",
+          "hide": false,
+          "interval": "",
+          "intervalFactor": 10,
+          "legendFormat": "get index template: {{name}}",
+          "refId": "T"
+        },
+        {
+          "expr": "max(increase(elasticsearch_nodes_usage_rest_actions_get_indices_action{cluster=~\"$cluster\"}[$time])) by (name)",
+          "hide": false,
+          "interval": "",
+          "intervalFactor": 10,
+          "legendFormat": "get indices: {{name}}",
+          "refId": "U"
+        },
+        {
+          "expr": "max(increase(elasticsearch_nodes_usage_rest_actions_indices_stats_action{cluster=~\"$cluster\"}[$time])) by (name)",
+          "hide": false,
+          "interval": "",
+          "intervalFactor": 10,
+          "legendFormat": "indices stats: {{name}}",
+          "refId": "V"
+        },
+        {
+          "expr": "max(increase(elasticsearch_nodes_usage_rest_actions_ingest_get_pipeline_action{cluster=~\"$cluster\"}[$time])) by (name)",
+          "hide": false,
+          "interval": "",
+          "intervalFactor": 10,
+          "legendFormat": "get pipeline action: {{name}}",
+          "refId": "Q"
+        },
+        {
+          "expr": "max(increase(elasticsearch_nodes_usage_rest_actions_ingest_put_pipeline_action{cluster=~\"$cluster\"}[$time])) by (name)",
+          "hide": false,
+          "interval": "",
+          "intervalFactor": 10,
+          "legendFormat": "put pipeline action: {{name}}",
+          "refId": "W"
+        },
+        {
+          "expr": "max(increase(elasticsearch_nodes_usage_rest_actions_msearch_action{cluster=~\"$cluster\"}[$time])) by (name)",
+          "hide": false,
+          "interval": "",
+          "intervalFactor": 10,
+          "legendFormat": "/_msearch: {{name}}",
+          "refId": "X"
+        },
+        {
+          "expr": "max(increase(elasticsearch_nodes_usage_rest_actions_nodes_info_action{cluster=~\"$cluster\"}[$time])) by (name)",
+          "hide": false,
+          "interval": "",
+          "intervalFactor": 10,
+          "legendFormat": "/_nodes/info: {{name}}",
+          "refId": "Y"
+        },
+        {
+          "expr": "max(increase(elasticsearch_nodes_usage_rest_actions_nodes_stats_action{cluster=~\"$cluster\"}[$time])) by (name)",
+          "hide": false,
+          "interval": "",
+          "intervalFactor": 10,
+          "legendFormat": "/_nodes/stats: {{name}}",
+          "refId": "Z"
+        },
+        {
+          "expr": "max(increase(elasticsearch_nodes_usage_rest_actions_nodes_usage_action{cluster=~\"$cluster\"}[$time])) by (name)",
+          "hide": false,
+          "interval": "",
+          "intervalFactor": 10,
+          "legendFormat": "/_nodes/usage: {{name}}",
+          "refId": "NA"
+        },
+        {
+          "expr": "max(increase(elasticsearch_nodes_usage_rest_actions_put_index_template_action{cluster=~\"$cluster\"}[$time])) by (name)",
+          "hide": false,
+          "interval": "",
+          "intervalFactor": 10,
+          "legendFormat": "put index template: {{name}}",
+          "refId": "NA"
+        },
+        {
+          "expr": "max(increase(elasticsearch_nodes_usage_rest_actions_refresh_action{cluster=~\"$cluster\"}[$time])) by (name)",
+          "hide": false,
+          "interval": "",
+          "intervalFactor": 10,
+          "legendFormat": "/_refresh: {{name}}",
+          "refId": "NA"
+        },
+        {
+          "expr": "max(increase(elasticsearch_nodes_usage_rest_actions_update_settings_action{cluster=~\"$cluster\"}[$time])) by (name)",
+          "hide": false,
+          "interval": "",
+          "intervalFactor": 10,
+          "legendFormat": "update settings: {{name}}",
+          "refId": "NA"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Rest actions",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "decimals": null,
+          "format": "short",
+          "label": "Count",
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "decimals": null,
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$source",
+      "description": "Main rest action\n\nhttps://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-nodes-usage.html",
+      "fieldConfig": {
+        "defaults": {
+          "links": []
+        },
+        "overrides": []
+      },
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 37
+      },
+      "hiddenSeries": false,
+      "id": 118,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "max": true,
+        "min": true,
+        "rightSide": true,
+        "show": true,
+        "sort": "current",
+        "sortDesc": true,
+        "total": true,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.5.11",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "max(increase(elasticsearch_nodes_usage_rest_actions_main_action{cluster=~\"$cluster\"}[$time]) > 0) by (name)",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "{{name}}",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Main action",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:119",
+          "decimals": null,
+          "format": "short",
+          "label": "Count",
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "$$hashKey": "object:120",
+          "decimals": null,
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    }
+  ],
+  "refresh": false,
+  "schemaVersion": 27,
+  "style": "dark",
+  "tags": [
+    "elasticsearch",
+    "nodes",
+    "system",
+    "distribution"
+  ],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "selected": false,
+          "text": "monitoring-prometheus",
+          "value": "monitoring-prometheus"
+        },
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": false,
+        "label": null,
+        "multi": false,
+        "name": "source",
+        "options": [],
+        "query": "prometheus",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "type": "datasource"
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "$source",
+        "definition": "label_values(elasticsearch_cluster_health_number_of_nodes, cluster)",
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": false,
+        "label": null,
+        "multi": true,
+        "name": "cluster",
+        "options": [],
+        "query": {
+          "query": "label_values(elasticsearch_cluster_health_number_of_nodes, cluster)",
+          "refId": "monitoring-prometheus-cluster-Variable-Query"
+        },
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {
+          "selected": false,
+          "text": "10m",
+          "value": "10m"
+        },
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": false,
+        "label": null,
+        "multi": false,
+        "name": "time",
+        "options": [
+          {
+            "selected": false,
+            "text": "1m",
+            "value": "1m"
+          },
+          {
+            "selected": false,
+            "text": "5m",
+            "value": "5m"
+          },
+          {
+            "selected": true,
+            "text": "10m",
+            "value": "10m"
+          },
+          {
+            "selected": false,
+            "text": "30m",
+            "value": "30m"
+          },
+          {
+            "selected": false,
+            "text": "1h",
+            "value": "1h"
+          },
+          {
+            "selected": false,
+            "text": "6h",
+            "value": "6h"
+          },
+          {
+            "selected": false,
+            "text": "12h",
+            "value": "12h"
+          },
+          {
+            "selected": false,
+            "text": "1d",
+            "value": "1d"
+          },
+          {
+            "selected": false,
+            "text": "7d",
+            "value": "7d"
+          },
+          {
+            "selected": false,
+            "text": "14d",
+            "value": "14d"
+          },
+          {
+            "selected": false,
+            "text": "30d",
+            "value": "30d"
+          }
+        ],
+        "query": "1m,5m,10m,30m,1h,6h,12h,1d,7d,14d,30d",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
+      },
+      {
+        "allValue": ".*data.*",
+        "current": {},
+        "datasource": "$source",
+        "definition": "label_values(elasticsearch_nodes_usage_rest_actions_main_action{cluster=~\"$cluster\"}, name)",
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "name",
+        "options": [],
+        "query": {
+          "query": "label_values(elasticsearch_nodes_usage_rest_actions_main_action{cluster=~\"$cluster\"}, name)",
+          "refId": "monitoring-prometheus-name-Variable-Query"
+        },
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      }
+    ]
+  },
+  "time": {
+    "from": "now-24h",
+    "to": "now"
+  },
+  "timepicker": {
+    "refresh_intervals": [
+      "10s",
+      "30s",
+      "1m",
+      "5m",
+      "15m",
+      "30m",
+      "1h",
+      "2h",
+      "1d"
+    ]
+  },
+  "timezone": "",
+  "title": "Elasticsearch Exporter: /_nodes/usage",
+  "uid": "GdXYST0Mz",
+  "version": 42
+}
