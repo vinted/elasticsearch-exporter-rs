@@ -95,7 +95,7 @@ pub struct Opts {
     /// Exporter include labels
     #[clap(
         long = "exporter_include_labels",
-        default_value = "cat_health=shards&cat_aliases=index,alias&cat_allocation=node&cat_fielddata=node,field&cat_indices=index&cat_nodeattrs=node,attr&cat_nodes=ip,name,node_role&cat_pending_tasks=index&cat_plugins=name&cat_recovery=index,shard,stage,type&cat_repositories=index&cat_segments=index,shard&cat_shards=index,node,shard&cat_templates=name,index_patterns&cat_thread_pool=node_name,name,type&cat_transforms=index&cluster_health=status&nodes_usage=name&nodes_stats=name,vin_cluster_version&nodes_info=name&stats=index"
+        default_value = "cat_health=shards&cat_aliases=index,alias&cat_allocation=node&cat_fielddata=node,field&cat_indices=index&cat_nodeattrs=node,attr&cat_nodes=ip,name,node_role&cat_pending_tasks=index&cat_plugins=name&cat_recovery=index,shard,stage,type&cat_repositories=index&cat_segments=index,shard&cat_shards=index,node,shard&cat_templates=name,index_patterns&cat_thread_pool=node_name,name,type&cat_transforms=index&cluster_health=status&nodes_usage=name&nodes_stats=name&nodes_info=name&stats=index"
     )]
     pub exporter_include_labels: HashMapVec,
 
@@ -132,7 +132,7 @@ pub struct Opts {
 
     /// Elasticsearch query ?fields= for /_nodes/stats fields comma-separated list or
     /// wildcard expressions of fields to include in the statistics.
-    #[clap(long = "elasticsearch_query_fields", default_value = "nodes_stats=*")]
+    #[clap(long = "elasticsearch_query_fields", default_value = "")]
     pub elasticsearch_query_fields: HashMapVec,
 
     /// Exporter default metrics lifeimte interval in seconds
@@ -213,6 +213,10 @@ impl FromStr for HashMapVec {
 
     fn from_str(input: &str) -> Result<Self, Self::Err> {
         let mut map = CollectionLabels::new();
+
+        if input.is_empty() {
+            return Ok(Self(map));
+        }
 
         let parts = input.trim().split('&').collect::<Vec<&str>>();
 

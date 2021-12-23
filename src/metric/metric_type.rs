@@ -93,6 +93,23 @@ impl<'s> TryFrom<RawMetric<'s>> for MetricType {
                     }
                 };
             }
+            // elasticsearch_nodes_stats_fs_io_stats_total_write_kilobytes
+            "kilobytes" => {
+                return match parse_i64() {
+                    Ok(int) => Ok(MetricType::Bytes(int * 1024)),
+                    Err(e) => {
+                        if let Some(byte_str) = value.as_str() {
+                            return Ok(MetricType::Bytes(
+                                // FIX: Possible accuracy loss (Prometheus accepts up to 64 bits)
+                                Byte::from_str(byte_str).map(|b| b.get_bytes()).or(Err(e))? as i64
+                                    * 1024,
+                            ));
+                        }
+
+                        Err(e)
+                    }
+                };
+            }
             // Skip these metrics as highly variable or redundant
             "installed" | "jdk" | "pid" | "date" | "epoch" | "timestamp" | "uptime" => {
                 return Ok(MetricType::Null)

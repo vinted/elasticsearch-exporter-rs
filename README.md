@@ -31,6 +31,7 @@ $ docker run --network=host -it vinted/elasticsearch_exporter --elasticsearch_ur
  - Metric collection is decoupled from serving `/metrics` page
  - Skips zero/empty metrics (controlled with flag `exporter_allow_zero_metrics`)
  - Elasticsearch "millis" converted to seconds
+ - Elasticsearch "kilobytes" converted to bytes
  - All time based metrics are converted as f64 seconds, keywords `millis` replaced with `seconds`
  - Added `_bytes` and `_seconds` postfix
  - Preserves metrics tree namespace up to last leaf
@@ -90,7 +91,6 @@ Exporter settings:
 elasticsearch_url: http://127.0.0.1:9200
 elasticsearch_global_timeout: 30s
 elasticsearch_query_fields:
- - nodes_stats: *
 elasticsearch_subsystem_timeouts:
  - nodes_stats: 15s
 elasticsearch_path_parameters:
@@ -128,7 +128,7 @@ exporter_include_labels:
  - cat_transforms: index
  - cluster_health: status
  - nodes_info: name
- - nodes_stats: name,vin_cluster_version
+ - nodes_stats: name
  - nodes_usage: name
  - stats: index
 exporter_skip_metrics:
