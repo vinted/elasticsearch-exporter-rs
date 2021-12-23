@@ -132,7 +132,7 @@ pub struct Opts {
 
     /// Elasticsearch query ?fields= for /_nodes/stats fields comma-separated list or
     /// wildcard expressions of fields to include in the statistics.
-    #[clap(long = "elasticsearch_query_fields", default_value = "nodes_stats=*")]
+    #[clap(long = "elasticsearch_query_fields", default_value = "")]
     pub elasticsearch_query_fields: HashMapVec,
 
     /// Exporter default metrics lifeimte interval in seconds
@@ -213,6 +213,10 @@ impl FromStr for HashMapVec {
 
     fn from_str(input: &str) -> Result<Self, Self::Err> {
         let mut map = CollectionLabels::new();
+
+        if input.is_empty() {
+            return Ok(Self(map));
+        }
 
         let parts = input.trim().split('&').collect::<Vec<&str>>();
 

@@ -90,7 +90,6 @@ Exporter settings:
 elasticsearch_url: http://127.0.0.1:9200
 elasticsearch_global_timeout: 30s
 elasticsearch_query_fields:
- - nodes_stats: *
 elasticsearch_subsystem_timeouts:
  - nodes_stats: 15s
 elasticsearch_path_parameters:

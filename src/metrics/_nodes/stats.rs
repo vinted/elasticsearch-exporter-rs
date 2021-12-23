@@ -6,16 +6,20 @@ pub(crate) const SUBSYSTEM: &str = "nodes_stats";
 
 // https://www.elastic.co/guide/en/elasticsearch/reference/current/cluster-nodes-stats.html
 async fn metrics(exporter: &Exporter) -> Result<Vec<Metrics>, elasticsearch::Error> {
-    let response = exporter
-        .client()
-        .nodes()
-        .stats(NodesStatsParts::Metric(
-            &exporter.options().path_parameters_for_subsystem(SUBSYSTEM),
-        ))
-        .fields(&exporter.options().query_fields_for_subsystem(SUBSYSTEM))
-        .request_timeout(exporter.options().timeout_for_subsystem(SUBSYSTEM))
-        .send()
-        .await?;
+    let fields = exporter.options().query_fields_for_subsystem(SUBSYSTEM);
+    let path_params = exporter.options().path_parameters_for_subsystem(SUBSYSTEM);
+
+    let nodes = exporter.client().nodes();
+
+    let mut nodes_stats = nodes
+        .stats(NodesStatsParts::Metric(&path_params))
+        .request_timeout(exporter.options().timeout_for_subsystem(SUBSYSTEM));
+
+    if !fields.is_empty() {
+        nodes_stats = nodes_stats.fields(&fields);
+    }
+
+    let response = nodes_stats.send().await?;
 
     let values = response
         .json::<NodesResponse>()

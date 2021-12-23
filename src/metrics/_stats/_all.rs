@@ -5,14 +5,19 @@ use super::responses::StatsResponse;
 pub(crate) const SUBSYSTEM: &str = "stats";
 
 async fn metrics(exporter: &Exporter) -> Result<Vec<Metrics>, elasticsearch::Error> {
-    let response = exporter
-        .client()
-        .indices()
+    let fields = exporter.options().query_fields_for_subsystem(SUBSYSTEM);
+
+    let indices = exporter.client().indices();
+
+    let mut indices_stats = indices
         .stats(IndicesStatsParts::None)
-        .fields(&exporter.options().query_fields_for_subsystem(SUBSYSTEM))
-        .request_timeout(exporter.options().timeout_for_subsystem(SUBSYSTEM))
-        .send()
-        .await?;
+        .request_timeout(exporter.options().timeout_for_subsystem(SUBSYSTEM));
+
+    if !fields.is_empty() {
+        indices_stats = indices_stats.fields(&fields);
+    }
+
+    let response = indices_stats.send().await?;
 
     let values = response
         .json::<StatsResponse>()
