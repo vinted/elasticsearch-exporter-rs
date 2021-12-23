@@ -57,6 +57,22 @@ $ docker run --network=host -it vinted/elasticsearch_exporter --elasticsearch_ur
  - Configurable metrics collection (flag `exporter_metrics_enabled`)
  - Configurable metadata collection (flag `exporter_metadata_refresh_interval`)
 
+
+## Usage cheat sheet
+
+Scraping `/_nodes/stats` subsystem thread_pool path metric
+
+```
+$ docker run --network=host -it vinted/elasticsearch_exporter --elasticsearch_url=http://IP:PORT --exporter_metrics_enabled="nodes_stats=true" --elasticsearch_path_parameters="nodes_stats=thread_pool"
+```
+
+Scraping `/_nodes/stats` subsystem thread_pool + fs paths metric
+
+```
+$ docker run --network=host -it vinted/elasticsearch_exporter --elasticsearch_url=http://IP:PORT --exporter_metrics_enabled="nodes_stats=true" --elasticsearch_path_parameters="nodes_stats=thread_pool,fs"
+```
+
+
 ```shell
 $ curl -s http://127.0.0.1:9222
 Vinted Elasticsearch exporter
