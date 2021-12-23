@@ -128,7 +128,7 @@ exporter_include_labels:
  - cat_transforms: index
  - cluster_health: status
  - nodes_info: name
- - nodes_stats: name,vin_cluster_version
+ - nodes_stats: name
  - nodes_usage: name
  - stats: index
 exporter_skip_metrics:
