@@ -127,7 +127,7 @@ mod tests {
                 MetricType::Gauge(216732278),
             ),
             Metric(
-                "fs_io_stats_devices_read_kilobytes".into(),
+                "fs_io_stats_devices_read_bytes".into(),
                 MetricType::Bytes(21143552),
             ),
             Metric(
@@ -136,13 +136,32 @@ mod tests {
             ),
             Metric("vin_cluster_version".into(), MetricType::Label("".into())),
             Metric(
-                "fs_io_stats_devices_write_kilobytes".into(),
+                "fs_io_stats_devices_write_bytes".into(),
                 MetricType::Bytes(2455948251136),
             ),
             Metric(
                 "fs_io_stats_devices_write_operations".into(),
                 MetricType::Gauge(216731159),
             ),
+        ];
+
+        assert!(
+            metrics.contains(&expected),
+            "got {:?}\nexpected {:?}",
+            metrics,
+            expected
+        );
+
+        let expected = vec![
+            Metric("ip".into(), MetricType::Label("".into())),
+            Metric("name".into(), MetricType::Label(expected_name.clone())),
+            Metric("indices_flush_periodic".into(), MetricType::Gauge(1286)),
+            Metric("indices_flush_total".into(), MetricType::Gauge(1401)),
+            Metric(
+                "indices_flush_total_time_in_seconds".into(),
+                MetricType::Time(Duration::from_millis(7333176)),
+            ),
+            Metric("vin_cluster_version".into(), MetricType::Label("".into())),
         ];
 
         assert!(

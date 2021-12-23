@@ -40,7 +40,7 @@ impl<'s> TryFrom<RawMetric<'s>> for Metric {
     type Error = MetricError;
 
     fn try_from(metric: RawMetric) -> Result<Self, MetricError> {
-        let key: String = metric.0.replace(".", "_");
+        let mut key: String = metric.0.replace(".", "_");
 
         let underscore_index = key.rfind('_').unwrap_or(0);
 
@@ -54,6 +54,10 @@ impl<'s> TryFrom<RawMetric<'s>> for Metric {
         debug_assert!(!last.contains('.'));
 
         let metric_type = MetricType::try_from((last, metric.1))?;
+
+        key = key
+            .replace("_kilobytes", "_bytes")
+            .replace("_millis", "_seconds");
 
         Ok(Self(key, metric_type))
     }

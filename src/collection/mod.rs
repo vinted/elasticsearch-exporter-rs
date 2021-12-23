@@ -216,65 +216,50 @@ impl Collection {
         for metric in metrics.into_iter() {
             trace!("Collection metric: {:?}", metric);
 
+            let key = metric.key();
+
             match metric.metric_type() {
                 MetricType::Switch(value) => {
-                    if let Err(e) =
-                        self.insert_gauge(metric.key(), *value as i64, &labels, None, false, now)
+                    if let Err(e) = self.insert_gauge(key, *value as i64, &labels, None, false, now)
                     {
                         error!("SWITCH insert_gauge {:?} err {}", metric, e);
                         return Err(e);
                     }
                 }
                 MetricType::Bytes(value) => {
-                    let adjusted_key = metric.key().replace("_kilobytes", "_bytes");
-
                     // /_cat/recovery has key name `bytes`
-                    let postfix = if adjusted_key.ends_with("bytes") {
+                    let postfix = if key.ends_with("bytes") {
                         None
                     } else {
                         Some("_bytes")
                     };
-
-                    if let Err(e) =
-                        self.insert_gauge(&adjusted_key, *value, &labels, postfix, true, now)
-                    {
+                    if let Err(e) = self.insert_gauge(key, *value, &labels, postfix, true, now) {
                         error!("BYTES insert_gauge {:?} err {}", metric, e);
                         return Err(e);
                     }
                 }
                 MetricType::GaugeF(value) => {
-                    if let Err(e) =
-                        self.insert_fgauge(metric.key(), *value, &labels, None, true, now)
-                    {
+                    if let Err(e) = self.insert_fgauge(key, *value, &labels, None, true, now) {
                         error!("GAUGEF insert_fgauge {:?} err {}", metric, e);
                         return Err(e);
                     }
                 }
                 MetricType::Gauge(value) => {
-                    if let Err(e) =
-                        self.insert_gauge(metric.key(), *value, &labels, None, true, now)
-                    {
+                    if let Err(e) = self.insert_gauge(key, *value, &labels, None, true, now) {
                         error!("GAUGE insert_gauge {:?} err {}", metric, e);
                         return Err(e);
                     }
                 }
                 MetricType::Time(duration) => {
-                    let adjusted_key = metric.key().replace("_millis", "_seconds");
-
-                    let postfix = if adjusted_key.ends_with("_seconds") {
+                    let postfix = if key.ends_with("_seconds") {
                         None
                     } else {
                         Some("_seconds")
                     };
 
-                    if let Err(e) = self.insert_fgauge(
-                        &adjusted_key,
-                        duration.as_secs_f64(),
-                        &labels,
-                        postfix,
-                        true,
-                        now,
-                    ) {
+                    if let Err(e) =
+                        self.insert_fgauge(key, duration.as_secs_f64(), &labels, postfix, true, now)
+                    {
                         error!("TIME insert_fgauge {:?} err {}", metric, e);
                         return Err(e);
                     }
