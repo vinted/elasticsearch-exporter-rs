@@ -11,7 +11,7 @@ pub(crate) type RawMetric<'s> = (&'s str, &'s Value);
 
 /// Metric consisting of Key and parsed metric type
 #[derive(Debug, PartialEq)]
-pub struct Metric(String, MetricType);
+pub struct Metric(pub(crate) String, pub(crate) MetricType);
 
 /// Vector of metrics for convenience
 pub type Metrics = Vec<Metric>;

@@ -226,14 +226,17 @@ impl Collection {
                     }
                 }
                 MetricType::Bytes(value) => {
+                    let adjusted_key = metric.key().replace("_kilobytes", "_bytes");
+
                     // /_cat/recovery has key name `bytes`
-                    let postfix = if metric.key().ends_with("bytes") {
+                    let postfix = if adjusted_key.ends_with("bytes") {
                         None
                     } else {
                         Some("_bytes")
                     };
+
                     if let Err(e) =
-                        self.insert_gauge(metric.key(), *value, &labels, postfix, true, now)
+                        self.insert_gauge(&adjusted_key, *value, &labels, postfix, true, now)
                     {
                         error!("BYTES insert_gauge {:?} err {}", metric, e);
                         return Err(e);
