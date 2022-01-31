@@ -54,7 +54,7 @@ version = "0.13.0"
 [dependencies.tokio]
 default-features = false
 features = ["rt-multi-thread", "signal", "sync", "macros", "time"]
-version = "1.14.0"
+version = "1.16.1"
 
 [profile]
 [profile.release]
