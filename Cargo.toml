@@ -44,7 +44,7 @@ version = "7.14.0-alpha.1"
 [dependencies.hyper]
 default-features = false
 features = ["runtime", "tcp", "server"]
-version = "0.14.18"
+version = "0.14.19"
 
 [dependencies.prometheus]
 default-features = false
