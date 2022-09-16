@@ -39,7 +39,7 @@ version = "3.2.2"
 [dependencies.elasticsearch]
 default-features = false
 features = ["rustls-tls"]
-version = "7.14.0-alpha.1"
+version = "8.4.0-alpha.1"
 
 [dependencies.hyper]
 default-features = false
