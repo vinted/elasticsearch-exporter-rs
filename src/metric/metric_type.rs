@@ -177,7 +177,9 @@ impl<'s> TryFrom<RawMetric<'s>> for MetricType {
             | "core" | "tasks" | "relo" | "unassign" | "init" | "files" | "ops" | "recovered"
             | "generation" | "contexts" | "listeners" | "pri" | "rep" | "docs" | "count"
             | "compilations" | "deleted" | "shards" | "checkpoint" | "cpu" | "triggered"
-            | "evictions" | "failed" | "total" | "current" => Ok(MetricType::Gauge(parse_i64()?)),
+            | "evictions" | "failed" | "total" | "current" | "operations" => {
+                Ok(MetricType::Gauge(parse_i64()?))
+            }
 
             "avg" | "1m" | "5m" | "15m" | "number" | "percent" => {
                 Ok(MetricType::GaugeF(parse_f64()?))
