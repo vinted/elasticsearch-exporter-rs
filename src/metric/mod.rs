@@ -40,7 +40,7 @@ impl<'s> TryFrom<RawMetric<'s>> for Metric {
     type Error = MetricError;
 
     fn try_from(metric: RawMetric) -> Result<Self, MetricError> {
-        let mut key: String = metric.0.replace(".", "_");
+        let mut key: String = metric.0.replace(".", "_").replace("-", "_");
 
         let underscore_index = key.rfind('_').unwrap_or(0);
 
@@ -91,5 +91,13 @@ mod tests {
             m.metric_type(),
             &MetricType::Time(Duration::from_millis(10))
         );
+
+        let metric = "thread_pool_security-crypto_queue_size".to_string();
+        let raw: RawMetric = (&metric, &Value::from("1000"));
+
+        let m = Metric::try_from(raw);
+        assert!(m.is_ok());
+        let m = m.unwrap();
+        assert_eq!(&m.key(), &"thread_pool_security_crypto_queue_size");
     }
 }
