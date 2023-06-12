@@ -115,7 +115,7 @@ impl<'s> TryFrom<RawMetric<'s>> for MetricType {
                 return Ok(MetricType::Null)
             }
 
-            "time" | "millis" | "alive" => {
+            "time" | "millis" | "alive" | "timeInQueue" => {
                 return Ok(MetricType::Time(Duration::from_millis(
                     parse_i64().unwrap_or(0) as u64,
                 )))
@@ -177,7 +177,7 @@ impl<'s> TryFrom<RawMetric<'s>> for MetricType {
             | "core" | "tasks" | "relo" | "unassign" | "init" | "files" | "ops" | "recovered"
             | "generation" | "contexts" | "listeners" | "pri" | "rep" | "docs" | "count"
             | "compilations" | "deleted" | "shards" | "checkpoint" | "cpu" | "triggered"
-            | "evictions" | "failed" | "total" | "current" | "operations" => {
+            | "evictions" | "failed" | "total" | "current" | "operations" | "insertOrder" => {
                 Ok(MetricType::Gauge(parse_i64()?))
             }
 
@@ -191,7 +191,7 @@ impl<'s> TryFrom<RawMetric<'s>> for MetricType {
             | "health" | "build" | "node" | "state" | "patterns" | "of" | "segment" | "host"
             | "ip" | "prirep" | "id" | "status" | "at" | "for" | "details" | "reason" | "port"
             | "attr" | "field" | "shard" | "index" | "name" | "type" | "version"
-            | "description" | "agent" | "uri" => Ok(MetricType::Label(
+            | "description" | "agent" | "uri" | "priority" | "source" => Ok(MetricType::Label(
                 value.as_str().ok_or_else(unknown)?.to_owned(),
             )),
             _ => {
@@ -210,5 +210,39 @@ impl<'s> TryFrom<RawMetric<'s>> for MetricType {
                 ))
             }
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::metric::Metric;
+
+    use super::*;
+
+    #[test]
+    fn test_metric_special_cases() {
+        let metric = "data".to_string();
+        let raw: RawMetric = (&metric, &Value::from("/var/lib/elasticsearch/m1/nodes/0"));
+
+        let m = Metric::try_from(raw).unwrap();
+        assert_eq!(
+            m.metric_type(),
+            &MetricType::Label("/var/lib/elasticsearch/m1/nodes/0".into())
+        );
+
+        let metric = "data".to_string();
+        let raw: RawMetric = (&metric, &Value::from("2020"));
+
+        let m = Metric::try_from(raw).unwrap();
+        assert_eq!(m.metric_type(), &MetricType::Gauge(2020));
+    }
+
+    #[test]
+    fn test_metric_type() {
+        let metric = "insertOrder".to_string();
+        let raw: RawMetric = (&metric, &Value::from("16281"));
+
+        let m = Metric::try_from(raw).unwrap();
+        assert_eq!(m.metric_type(), &MetricType::Gauge(16281));
     }
 }
