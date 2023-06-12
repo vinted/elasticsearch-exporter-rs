@@ -60,6 +60,11 @@ impl<'s> TryFrom<RawMetric<'s>> for Metric {
             .replace("_kilobytes", "_bytes")
             .replace("_millis", "_seconds")
             .replace(" ", "_")
+            .replace(":", "_")
+            .replace("/", "_")
+            .replace("\\", "_")
+            .replace("[", ":")
+            .replace("]", ":")
             .to_lowercase();
 
         debug_assert!(!key.contains(' '), "Key contains space: {}", key);
@@ -115,5 +120,33 @@ mod tests {
             &m.key(),
             &"jvm_gc_collectors_g1_concurrent_gc_collection_count"
         );
+    }
+
+    #[test]
+    fn test_try_from_raw_metric_normalize_names() {
+        let metric = "transport_actions_cluster:monitor/nodes/info[n]_requests_count".to_string();
+        let raw: RawMetric = (&metric, &Value::from("2"));
+
+        let m = Metric::try_from(raw);
+        assert!(m.is_ok());
+        let m = m.unwrap();
+        assert_eq!(
+            &m.key(),
+            &"transport_actions_cluster_monitor_nodes_info:n:_requests_count"
+        );
+        assert_eq!(m.metric_type(), &MetricType::Gauge(2));
+
+        let metric =
+            "transport_actions_internal:cluster/coordination/join/ping_requests_count".to_string();
+        let raw: RawMetric = (&metric, &Value::from("2"));
+
+        let m = Metric::try_from(raw);
+        assert!(m.is_ok());
+        let m = m.unwrap();
+        assert_eq!(
+            &m.key(),
+            &"transport_actions_internal_cluster_coordination_join_ping_requests_count"
+        );
+        assert_eq!(m.metric_type(), &MetricType::Gauge(2));
     }
 }

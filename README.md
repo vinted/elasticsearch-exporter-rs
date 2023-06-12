@@ -46,6 +46,9 @@ $ docker run --network=host -it vinted/elasticsearch_exporter --elasticsearch_ur
    - IP namespaced -> `ip`
  - Automatic metrics deletion based on lifetime settings, by default metric by value will be
    deleted after 600s since last occurrence.
+ - Metric names are normalized to snake case, colon is replaced with underscore, brackets are replaced with colon (:)
+   - "transport_actions_cluster:monitor/nodes/info[n]_requests_count" -> "transport_actions_cluster_monitor_nodes_info:n:_requests_count"
+   - "transport_actions_internal:cluster/coordination/join/ping_requests_count" -> "transport_actions_internal_cluster_coordination_join_ping_requests_count"
 
 ## Options
 
