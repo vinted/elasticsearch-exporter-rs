@@ -191,7 +191,7 @@ impl<'s> TryFrom<RawMetric<'s>> for MetricType {
             | "health" | "build" | "node" | "state" | "patterns" | "of" | "segment" | "host"
             | "ip" | "prirep" | "id" | "status" | "at" | "for" | "details" | "reason" | "port"
             | "attr" | "field" | "shard" | "index" | "name" | "type" | "version"
-            | "description" => Ok(MetricType::Label(
+            | "description" | "agent" | "uri" => Ok(MetricType::Label(
                 value.as_str().ok_or_else(unknown)?.to_owned(),
             )),
             _ => {
