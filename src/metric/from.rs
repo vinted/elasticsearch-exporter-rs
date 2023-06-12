@@ -161,7 +161,7 @@ mod tests {
         let expected = vec![
             Metric("top_level_bytes".into(), MetricType::Bytes(2)),
             Metric(
-                "top_level_bytes_kB_size".into(),
+                "top_level_bytes_kb_size".into(),
                 MetricType::Gauge(77 * 1000),
             ),
             Metric("top_level_one".into(), MetricType::Gauge(1)),
