@@ -68,7 +68,8 @@ impl<'s> TryFrom<RawMetric<'s>> for MetricType {
             }));
         }
 
-        if value.is_null() {
+        // Handling cases when value is null or "-" aka not initialized
+        if value.is_null() || value.as_str().map(|v| v == "-").unwrap_or(false) {
             return Ok(MetricType::Null);
         }
 
@@ -115,7 +116,7 @@ impl<'s> TryFrom<RawMetric<'s>> for MetricType {
                 return Ok(MetricType::Null)
             }
 
-            "time" | "millis" | "alive" | "timeInQueue" => {
+            "time" | "millis" | "alive" | "timeInQueue" | "frequency" => {
                 return Ok(MetricType::Time(Duration::from_millis(
                     parse_i64().unwrap_or(0) as u64,
                 )))
@@ -172,16 +173,16 @@ impl<'s> TryFrom<RawMetric<'s>> for MetricType {
                 };
             }
 
+            // docs_per_second -> second - https://www.elastic.co/guide/en/elasticsearch/reference/current/cat-transforms.html
             "overhead" | "processors" | "primaries" | "min" | "max" | "successful" | "nodes"
             | "fetch" | "order" | "largest" | "rejected" | "completed" | "queue" | "active"
             | "core" | "tasks" | "relo" | "unassign" | "init" | "files" | "ops" | "recovered"
             | "generation" | "contexts" | "listeners" | "pri" | "rep" | "docs" | "count"
             | "compilations" | "deleted" | "shards" | "checkpoint" | "cpu" | "triggered"
-            | "evictions" | "failed" | "total" | "current" | "operations" | "insertOrder" => {
-                Ok(MetricType::Gauge(parse_i64()?))
-            }
+            | "evictions" | "failed" | "total" | "current" | "operations" | "insertOrder"
+            | "processed" | "indexed" | "second" | "failure" => Ok(MetricType::Gauge(parse_i64()?)),
 
-            "avg" | "1m" | "5m" | "15m" | "number" | "percent" => {
+            "avg" | "1m" | "5m" | "15m" | "number" | "percent" | "progress" => {
                 Ok(MetricType::GaugeF(parse_f64()?))
             }
 
@@ -244,5 +245,36 @@ mod tests {
 
         let m = Metric::try_from(raw).unwrap();
         assert_eq!(m.metric_type(), &MetricType::Gauge(16281));
+    }
+
+    // https://www.elastic.co/guide/en/elasticsearch/reference/current/cat-transforms.html#cat-transforms-api-query-params
+    #[test]
+    fn test_metric_type_cat_transform() {
+        let metric = "docs_per_second".to_string();
+        let raw: RawMetric = (&metric, &Value::from("-"));
+
+        let m = Metric::try_from(raw).unwrap();
+        assert_eq!(m.metric_type(), &MetricType::Null);
+
+        let metric = "frequency".to_string();
+        let raw: RawMetric = (&metric, &Value::from("329"));
+
+        let m = Metric::try_from(raw).unwrap();
+        assert_eq!(
+            m.metric_type(),
+            &MetricType::Time(Duration::from_millis(329))
+        );
+
+        let metric = "index_failure".to_string();
+        let raw: RawMetric = (&metric, &Value::from("2329"));
+
+        let m = Metric::try_from(raw).unwrap();
+        assert_eq!(m.metric_type(), &MetricType::Gauge(2329));
+
+        let metric = "indexed_documents_exp_avg".to_string();
+        let raw: RawMetric = (&metric, &Value::from("12"));
+
+        let m = Metric::try_from(raw).unwrap();
+        assert_eq!(m.metric_type(), &MetricType::GaugeF(12.0));
     }
 }
