@@ -52,12 +52,17 @@ impl<'s> TryFrom<RawMetric<'s>> for Metric {
 
         debug_assert!(!last.contains('_'));
         debug_assert!(!last.contains('.'));
+        debug_assert!(!last.contains(' '));
 
         let metric_type = MetricType::try_from((last, metric.1))?;
 
         key = key
             .replace("_kilobytes", "_bytes")
-            .replace("_millis", "_seconds");
+            .replace("_millis", "_seconds")
+            .replace(" ", "_")
+            .to_lowercase();
+
+        debug_assert!(!key.contains(' '), "Key contains space: {}", key);
 
         Ok(Self(key, metric_type))
     }
@@ -99,5 +104,16 @@ mod tests {
         assert!(m.is_ok());
         let m = m.unwrap();
         assert_eq!(&m.key(), &"thread_pool_security_crypto_queue_size");
+
+        let metric = "jvm_gc_collectors_G1 Concurrent GC_collection_count".to_string();
+        let raw: RawMetric = (&metric, &Value::from("1000"));
+
+        let m = Metric::try_from(raw);
+        assert!(m.is_ok());
+        let m = m.unwrap();
+        assert_eq!(
+            &m.key(),
+            &"jvm_gc_collectors_g1_concurrent_gc_collection_count"
+        );
     }
 }
