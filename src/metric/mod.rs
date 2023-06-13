@@ -40,7 +40,11 @@ impl<'s> TryFrom<RawMetric<'s>> for Metric {
     type Error = MetricError;
 
     fn try_from(metric: RawMetric) -> Result<Self, MetricError> {
-        let mut key: String = metric.0.replace(".", "_").replace("-", "_");
+        let mut key: String = metric
+            .0
+            .replace(".", "_")
+            .replace("-", "_")
+            .replace("+", "_");
 
         let underscore_index = key.rfind('_').unwrap_or(0);
 
@@ -60,6 +64,7 @@ impl<'s> TryFrom<RawMetric<'s>> for Metric {
             .replace("_kilobytes", "_bytes")
             .replace("_millis", "_seconds")
             .replace(" ", "_")
+            .replace(":_", "_") // should come before removing single colon
             .replace(":", "_")
             .replace("/", "_")
             .replace("\\", "_")
@@ -146,6 +151,20 @@ mod tests {
         assert_eq!(
             &m.key(),
             &"transport_actions_internal_cluster_coordination_join_ping_requests_count"
+        );
+        assert_eq!(m.metric_type(), &MetricType::Gauge(2));
+
+        let metric =
+            "transport_actions_indices_data_read_search:phase_query+fetch_scroll:_requests_count"
+                .to_string();
+        let raw: RawMetric = (&metric, &Value::from("2"));
+
+        let m = Metric::try_from(raw);
+        assert!(m.is_ok());
+        let m = m.unwrap();
+        assert_eq!(
+            &m.key(),
+            &"transport_actions_indices_data_read_search_phase_query_fetch_scroll_requests_count"
         );
         assert_eq!(m.metric_type(), &MetricType::Gauge(2));
     }
