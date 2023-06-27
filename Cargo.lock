@@ -361,7 +361,7 @@ dependencies = [
 
 [[package]]
 name = "elasticsearch_exporter"
-version = "0.24.1"
+version = "0.25.0"
 dependencies = [
  "byte-unit",
  "chrono",
