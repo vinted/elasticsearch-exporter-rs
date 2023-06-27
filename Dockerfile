@@ -1,11 +1,10 @@
-FROM rust:1.54.0 as build
+FROM rustlang/rust:nightly-bullseye-slim as build
+RUN apt-get update && \
+    update-ca-certificates && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
-
-RUN apt-get update \
-    && apt-get install --no-install-recommends -y musl-tools=1.1.21-2 \
-    && rustup default nightly \
-    && rustup target add x86_64-unknown-linux-musl
 
 RUN mkdir -p src/bin
 
@@ -17,11 +16,16 @@ RUN cargo fetch
 
 COPY . .
 
-RUN cargo build --bin elasticsearch_exporter --release --target x86_64-unknown-linux-musl
+RUN cargo build --bin elasticsearch_exporter --release
 
-FROM alpine:3.14.1
+FROM debian:bullseye-slim
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends ca-certificates=20210119 && \
+    update-ca-certificates && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
-COPY --from=build /app/target/x86_64-unknown-linux-musl/release/elasticsearch_exporter /usr/bin/elasticsearch_exporter
+COPY --from=build /app/target/release/elasticsearch_exporter /usr/bin/elasticsearch_exporter
 
 ENV RUST_LOG="info"
 
