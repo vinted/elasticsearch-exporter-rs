@@ -1,6 +1,7 @@
 FROM rustlang/rust:nightly-bullseye-slim as build
 RUN apt-get update && \
     update-ca-certificates && \
+    apt-get install --no-install-recommends --assume-yes pkg-config libssl-dev && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
