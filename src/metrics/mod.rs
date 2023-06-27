@@ -93,7 +93,7 @@ macro_rules! poll_metrics {
 
                 for (_, v) in collection
                     .gauges_lifetime
-                    .drain_filter(|_k, v| v.is_outdated(now))
+                    .extract_if(|_k, v| v.is_outdated(now))
                     .collect::<MetricLifetimeMap>()
                     .iter()
                 {
@@ -113,7 +113,7 @@ macro_rules! poll_metrics {
 
                 for (_, v) in collection
                     .fgauges_lifetime
-                    .drain_filter(|_k, v| v.is_outdated(now))
+                    .extract_if(|_k, v| v.is_outdated(now))
                     .collect::<MetricLifetimeMap>()
                     .iter()
                 {
