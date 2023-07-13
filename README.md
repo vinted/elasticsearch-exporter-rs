@@ -75,6 +75,11 @@ Scraping `/_nodes/stats` subsystem thread_pool + fs paths metric
 $ docker run --network=host -it vinted/elasticsearch_exporter --elasticsearch_url=http://IP:PORT --exporter_metrics_enabled="nodes_stats=true" --elasticsearch_path_parameters="nodes_stats=thread_pool,fs"
 ```
 
+Scraping `/stats` for `total.indexing` and `total.search` metrics only
+
+```
+$ docker run --network=host -it vinted/elasticsearch_exporter --elasticsearch_url=http://IP:PORT --exporter_metrics_enabled="stats=true" --elasticsearch_query_filter_path="stats=indices.*.total.indexing,indices.*.total.search" 
+```
 
 ```shell
 $ curl -s http://127.0.0.1:9222

@@ -14,6 +14,9 @@ pub struct ExporterOptions {
     /// Elasticsearch /_nodes/stats fields comma-separated list or
     /// wildcard expressions of fields to include in the statistics.
     pub elasticsearch_query_fields: CollectionLabels,
+    /// Elasticsearch /stats filter_path. Comma-separated list or
+    /// wildcard expressions of paths to include in the statistics.
+    pub elasticsearch_query_filter_path: CollectionLabels,
     /// Exporter timeout for subsystems, in case subsystem timeout is not defined
     /// default global timeout is used
     pub elasticsearch_subsystem_timeouts: ExporterPollIntervals,
@@ -66,6 +69,14 @@ impl ExporterOptions {
     /// ?fields= parameters for subsystems
     pub fn query_fields_for_subsystem(&self, subsystem: &'static str) -> Vec<&str> {
         self.elasticsearch_query_fields
+            .get(subsystem)
+            .map(|params| params.iter().map(AsRef::as_ref).collect::<Vec<&str>>())
+            .unwrap_or_default()
+    }
+
+    /// ?filter_path= parameters for subsystems
+    pub fn query_filter_path_for_subsystem(&self, subsystem: &'static str) -> Vec<&str> {
+        self.elasticsearch_query_filter_path
             .get(subsystem)
             .map(|params| params.iter().map(AsRef::as_ref).collect::<Vec<&str>>())
             .unwrap_or_default()
@@ -218,6 +229,12 @@ impl fmt::Display for ExporterOptions {
             &mut output,
             "elasticsearch_query_fields",
             &self.elasticsearch_query_fields,
+        );
+
+        collection_labels_to_string(
+            &mut output,
+            "elasticsearch_query_filter_path",
+            &self.elasticsearch_query_filter_path,
         );
 
         poll_duration_to_string(
