@@ -135,6 +135,11 @@ pub struct Opts {
     #[clap(long = "elasticsearch_query_fields", default_value = "")]
     pub elasticsearch_query_fields: HashMapVec,
 
+    /// Elasticsearch query ?filter_path= for /stats. Comma-separated list or
+    /// wildcard expressions of paths to include in the statistics.
+    #[clap(long = "elasticsearch_query_filter_path", default_value = "")]
+    pub elasticsearch_query_filter_path: HashMapVec,
+
     /// Exporter default metrics lifeimte interval in seconds
     #[clap(
         long = "exporter_metrics_lifetime_default_interval",

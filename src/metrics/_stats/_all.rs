@@ -6,6 +6,7 @@ pub(crate) const SUBSYSTEM: &str = "stats";
 
 async fn metrics(exporter: &Exporter) -> Result<Vec<Metrics>, elasticsearch::Error> {
     let fields = exporter.options().query_fields_for_subsystem(SUBSYSTEM);
+    let filter_path = exporter.options().query_filter_path_for_subsystem(SUBSYSTEM);
 
     let indices = exporter.client().indices();
 
@@ -15,6 +16,10 @@ async fn metrics(exporter: &Exporter) -> Result<Vec<Metrics>, elasticsearch::Err
 
     if !fields.is_empty() {
         indices_stats = indices_stats.fields(&fields);
+    }
+
+    if !filter_path.is_empty() {
+        indices_stats = indices_stats.filter_path(&filter_path)
     }
 
     let response = indices_stats.send().await?;

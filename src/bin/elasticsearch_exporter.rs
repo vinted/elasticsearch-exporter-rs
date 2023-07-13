@@ -99,6 +99,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         elasticsearch_url: opts.elasticsearch_url.clone(),
         elasticsearch_global_timeout: *opts.elasticsearch_global_timeout,
         elasticsearch_query_fields: opts.elasticsearch_query_fields.0.clone(),
+        elasticsearch_query_filter_path: opts.elasticsearch_query_filter_path.0.clone(),
         elasticsearch_subsystem_timeouts: opts.elasticsearch_subsystem_timeouts.0.clone(),
         elasticsearch_path_parameters: opts.elasticsearch_path_parameters.0.clone(),
 
