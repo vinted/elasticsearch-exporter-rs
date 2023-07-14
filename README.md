@@ -81,6 +81,12 @@ Scraping `/stats` for `total.indexing` and `total.search` metrics only
 $ docker run --network=host -it vinted/elasticsearch_exporter --elasticsearch_url=http://IP:PORT --exporter_metrics_enabled="stats=true" --elasticsearch_query_filter_path="stats=indices.*.total.indexing,indices.*.total.search" 
 ```
 
+Scraping `/_cat/shards` for `search.fetch*` metrics only. In this case `elasticsearch_query_filter_path` must always include `index,shard`, and dotted format is not supported. Example: 
+
+```
+$ docker run --network=host -it vinted/elasticsearch_exporter --elasticsearch_url=http://IP:PORT --exporter_metrics_enabled="cat_shards=true" --elasticsearch_query_filter_path="cat_shards=index,shard,search*fetch*" 
+```
+
 ```shell
 $ curl -s http://127.0.0.1:9222
 Vinted Elasticsearch exporter
