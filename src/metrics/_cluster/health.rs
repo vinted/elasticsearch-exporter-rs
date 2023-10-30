@@ -40,15 +40,13 @@ const COLORS: [&str; 3] = ["red", "green", "yellow"];
 fn inject_cluster_health(map: &mut SerdeMap<String, Value>) {
     let cluster_status: String = map
         .get("status")
-        .map(|v| v.as_str())
-        .flatten()
+        .and_then(|v| v.as_str())
         .map(ToOwned::to_owned)
         .unwrap_or_else(|| "red".into());
 
     let cluster_name: String = map
         .get("cluster_name")
-        .map(|v| v.as_str())
-        .flatten()
+        .and_then(|v| v.as_str())
         .map(ToOwned::to_owned)
         .expect("/_cluster/health must contain cluster_name");
 
