@@ -36,10 +36,10 @@ pub fn from_value(value: Value) -> Vec<Metrics> {
     output
 }
 
-fn _from_value<'f>(
+fn _from_value(
     prefix: &str,
     output: &mut Vec<Metrics>,
-    value: &'f Value,
+    value: &Value,
 ) -> Result<Metrics, MetricError> {
     let mut metrics = Metrics::new();
 
