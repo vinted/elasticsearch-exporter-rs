@@ -40,15 +40,12 @@
 )]
 
 #[macro_use]
-extern crate prometheus;
-#[macro_use]
-extern crate lazy_static;
-#[macro_use]
 extern crate log;
 #[macro_use]
 extern crate serde_derive;
 use elasticsearch::http::transport::{SingleNodeConnectionPool, TransportBuilder};
 use elasticsearch::Elasticsearch;
+use prometheus::{default_registry, HistogramOpts, HistogramVec, IntGaugeVec, Opts};
 use std::collections::{BTreeMap, HashMap};
 use std::sync::Arc;
 use std::time::Duration;
@@ -57,9 +54,6 @@ use std::time::Duration;
 pub mod collection;
 /// Metric
 pub mod metric;
-
-/// Exporter metrics
-mod exporter_metrics;
 
 mod options;
 pub use options::ExporterOptions;
@@ -102,6 +96,18 @@ struct Inner {
     /// Node ID to node name map for adding extra metadata labels
     /// {"U-WnGaTpRxucgde3miiDWw": "m1-supernode.example.com"}
     nodes_metadata: metadata::IdToMetadata,
+
+    // Exporter metrics
+    metrics: ExporterMetrics,
+}
+
+/// Global metrics for Elasticsearch exporter
+#[derive(Debug)]
+pub struct ExporterMetrics {
+    /// Subsystem request histogram
+    subsystem_req_histogram: HistogramVec,
+    /// Cluster health status
+    cluster_health_status: IntGaugeVec,
 }
 
 impl Exporter {
@@ -131,6 +137,11 @@ impl Exporter {
         &self.0.nodes_metadata
     }
 
+    /// Exporter metrics
+    pub fn metrics(&self) -> &ExporterMetrics {
+        &self.0.metrics
+    }
+
     /// Spawn exporter
     pub async fn new(options: ExporterOptions) -> Result<Self, Box<dyn std::error::Error>> {
         let connection_pool = SingleNodeConnectionPool::new(options.elasticsearch_url.clone());
@@ -155,12 +166,38 @@ impl Exporter {
         let mut const_labels = HashMap::new();
         let _ = const_labels.insert("cluster".into(), cluster_name.clone());
 
+        let metrics = ExporterMetrics {
+            subsystem_req_histogram: HistogramVec::new(
+                HistogramOpts::new(
+                    "subsystem_request_duration_seconds",
+                    "The Elasticsearch subsystem request latencies in seconds.",
+                )
+                .namespace(options.exporter_metrics_namespace.as_str()),
+                &["subsystem", "cluster"],
+            )
+            .expect("valid histogram vec metric"),
+
+            cluster_health_status: prometheus::IntGaugeVec::new(
+                Opts::new(
+                    "cluster_health_status",
+                    "Whether all primary and replica shards are allocated.",
+                )
+                .namespace(options.exporter_metrics_namespace.as_str()),
+                &["cluster", "color"],
+            )
+            .expect("valid prometheus metric"),
+        };
+
+        default_registry().register(Box::new(metrics.cluster_health_status.clone()))?;
+        default_registry().register(Box::new(metrics.subsystem_req_histogram.clone()))?;
+
         Ok(Self(Arc::new(Inner {
             cluster_name,
             client,
             options,
             const_labels,
             nodes_metadata,
+            metrics,
         })))
     }
 

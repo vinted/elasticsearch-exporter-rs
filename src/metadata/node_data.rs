@@ -3,7 +3,7 @@ use elasticsearch::{Elasticsearch, Error};
 use std::collections::HashMap;
 use tokio::sync::RwLock;
 
-use crate::{exporter_metrics::SUBSYSTEM_REQ_HISTOGRAM, Exporter};
+use crate::Exporter;
 
 pub(crate) type IdToMetadata = RwLock<NodeDataMap>;
 
@@ -59,7 +59,9 @@ pub(crate) async fn poll(exporter: Exporter) {
     loop {
         let _ = interval.tick().await;
 
-        let timer = SUBSYSTEM_REQ_HISTOGRAM
+        let timer: prometheus::HistogramTimer = exporter
+            .metrics()
+            .subsystem_req_histogram
             .with_label_values(&["/_nodes/os", exporter.cluster_name()])
             .start_timer();
 
