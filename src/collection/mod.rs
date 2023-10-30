@@ -104,7 +104,7 @@ impl Collection {
                 Opts::new(metric_key, key)
                     .const_labels(self.const_labels.clone())
                     .subsystem(self.subsystem)
-                    .namespace(crate::NAMESPACE),
+                    .namespace(self.options.exporter_metrics_namespace.clone()),
                 &labels.keys().map(|s| s.as_str()).collect::<Vec<&str>>(),
             )?;
 
@@ -171,7 +171,7 @@ impl Collection {
                 Opts::new(metric_key, key)
                     .const_labels(self.const_labels.clone())
                     .subsystem(self.subsystem)
-                    .namespace(crate::NAMESPACE),
+                    .namespace(self.options.exporter_metrics_namespace.clone()),
                 &labels.keys().map(|s| s.as_str()).collect::<Vec<&str>>(),
             )?;
 

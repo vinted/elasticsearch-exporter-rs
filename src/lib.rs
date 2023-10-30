@@ -72,8 +72,6 @@ pub mod metadata;
 
 pub(crate) mod metrics;
 
-const NAMESPACE: &str = "elasticsearch";
-
 /// Labels type with ordered keys
 pub type Labels = BTreeMap<String, String>;
 

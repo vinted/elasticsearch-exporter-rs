@@ -110,6 +110,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         exporter_skip_zero_metrics: !opts.exporter_allow_zero_metrics,
         exporter_poll_intervals: opts.exporter_poll_intervals.0.clone(),
         exporter_metrics_enabled: opts.exporter_metrics_enabled.0.clone(),
+        exporter_metrics_namespace: opts.exporter_metrics_namespace.clone(),
         exporter_metadata_refresh_interval: *opts.exporter_metadata_refresh_interval,
 
         exporter_metrics_lifetime_interval: opts.exporter_metrics_lifetime_interval.0.clone(),
