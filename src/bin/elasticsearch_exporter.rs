@@ -132,6 +132,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     match Exporter::new(options).await {
         Ok(exporter) => {
+            #[allow(clippy::let_underscore_future)]
             let _ = tokio::spawn(exporter.spawn());
         }
         Err(e) => {

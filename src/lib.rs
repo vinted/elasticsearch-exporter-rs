@@ -174,6 +174,7 @@ impl Exporter {
         self.spawn_stats();
 
         if self.options().enable_metadata_refresh() {
+            #[allow(clippy::let_underscore_future)]
             let _ = tokio::spawn(metadata::node_data::poll(self));
         }
     }
@@ -246,6 +247,7 @@ impl Exporter {
 macro_rules! is_metric_enabled {
     ($exporter:expr, $metric:ident) => {
         if $exporter.options().is_metric_enabled($metric::SUBSYSTEM) {
+            #[allow(clippy::let_underscore_future)]
             let _ = tokio::spawn($metric::poll($exporter.clone()));
         }
     };
