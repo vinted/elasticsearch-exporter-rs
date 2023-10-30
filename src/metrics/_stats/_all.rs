@@ -6,7 +6,9 @@ pub(crate) const SUBSYSTEM: &str = "stats";
 
 async fn metrics(exporter: &Exporter) -> Result<Vec<Metrics>, elasticsearch::Error> {
     let fields = exporter.options().query_fields_for_subsystem(SUBSYSTEM);
-    let filter_path = exporter.options().query_filter_path_for_subsystem(SUBSYSTEM);
+    let filter_path = exporter
+        .options()
+        .query_filter_path_for_subsystem(SUBSYSTEM);
 
     let indices = exporter.client().indices();
 

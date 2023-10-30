@@ -36,10 +36,10 @@ pub fn from_value(value: Value) -> Vec<Metrics> {
     output
 }
 
-fn _from_value<'f>(
+fn _from_value(
     prefix: &str,
     output: &mut Vec<Metrics>,
-    value: &'f Value,
+    value: &Value,
 ) -> Result<Metrics, MetricError> {
     let mut metrics = Metrics::new();
 
@@ -51,9 +51,9 @@ fn _from_value<'f>(
     {
         metrics.push(Metric::try_from((prefix, value))?);
     } else if let Some(obj) = value.as_object() {
-        let _ = _from_map(prefix, output, obj)?;
+        _from_map(prefix, output, obj)?;
     } else if let Some(array) = value.as_array() {
-        let _ = from_array(prefix, output, array)?;
+        from_array(prefix, output, array)?;
     } else {
         unreachable!()
     }

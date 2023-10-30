@@ -54,7 +54,7 @@ impl<'s> TryFrom<RawMetric<'s>> for MetricType {
                 value
                     .as_str()
                     // .replace is handling string percent notation, e.g.: "3.44%"
-                    .map(|n| n.replace("%", "").parse::<f64>())
+                    .map(|n| n.replace('%', "").parse::<f64>())
                     .ok_or_else(unknown)?
                     .map_err(|e| MetricError::from_parse_float(e, Some(value.clone())))
             }

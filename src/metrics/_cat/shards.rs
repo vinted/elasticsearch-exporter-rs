@@ -6,7 +6,9 @@ use super::responses::CatResponse;
 pub(crate) const SUBSYSTEM: &str = "cat_shards";
 
 async fn metrics(exporter: &Exporter) -> Result<Vec<Metrics>, elasticsearch::Error> {
-    let filter_path = exporter.options().query_filter_path_for_subsystem(SUBSYSTEM);
+    let filter_path = exporter
+        .options()
+        .query_filter_path_for_subsystem(SUBSYSTEM);
 
     let cat = exporter.client().cat();
 

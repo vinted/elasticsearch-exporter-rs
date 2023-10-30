@@ -21,7 +21,7 @@ jobs:
           override: true
       - name: Run cargo check
         uses: actions-rs/cargo@v1
-        continue-on-error: true # WARNING: only for this example, remove it!
+        continue-on-error: false
         with:
           command: check
   test:
@@ -38,7 +38,7 @@ jobs:
           override: true
       - name: Run cargo test
         uses: actions-rs/cargo@v1
-        continue-on-error: true # WARNING: only for this example, remove it!
+        continue-on-error: false
         with:
           command: test
   lints:
@@ -56,13 +56,13 @@ jobs:
           components: rustfmt, clippy
       - name: Run cargo fmt
         uses: actions-rs/cargo@v1
-        continue-on-error: true # WARNING: only for this example, remove it!
+        continue-on-error: false
         with:
           command: fmt
           args: --all -- --check
       - name: Run cargo clippy
         uses: actions-rs/cargo@v1
-        continue-on-error: true # WARNING: only for this example, remove it!
+        continue-on-error: false
         with:
           command: clippy
           args: -- -D warnings

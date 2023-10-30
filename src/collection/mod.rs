@@ -85,7 +85,7 @@ impl Collection {
         };
 
         if let Some(fgauge) = self.fgauges.get(key) {
-            let _ = set_labels(fgauge, &mut self.fgauges_lifetime)?;
+            set_labels(fgauge, &mut self.fgauges_lifetime)?;
         } else {
             // If metric is skippable and haven't been registered skip it
             // until value is not zero
@@ -108,7 +108,7 @@ impl Collection {
                 &labels.keys().map(|s| s.as_str()).collect::<Vec<&str>>(),
             )?;
 
-            let _ = set_labels(&new_fgauge, &mut self.fgauges_lifetime)?;
+            set_labels(&new_fgauge, &mut self.fgauges_lifetime)?;
 
             // Register new metric
             default_registry().register(Box::new(new_fgauge.clone()))?;
@@ -153,7 +153,7 @@ impl Collection {
         };
 
         if let Some(gauge) = self.gauges.get(key) {
-            let _ = set_labels(gauge, &mut self.gauges_lifetime)?;
+            set_labels(gauge, &mut self.gauges_lifetime)?;
         } else {
             // If metric is skippable and haven't been registered skip it
             // until value is not zero
@@ -175,7 +175,7 @@ impl Collection {
                 &labels.keys().map(|s| s.as_str()).collect::<Vec<&str>>(),
             )?;
 
-            let _ = set_labels(&new_gauge, &mut self.gauges_lifetime)?;
+            set_labels(&new_gauge, &mut self.gauges_lifetime)?;
 
             // Register new metric
             default_registry().register(Box::new(new_gauge.clone()))?;

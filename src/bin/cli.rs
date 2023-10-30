@@ -25,6 +25,7 @@ async fn wait_for_signal(tx: Sender<()>) {
 pub fn signal_channel() -> Receiver<()> {
     let (signal_tx, signal_rx) = unit_channel();
 
+    #[allow(clippy::let_underscore_future)]
     let _ = tokio::spawn(wait_for_signal(signal_tx));
 
     signal_rx
