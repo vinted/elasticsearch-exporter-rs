@@ -17,10 +17,10 @@ macro_rules! poll_metrics {
         use std::cmp;
         use std::time::Duration;
 
-        use crate::collection::{lifetime, lifetime::MetricLifetimeMap, Collection};
-        use crate::exporter_metrics::SUBSYSTEM_REQ_HISTOGRAM;
-        use crate::metric::{self, Metrics};
-        use crate::Exporter;
+        use $crate::collection::{lifetime, lifetime::MetricLifetimeMap, Collection};
+        use $crate::exporter_metrics::SUBSYSTEM_REQ_HISTOGRAM;
+        use $crate::metric::{self, Metrics};
+        use $crate::Exporter;
 
         #[allow(unused)]
         pub(crate) async fn poll(exporter: Exporter) {
