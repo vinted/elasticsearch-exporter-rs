@@ -42,9 +42,7 @@ impl<'s> TryFrom<RawMetric<'s>> for Metric {
     fn try_from(metric: RawMetric) -> Result<Self, MetricError> {
         let mut key: String = metric
             .0
-            .replace(".", "_")
-            .replace("-", "_")
-            .replace("+", "_");
+            .replace(['.', '-', '+'], "_");
 
         let underscore_index = key.rfind('_').unwrap_or(0);
 
@@ -63,13 +61,10 @@ impl<'s> TryFrom<RawMetric<'s>> for Metric {
         key = key
             .replace("_kilobytes", "_bytes")
             .replace("_millis", "_seconds")
-            .replace(" ", "_")
+            .replace(' ', "_")
             .replace(":_", "_") // should come before removing single colon
-            .replace(":", "_")
-            .replace("/", "_")
-            .replace("\\", "_")
-            .replace("[", ":")
-            .replace("]", ":")
+            .replace([':','/','\\'], "_")
+            .replace(['[', ']'], ":")
             .to_lowercase();
 
         debug_assert!(!key.contains(' '), "Key contains space: {}", key);
