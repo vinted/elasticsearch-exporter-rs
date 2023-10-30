@@ -51,9 +51,9 @@ fn _from_value<'f>(
     {
         metrics.push(Metric::try_from((prefix, value))?);
     } else if let Some(obj) = value.as_object() {
-        let _ = _from_map(prefix, output, obj)?;
+        _from_map(prefix, output, obj)?;
     } else if let Some(array) = value.as_array() {
-        let _ = from_array(prefix, output, array)?;
+        from_array(prefix, output, array)?;
     } else {
         unreachable!()
     }
