@@ -40,9 +40,7 @@ impl<'s> TryFrom<RawMetric<'s>> for Metric {
     type Error = MetricError;
 
     fn try_from(metric: RawMetric) -> Result<Self, MetricError> {
-        let mut key: String = metric
-            .0
-            .replace(['.', '-', '+'], "_");
+        let mut key: String = metric.0.replace(['.', '-', '+'], "_");
 
         let underscore_index = key.rfind('_').unwrap_or(0);
 
@@ -63,7 +61,7 @@ impl<'s> TryFrom<RawMetric<'s>> for Metric {
             .replace("_millis", "_seconds")
             .replace(' ', "_")
             .replace(":_", "_") // should come before removing single colon
-            .replace([':','/','\\'], "_")
+            .replace([':', '/', '\\'], "_")
             .replace(['[', ']'], ":")
             .to_lowercase();
 
