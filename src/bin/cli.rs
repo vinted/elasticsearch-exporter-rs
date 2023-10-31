@@ -127,6 +127,10 @@ pub struct Opts {
     )]
     pub exporter_metrics_enabled: HashMapSwitch,
 
+    // Exporter metrics namespace
+    #[clap(long = "exporter_metrics_namespace", default_value = "elasticsearch")]
+    pub exporter_metrics_namespace: String,
+
     /// Exporter metadata refresh interval
     #[clap(long = "exporter_metadata_refresh_interval", default_value = "3m")]
     pub exporter_metadata_refresh_interval: humantime::Duration,

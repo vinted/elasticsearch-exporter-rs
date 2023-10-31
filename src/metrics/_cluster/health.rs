@@ -17,27 +17,23 @@ async fn metrics(exporter: &Exporter) -> Result<Vec<Metrics>, elasticsearch::Err
         .send()
         .await?;
 
-    let values = response
-        .json::<CluserHealthResponse>()
-        .await?
-        .into_value(inject_cluster_health);
+    let values = response.json::<CluserHealthResponse>().await?.into_value();
+
+    update_health_metrics_from_value(&values, exporter.metrics().cluster_health_status.clone());
 
     Ok(metric::from_value(values))
 }
 
-lazy_static! {
-    static ref CLUSTER_STATUS: IntGaugeVec = register_int_gauge_vec!(
-        "elasticsearch_cluster_health_status",
-        "Whether all primary and replica shards are allocated.",
-        &["cluster", "color"]
-    )
-    .expect("valid prometheus metric");
-}
-
 const COLORS: [&str; 3] = ["red", "green", "yellow"];
 
+fn update_health_metrics_from_value(value: &Value, health_metric: IntGaugeVec) {
+    if let Some(map) = value.as_object() {
+        update_health_metrics(map, health_metric)
+    }
+}
+
 // elasticsearch_cluster_health_cluster_status{cluster="some",status="green"} 1
-fn inject_cluster_health(map: &mut SerdeMap<String, Value>) {
+fn update_health_metrics(map: &SerdeMap<String, Value>, health_metric: IntGaugeVec) {
     let cluster_status: String = map
         .get("status")
         .and_then(|v| v.as_str())
@@ -52,11 +48,11 @@ fn inject_cluster_health(map: &mut SerdeMap<String, Value>) {
 
     for color in COLORS.iter() {
         if color == &cluster_status {
-            CLUSTER_STATUS
+            health_metric
                 .with_label_values(&[&cluster_name, &cluster_status])
                 .set(1);
         } else {
-            CLUSTER_STATUS
+            health_metric
                 .with_label_values(&[&cluster_name, color])
                 .set(0);
         }
@@ -71,7 +67,7 @@ async fn test_cluster_health() {
         serde_json::from_str(include_str!("../../tests/files/cluster_health.json"))
             .expect("valid json");
 
-    let values = cluster_health.into_value(inject_cluster_health);
+    let values = cluster_health.into_value();
 
     let metrics = metric::from_value(values);
     assert!(!metrics.is_empty());

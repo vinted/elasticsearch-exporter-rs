@@ -37,6 +37,8 @@ pub struct ExporterOptions {
     pub exporter_skip_zero_metrics: bool,
     /// Exporter metrics switch either ON or OFF
     pub exporter_metrics_enabled: ExporterMetricsSwitch,
+    /// Export metrics namespace
+    pub exporter_metrics_namespace: String,
     /// Exporter metadata refresh interval
     pub exporter_metadata_refresh_interval: Duration,
 

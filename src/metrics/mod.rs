@@ -18,7 +18,6 @@ macro_rules! poll_metrics {
         use std::time::Duration;
 
         use $crate::collection::{lifetime, lifetime::MetricLifetimeMap, Collection};
-        use $crate::exporter_metrics::SUBSYSTEM_REQ_HISTOGRAM;
         use $crate::metric::{self, Metrics};
         use $crate::Exporter;
 
@@ -74,7 +73,9 @@ macro_rules! poll_metrics {
 
                 let _ = interval.tick().await;
 
-                let timer = SUBSYSTEM_REQ_HISTOGRAM
+                let timer = exporter
+                    .metrics()
+                    .subsystem_request_histogram
                     .with_label_values(&[&format!("/{}", SUBSYSTEM), exporter.cluster_name()])
                     .start_timer();
 
