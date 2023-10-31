@@ -58,6 +58,7 @@ $ docker run --network=host -it vinted/elasticsearch_exporter --elasticsearch_ur
  - Configurable global polling interval (flag `exporter_poll_default_interval`)
  - Configurable per metric polling interval (flag `exporter_poll_intervals`)
  - Configurable metrics collection (flag `exporter_metrics_enabled`)
+ - Configurable metrics namespace (flag `exporter_metrics_namespace`): metrics will be prefixed with custom namespace instead of `elasticsearch`
  - Configurable metadata collection (flag `exporter_metadata_refresh_interval`)
 
 
@@ -176,6 +177,7 @@ exporter_metrics_enabled:
  - cat_indices: true
  - nodes_info: true
  - nodes_stats: true
+exporter_metrics_namespace: elasticsearch
 exporter_metadata_refresh_interval: 180s
 exporter_metrics_lifetime_default_interval: 15s
 exporter_metrics_lifetime_interval:

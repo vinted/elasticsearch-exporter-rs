@@ -294,6 +294,12 @@ impl fmt::Display for ExporterOptions {
 
         output.push('\n');
         output.push_str(&format!(
+            "exporter_metrics_namespace: {}",
+            self.exporter_metrics_namespace
+        ));
+
+        output.push('\n');
+        output.push_str(&format!(
             "exporter_metadata_refresh_interval: {:?}",
             self.exporter_metadata_refresh_interval
         ));
