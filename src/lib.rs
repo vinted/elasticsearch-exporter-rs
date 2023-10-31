@@ -105,7 +105,7 @@ struct Inner {
 #[derive(Debug)]
 pub struct ExporterMetrics {
     /// Subsystem request histogram
-    subsystem_req_histogram: HistogramVec,
+    subsystem_request_histogram: HistogramVec,
     /// Cluster health status
     cluster_health_status: IntGaugeVec,
 }
@@ -167,7 +167,7 @@ impl Exporter {
         let _ = const_labels.insert("cluster".into(), cluster_name.clone());
 
         let metrics = ExporterMetrics {
-            subsystem_req_histogram: HistogramVec::new(
+            subsystem_request_histogram: HistogramVec::new(
                 HistogramOpts::new(
                     "subsystem_request_duration_seconds",
                     "The Elasticsearch subsystem request latencies in seconds.",
@@ -189,7 +189,7 @@ impl Exporter {
         };
 
         default_registry().register(Box::new(metrics.cluster_health_status.clone()))?;
-        default_registry().register(Box::new(metrics.subsystem_req_histogram.clone()))?;
+        default_registry().register(Box::new(metrics.subsystem_request_histogram.clone()))?;
 
         Ok(Self(Arc::new(Inner {
             cluster_name,

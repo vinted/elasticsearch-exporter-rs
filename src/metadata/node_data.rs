@@ -61,7 +61,7 @@ pub(crate) async fn poll(exporter: Exporter) {
 
         let timer: prometheus::HistogramTimer = exporter
             .metrics()
-            .subsystem_req_histogram
+            .subsystem_request_histogram
             .with_label_values(&["/_nodes/os", exporter.cluster_name()])
             .start_timer();
 

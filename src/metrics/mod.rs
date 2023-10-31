@@ -75,7 +75,7 @@ macro_rules! poll_metrics {
 
                 let timer = exporter
                     .metrics()
-                    .subsystem_req_histogram
+                    .subsystem_request_histogram
                     .with_label_values(&[&format!("/{}", SUBSYSTEM), exporter.cluster_name()])
                     .start_timer();
 
