@@ -2,13 +2,15 @@ use clap::Parser;
 use std::error::Error as StdError;
 use std::fmt;
 use std::net::SocketAddr;
+use std::path::PathBuf;
 use std::str::FromStr;
 use tokio::signal;
 use tokio::sync::oneshot::{self, Receiver, Sender};
 use url::Url;
 
 use elasticsearch_exporter::{
-    CollectionLabels, ExporterMetricsSwitch, ExporterPollIntervals, Labels,
+    CertificateValidationOptions, CollectionLabels, ExporterMetricsSwitch, ExporterPollIntervals,
+    Labels,
 };
 
 pub fn unit_channel() -> (Sender<()>, Receiver<()>) {
@@ -160,6 +162,13 @@ pub struct Opts {
         default_value = "cat_indices=180s&cat_nodes=60s&cat_recovery=60s"
     )]
     pub exporter_metrics_lifetime_interval: HashMapDuration,
+
+    /// Exporter certificate path for Elasticsearch client
+    pub elasticsearch_certificate_path: Option<PathBuf>,
+
+    /// Exporter certificate validation options for Elasticsearch client
+    #[clap(long = "elasticsearch_certificate_validation")]
+    pub elasticsearch_certificate_validation: Option<CertificateValidationOptions>,
 }
 
 #[derive(Debug, Clone, Default)]

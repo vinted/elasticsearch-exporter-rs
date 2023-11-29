@@ -43,10 +43,13 @@
 extern crate log;
 #[macro_use]
 extern crate serde_derive;
+use elasticsearch::cert::{Certificate, CertificateValidation};
 use elasticsearch::http::transport::{SingleNodeConnectionPool, TransportBuilder};
 use elasticsearch::Elasticsearch;
 use prometheus::{default_registry, HistogramOpts, HistogramVec, IntGaugeVec, Opts};
 use std::collections::{BTreeMap, HashMap};
+use std::fs::File;
+use std::io::Read;
 use std::sync::Arc;
 use std::time::Duration;
 
@@ -56,7 +59,7 @@ pub mod collection;
 pub mod metric;
 
 mod options;
-pub use options::ExporterOptions;
+pub use options::{CertificateValidationOptions, ExporterOptions};
 
 /// Reserved labels
 pub mod reserved;
@@ -145,11 +148,36 @@ impl Exporter {
     /// Spawn exporter
     pub async fn new(options: ExporterOptions) -> Result<Self, Box<dyn std::error::Error>> {
         let connection_pool = SingleNodeConnectionPool::new(options.elasticsearch_url.clone());
-        let transport = TransportBuilder::new(connection_pool)
-            .timeout(options.elasticsearch_global_timeout)
-            .build()?;
 
-        let client = Elasticsearch::new(transport);
+        let mut transport =
+            TransportBuilder::new(connection_pool).timeout(options.elasticsearch_global_timeout);
+
+        let load_cert = || -> Result<Certificate, elasticsearch::Error> {
+            if let Some(ref cert_path) = options.elasticsearch_certificate_path {
+                let mut buf = Vec::new();
+                let _ = File::open(cert_path)?.read_to_end(&mut buf)?;
+                Certificate::from_pem(&buf)
+            } else {
+                panic!("Please provide --elasticsearch_certificate_path=CERTIFICATE_PATH flag");
+            }
+        };
+
+        match options.elasticsearch_certificate_validation {
+            Some(CertificateValidationOptions::Full) => {
+                let cert = load_cert()?;
+                transport = transport.cert_validation(CertificateValidation::Full(cert));
+            }
+            Some(CertificateValidationOptions::Partial) => {
+                let cert = load_cert()?;
+                transport = transport.cert_validation(CertificateValidation::Certificate(cert));
+            }
+            Some(CertificateValidationOptions::None) => {
+                transport = transport.cert_validation(CertificateValidation::None);
+            }
+            None => {}
+        }
+
+        let client = Elasticsearch::new(transport.build()?);
         info!("Elasticsearch: ping");
         let _ = client.ping().send().await?;
 
