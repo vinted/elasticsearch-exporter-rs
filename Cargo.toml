@@ -8,7 +8,7 @@ homepage = "https://github.com/vinted/elasticsearch-exporter-rs"
 license = "MIT"
 name = "elasticsearch_exporter"
 repository = "https://github.com/vinted/elasticsearch-exporter-rs"
-version = "0.29.1"
+version = "0.30.0"
 [[bin]]
 name = "elasticsearch_exporter"
 
