@@ -61,6 +61,37 @@ $ docker run --network=host -it vinted/elasticsearch_exporter --elasticsearch_ur
  - Configurable metrics namespace (flag `exporter_metrics_namespace`): metrics will be prefixed with custom namespace instead of `elasticsearch`
  - Configurable metadata collection (flag `exporter_metadata_refresh_interval`)
 
+## TLS validation
+
+The certificate path is defined via flag `--elasticsearch_certificate_path=CERTIFICATE_PATH`.
+
+By default TLS validation is enabled, you don't have to configure anything.
+Default validation of the certificate, which validates that the certificate provided by the
+server is signed by a trusted Certificate Authority (CA) and also verifies that the server’s hostname
+(or IP address) matches the names identified by the CommonName (CN) or Subject Alternative
+Name (SAN) within the certificate.
+
+### No validation
+
+No validation is performed on the certificate provided by the server.
+
+Provide a flag `--elasticsearch_certificate_validation=none`
+
+### Full validation
+
+Full validation of the certificate, which validates that the certificate provided by the
+server is signed by a trusted Certificate Authority (CA) and also verifies that the server’s hostname
+(or IP address) matches the names identified by the CommonName (CN) or Subject Alternative
+Name (SAN) within the certificate.
+
+Provide a flag `--elasticsearch_certificate_validation=full`
+
+### Partial validation
+
+Validates that the certificate provided by the server is signed by a trusted
+Certificate Authority (CA), but does not perform hostname verification.
+
+Provide a flag `--elasticsearch_certificate_validation=partial`
 
 ## Usage cheat sheet
 
@@ -79,13 +110,13 @@ $ docker run --network=host -it vinted/elasticsearch_exporter --elasticsearch_ur
 Scraping `/stats` for `total.indexing` and `total.search` metrics only
 
 ```
-$ docker run --network=host -it vinted/elasticsearch_exporter --elasticsearch_url=http://IP:PORT --exporter_metrics_enabled="stats=true" --elasticsearch_query_filter_path="stats=indices.*.total.indexing,indices.*.total.search" 
+$ docker run --network=host -it vinted/elasticsearch_exporter --elasticsearch_url=http://IP:PORT --exporter_metrics_enabled="stats=true" --elasticsearch_query_filter_path="stats=indices.*.total.indexing,indices.*.total.search"
 ```
 
-Scraping `/_cat/shards` for `search.fetch*` metrics only. In this case `elasticsearch_query_filter_path` must always include `index,shard`, and dotted format is not supported. Example: 
+Scraping `/_cat/shards` for `search.fetch*` metrics only. In this case `elasticsearch_query_filter_path` must always include `index,shard`, and dotted format is not supported. Example:
 
 ```
-$ docker run --network=host -it vinted/elasticsearch_exporter --elasticsearch_url=http://IP:PORT --exporter_metrics_enabled="cat_shards=true" --elasticsearch_query_filter_path="cat_shards=index,shard,search*fetch*" 
+$ docker run --network=host -it vinted/elasticsearch_exporter --elasticsearch_url=http://IP:PORT --exporter_metrics_enabled="cat_shards=true" --elasticsearch_query_filter_path="cat_shards=index,shard,search*fetch*"
 ```
 
 ```shell

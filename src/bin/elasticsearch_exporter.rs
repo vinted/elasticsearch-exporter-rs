@@ -116,6 +116,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         exporter_metrics_lifetime_interval: opts.exporter_metrics_lifetime_interval.0.clone(),
         exporter_metrics_lifetime_default_interval: *opts
             .exporter_metrics_lifetime_default_interval,
+
+        elasticsearch_certificate_path: opts.elasticsearch_certificate_path.clone(),
+        elasticsearch_certificate_validation: opts.elasticsearch_certificate_validation,
     };
 
     info!("{}", options);
