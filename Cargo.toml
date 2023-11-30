@@ -13,7 +13,7 @@ version = "0.30.0"
 name = "elasticsearch_exporter"
 
 [dependencies]
-byte-unit = "4.0.19"
+byte-unit = "5.0.3"
 fnv = "1.0.7"
 humantime = "2.1.0"
 lazy_static = "1.4.0"

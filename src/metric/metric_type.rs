@@ -1,6 +1,7 @@
 use byte_unit::Byte;
 use serde_json::Value;
 use std::convert::TryFrom;
+use std::str::FromStr;
 use std::time::Duration;
 
 use super::{MetricError, RawMetric};
@@ -86,7 +87,7 @@ impl<'s> TryFrom<RawMetric<'s>> for MetricType {
                         if let Some(byte_str) = value.as_str() {
                             return Ok(MetricType::Bytes(
                                 // FIX: Possible accuracy loss (Prometheus accepts up to 64 bits)
-                                Byte::from_str(byte_str).map(|b| b.get_bytes()).or(Err(e))? as i64,
+                                Byte::from_str(byte_str).map(|b| b.as_u128()).or(Err(e))? as i64,
                             ));
                         }
 
@@ -102,7 +103,7 @@ impl<'s> TryFrom<RawMetric<'s>> for MetricType {
                         if let Some(byte_str) = value.as_str() {
                             return Ok(MetricType::Bytes(
                                 // FIX: Possible accuracy loss (Prometheus accepts up to 64 bits)
-                                Byte::from_str(byte_str).map(|b| b.get_bytes()).or(Err(e))? as i64
+                                Byte::from_str(byte_str).map(|b| b.as_u128()).or(Err(e))? as i64
                                     * 1024,
                             ));
                         }
@@ -164,7 +165,7 @@ impl<'s> TryFrom<RawMetric<'s>> for MetricType {
                         if let Some(byte_str) = value.as_str() {
                             return Ok(MetricType::Gauge(
                                 // FIX: Possible accuracy loss (Prometheus accepts up to 64 bits)
-                                Byte::from_str(byte_str).map(|b| b.get_bytes()).or(Err(e))? as i64,
+                                Byte::from_str(byte_str).map(|b| b.as_u128()).or(Err(e))? as i64,
                             ));
                         }
 
