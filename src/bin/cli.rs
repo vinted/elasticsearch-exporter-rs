@@ -10,7 +10,6 @@ use url::Url;
 
 use elasticsearch_exporter::{
     CertificateValidationOptions, CollectionLabels, ExporterMetricsSwitch, ExporterPollIntervals,
-    Labels,
 };
 
 pub fn unit_channel() -> (Sender<()>, Receiver<()>) {
@@ -263,21 +262,5 @@ impl FromStr for HashMapVec {
         }
 
         Ok(Self(map))
-    }
-}
-
-#[derive(Clone, Debug, Default)]
-struct HashMapStr(pub Labels);
-
-impl FromStr for HashMapStr {
-    type Err = SimpleError;
-
-    fn from_str(input: &str) -> Result<Self, Self::Err> {
-        Ok(Self(serde_qs::from_str(input).map_err(|e| {
-            SimpleError(format!(
-                "Usage `{}`, you provided `{}`",
-                HASH_MAP_STR_FORMAT, e
-            ))
-        })?))
     }
 }
