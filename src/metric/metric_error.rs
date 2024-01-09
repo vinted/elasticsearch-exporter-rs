@@ -47,10 +47,28 @@ impl StdError for MetricError {}
 
 impl fmt::Display for MetricError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "MetricError kind {:?} value: {:?}",
-            self.kind, self.value
-        )
+        match self.kind {
+            Kind::ParseInt(ref e) => {
+                write!(
+                    f,
+                    "MetricError->ParseIntError: {} value {:?}",
+                    e, self.value
+                )
+            }
+            Kind::ParseFloat(ref e) => {
+                write!(
+                    f,
+                    "MetricError->ParseFloatError: {} value {:?}",
+                    e, self.value
+                )
+            }
+            Kind::Unknown(ref s) => {
+                write!(
+                    f,
+                    "MetricError->Unknown error: {} value {:?}",
+                    s, self.value
+                )
+            }
+        }
     }
 }
