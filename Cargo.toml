@@ -29,7 +29,7 @@ url = "2.5.0"
 [dependencies.chrono]
 default-features = false
 features = ["clock"]
-version = "0.4.31"
+version = "0.4.33"
 
 [dependencies.clap]
 default-features = false
