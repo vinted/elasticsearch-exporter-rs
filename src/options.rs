@@ -243,7 +243,7 @@ fn vec_to_string(output: &mut String, field: &'static str, fields: &[&'static st
 
 impl fmt::Display for ExporterOptions {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let mut output = String::from("Vinted Elasticsearch exporter");
+        let mut output = String::from("Proper Elasticsearch exporter");
 
         output.push('\n');
         vec_to_string(

@@ -1,6 +1,6 @@
 #![feature(hash_extract_if)]
 
-//! # Vinted Elasticsearch exporter
+//! # Proper Elasticsearch exporter
 #![deny(
     warnings,
     bad_style,

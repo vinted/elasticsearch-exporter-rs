@@ -121,7 +121,7 @@ $ docker run --network=host -it vinted/elasticsearch_exporter --elasticsearch_ur
 
 ```shell
 $ curl -s http://127.0.0.1:9222
-Vinted Elasticsearch exporter
+Proper Elasticsearch exporter
 
 Available /_cat subsystems:
  - cat_allocation
