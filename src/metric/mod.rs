@@ -1,5 +1,4 @@
 use serde_json::Value;
-use std::convert::TryFrom;
 
 mod metric_error;
 mod metric_type;
