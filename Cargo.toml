@@ -1,7 +1,7 @@
 [package]
 authors = ["Ernestas Poskus <ernestas@vinted.com>"]
 autobins = false
-description = "Vinted Elasticsearch exporter\n"
+description = "Proper Elasticsearch exporter\n"
 documentation = "https://docs.rs/elasticsearch_exporter"
 edition = "2021"
 homepage = "https://github.com/vinted/elasticsearch-exporter-rs"
