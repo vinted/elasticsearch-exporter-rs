@@ -1,6 +1,5 @@
 use byte_unit::Byte;
 use serde_json::Value;
-use std::convert::TryFrom;
 use std::str::FromStr;
 use std::time::Duration;
 
