@@ -66,7 +66,15 @@ macro_rules! poll_metrics {
 
             let mut interval = tokio::time::interval_at(start, *poll_interval);
             // Convert to chrono Duration by overriding variable
-            let metric_lifetime = chrono::Duration::seconds(metric_lifetime.as_secs() as i64);
+            let metric_lifetime = chrono::TimeDelta::try_seconds(metric_lifetime.as_secs() as i64)
+                .expect(
+                    format!(
+                        "Invalid subsytem {} metric lifetime: {}",
+                        SUBSYSTEM,
+                        metric_lifetime.as_secs()
+                    )
+                    .as_str(),
+                );
 
             loop {
                 let now = lifetime::now() - metric_lifetime;
@@ -142,7 +150,7 @@ mod tests {
     fn test_chrono_lifetime_difference() {
         let now = chrono::Utc::now();
 
-        let past = now - chrono::Duration::days(3);
+        let past = now - chrono::TimeDelta::try_days(3).unwrap();
 
         assert_ne!(past, now);
         assert!(past < now);
