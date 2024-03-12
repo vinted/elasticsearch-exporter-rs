@@ -205,7 +205,7 @@ impl Exporter {
             )
             .expect("valid histogram vec metric"),
 
-            cluster_health_status: prometheus::IntGaugeVec::new(
+            cluster_health_status: IntGaugeVec::new(
                 Opts::new(
                     "cluster_health_status",
                     "Whether all primary and replica shards are allocated.",
