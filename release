@@ -1,13 +1,12 @@
 #!/bin/bash
-cargo release --help &> /dev/null || cargo install cargo-release
+cargo release --help &>/dev/null || cargo install cargo-release
 
 echo 'Running release dry-run'
-cargo release minor --dry-run --no-dev-version "$@"
+cargo release minor --dry-run "$@"
 echo
 
 read -p "Continue? [Yy]" -n 1 -r
-echo    # (optional) move to a new line
-if [[ $REPLY =~ ^[Yy]$ ]]
-then
-  cargo release minor --no-dev-version "$@"
+echo # (optional) move to a new line
+if [[ $REPLY =~ ^[Yy]$ ]]; then
+    cargo release minor "$@"
 fi
