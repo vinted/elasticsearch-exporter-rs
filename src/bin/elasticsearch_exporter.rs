@@ -80,6 +80,7 @@ pub fn panic_hook() {
 mod cli;
 use cli::{signal_channel, Opts};
 
+#[allow(clippy::needless_return)]
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     panic_hook();

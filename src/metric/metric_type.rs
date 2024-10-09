@@ -27,7 +27,7 @@ pub enum MetricType {
     Null,
 }
 
-impl<'s> TryFrom<RawMetric<'s>> for MetricType {
+impl TryFrom<RawMetric<'_>> for MetricType {
     type Error = MetricError;
 
     fn try_from(metric: RawMetric) -> Result<Self, MetricError> {
@@ -158,19 +158,19 @@ impl<'s> TryFrom<RawMetric<'s>> for MetricType {
             // pool_size is an int - MetricType::Gauge
             "size" => {
                 // parse byte unit
-                return match parse_i64() {
+                match parse_i64() {
                     Ok(int) => Ok(MetricType::Gauge(int)),
                     Err(e) => {
                         if let Some(byte_str) = value.as_str() {
-                            return Ok(MetricType::Gauge(
+                            Ok(MetricType::Gauge(
                                 // FIX: Possible accuracy loss (Prometheus accepts up to 64 bits)
                                 Byte::from_str(byte_str).map(|b| b.as_u128()).or(Err(e))? as i64,
-                            ));
+                            ))
+                        } else {
+                            Err(e)
                         }
-
-                        Err(e)
                     }
-                };
+                }
             }
 
             // docs_per_second -> second - https://www.elastic.co/guide/en/elasticsearch/reference/current/cat-transforms.html

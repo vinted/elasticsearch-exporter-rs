@@ -35,7 +35,7 @@ impl Metric {
     }
 }
 
-impl<'s> TryFrom<RawMetric<'s>> for Metric {
+impl TryFrom<RawMetric<'_>> for Metric {
     type Error = MetricError;
 
     fn try_from(metric: RawMetric) -> Result<Self, MetricError> {
