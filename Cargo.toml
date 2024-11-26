@@ -24,7 +24,7 @@ serde = "1.0.215"
 serde_derive = "1.0.147"
 serde_json = "1.0.133"
 serde_qs = "0.13.0"
-url = "2.5.3"
+url = "2.5.4"
 
 [dependencies.chrono]
 default-features = false
