@@ -1,5 +1,3 @@
-#![feature(hash_extract_if)]
-
 //! # Proper Elasticsearch exporter
 #![deny(
     warnings,
