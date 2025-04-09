@@ -34,7 +34,7 @@ version = "0.4.40"
 [dependencies.clap]
 default-features = false
 features = ["suggestions", "color", "derive", "std", "cargo"]
-version = "4.5.34"
+version = "4.5.35"
 
 [dependencies.elasticsearch]
 default-features = false
