@@ -21,7 +21,7 @@ RUN cargo build --bin elasticsearch_exporter --release
 
 FROM debian:bullseye-slim
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends ca-certificates=20210119 && \
+    apt-get install -y --no-install-recommends ca-certificates=20250419~deb12u1~deb11u1 && \
     update-ca-certificates && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
