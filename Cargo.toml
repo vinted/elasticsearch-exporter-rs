@@ -4,7 +4,6 @@ autobins = false
 description = "Proper Elasticsearch exporter\n"
 documentation = "https://docs.rs/elasticsearch_exporter"
 edition = "2021"
-homepage = "https://github.com/vinted/elasticsearch-exporter-rs"
 license = "MIT"
 name = "elasticsearch_exporter"
 repository = "https://github.com/vinted/elasticsearch-exporter-rs"
@@ -54,7 +53,7 @@ version = "0.13.4"
 [dependencies.tokio]
 default-features = false
 features = ["rt-multi-thread", "signal", "sync", "macros", "time"]
-version = "1.48.0"
+version = "1.54.0"
 
 [profile]
 [profile.release]
