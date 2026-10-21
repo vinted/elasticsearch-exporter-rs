@@ -1,4 +1,4 @@
-FROM rustlang/rust:nightly-bullseye-slim as build
+FROM rust:1.99.1-slim-bookworm as build
 RUN apt-get update && \
     update-ca-certificates && \
     apt-get install --no-install-recommends --assume-yes pkg-config libssl-dev && \
@@ -19,9 +19,10 @@ COPY . .
 
 RUN cargo build --bin elasticsearch_exporter --release
 
-FROM debian:bullseye-slim
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends ca-certificates=20210119 && \
+FROM debian:bookworm-slim
+RUN apt-get update -y && \
+    apt-get install -y --no-install-recommends  \
+    ca-certificates=20250419~deb12u2 && \
     update-ca-certificates && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
